@@ -1,4 +1,4 @@
-# Genetic biomarkers and clinical efficacy in non-smalllung cancer patients undergoing immune therapy
+# Genetic biomarkers and clinical efficacy in non-small lung cancer patients undergoing immune therapy
 **Masters thesis D.Lord** 
 
 
