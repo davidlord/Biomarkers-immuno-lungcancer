@@ -18,7 +18,7 @@ do
         spawn rsync -r -P xlorda@medair.sahlgrenska.gu.se:/seqstore/remote/share/AR_forskning/$FOLDERNAME/*.fastq.gz /tmp/xlorda/${FOLDERNAME}/
         # Prompt needs to be changed now that key has been added to ssh. 
         expect "xlorda@medair.sahlgrenska.gu.se's password:"
-        send "C?e&GDY52\n"
+        send "PASSWORD\n"
         expect eof
         EOD
 
