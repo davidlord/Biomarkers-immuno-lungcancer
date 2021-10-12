@@ -1,5 +1,8 @@
 #!/bin/bash -l
 
+# Script defined for one pair of reads. Run on a list of read pairs (R1 = Read1, R2 = Read2) through a loop. 
+# Example: 'cat samples.txt | while read R1 R2; do qsub .script $R1 $R2; done'
+
 # queue in batch
 #$ -cwd
 #$ -o logs/stdout.txt
