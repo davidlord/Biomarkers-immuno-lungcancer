@@ -21,5 +21,5 @@ OUT_PREFIX=duprm
 # Run Picard tools MarkDuplicates through GATK
 gatk --java-options -Xmx7g MarkDuplicates \
 -I $FILE_PATH/$R \
--O $FILE_PATH/$OUT_PREFIX$R \
--M marked_dup_metrics$R.txt
+-O $FILE_PATH/$OUT_PREFIX_$R \
+-M marked_dup_metrics_$R.txt
