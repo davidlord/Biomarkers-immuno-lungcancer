@@ -19,7 +19,7 @@ FILE_PATH=/seqstore/remote/share/anna_tmp/mapped_bam_files
 OUT_PREFIX=duprm
 
 # Run Picard tools MarkDuplicates through GATK
-gatk --java-options -Xmx7g MarkDuplicates \
+gatk MarkDuplicates \
 -I $FILE_PATH/$R \
 -O $FILE_PATH/$OUT_PREFIX_$R \
--M marked_dup_metrics_$R.txt
+-M $FILE_PATH/$R_metrics.txt
