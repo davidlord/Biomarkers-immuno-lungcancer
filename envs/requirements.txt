@@ -4,4 +4,5 @@ multiqc
 trimmomatic=0.39
 bwa=0.7.17-r1188
 samtools=1.13
-gatk=3.6
+gatk=4.2.20
+msisensor-pro
