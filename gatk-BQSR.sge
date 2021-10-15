@@ -1,0 +1,28 @@
+#!/bin/bash -l
+
+# Base quality score recalibration (BQSR) through GATK. 
+# Script defined for one bam file. Run on a list of bam files through a loop.
+# Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
+
+# queue in batch
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 2
+#$ -q batch.q
+
+# Rename input variable
+R=$1
+
+# Set variable for path to read files
+FILE_PATH=/seqstore/remote/share/anna_tmp/mapped_bam_files
+
+# Set variable to reference genome.fasta
+HG38=/home/xlorda/mapping/GRCh38.primary_assembly.genome.fa
+
+# Set variable to known sites SNPS.VCF
+
+# Set variable to known sites INDELS.VCF
+
+
+# Generate recalibration table for each input bam
+Gatk BaseRecalibrator -R REFERENCE_GENOME -I INPUT.BAM --known-sites KNOWN_SITES1 --known-sites KNOWN_SITES2 -O OUTPUT.TABLE
