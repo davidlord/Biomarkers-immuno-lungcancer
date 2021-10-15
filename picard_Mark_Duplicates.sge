@@ -16,10 +16,12 @@ R=$1
 FILE_PATH=/seqstore/remote/share/anna_tmp/mapped_bam_files
 
 # Create prefix that will be added to output files
-OUT_PREFIX=duprm
+OUT_PREFIX=RMDUP
 
 # Run Picard tools MarkDuplicates through GATK
+
 gatk MarkDuplicates \
--I $FILE_PATH/$R \
--O $FILE_PATH/$OUT_PREFIX_$R \
--M $FILE_PATH/$R_metrics.txt
+-I $FILE_PATH/${R} \
+-O $FILE_PATH/${OUT_PREFIX}_${R} \
+-M $FILE_PATH/${R}_metrics.txt
+
