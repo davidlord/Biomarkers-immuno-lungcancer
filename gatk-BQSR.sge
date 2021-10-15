@@ -14,15 +14,28 @@
 R=$1
 
 # Set variable for path to read files
-FILE_PATH=/seqstore/remote/share/anna_tmp/mapped_bam_files
+FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
 
 # Set variable to reference genome.fasta
-HG38=/home/xlorda/mapping/GRCh38.primary_assembly.genome.fa
+HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
 # Set variable to known sites SNPS.VCF
+KNOWN_SNPS=/home/xlorda/anna_tmp/reference_and_misc_files/Homo_sapiens_assembly38.dbsnp138.vcf
 
 # Set variable to known sites INDELS.VCF
-
+KNOWN_INDELS=/home/xlorda/anna_tmp/reference_and_misc_files/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 
 # Generate recalibration table for each input bam
-Gatk BaseRecalibrator -R REFERENCE_GENOME -I INPUT.BAM --known-sites KNOWN_SITES1 --known-sites KNOWN_SITES2 -O OUTPUT.TABLE
+Gatk BaseRecalibrator \
+-R HG38 \
+-I $FILE_PATH/$R \
+--known-sites $KNOWN_SNPS \
+--known-sites $KNOWN_INDELS \
+-O OUTPUT.TABLE
+
+
+
+
+
+
+
