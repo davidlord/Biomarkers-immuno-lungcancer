@@ -6,9 +6,8 @@
 # queue in batch
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 40
+#$ -pe mpi 10
 #$ -q batch.q
-#$ -l excl=1
 
 R=$1
 
