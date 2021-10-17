@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-# Base quality score recalibration (BQSR) through GATK. 
+# Script to add ReadGroups through Picard tools (within GATK) to a set of bam files. Input: BAM, OUTPUT: BAM. 
 # Script defined for one bam file. Run on a list of bam files through a loop.
 # Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
 
@@ -10,13 +10,21 @@
 #$ -pe mpi 2
 #$ -q batch.q
 
-# Rename input variable
+# Set variable for input
 R=$1
 
 # Set variable for path to read files
 FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
 
-# Extract the library number of sample 
-LIBVAR=`sed -r "s/.*lib([0-9]*)_([0-9]*).*/\1/" $R`
+# Create function for extracting library name from file name
+function libname_extract
+{
+FIRST=${R#*lib}
+echo ${FIRST%%_*}
+}
+LIBNAME=$( libname_extract $R )
 
-echo $R
+echo $LIBNAME
+
+
+
