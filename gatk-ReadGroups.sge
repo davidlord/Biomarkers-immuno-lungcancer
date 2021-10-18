@@ -24,7 +24,6 @@ function lib_extract
 	LIBNAME=`echo ${FIRST%%_*}`
 }
 lib_extract $R
-echo $LIBNAME
 
 # Create function to extract read group platform(?)
 function rgpu_extract
@@ -33,7 +32,6 @@ function rgpu_extract
 	RGPU=`echo ${FIRST%%_*}`
 }
 rgpu_extract $R
-echo $RGPU
 
 # Create function to extract sample name
 function samplename_extract
@@ -42,7 +40,10 @@ function samplename_extract
 	SAMPLENAME=`echo ${FIRST%%lib*}`
 }
 samplename_extract $R
-echo $SAMPLENAME
+
+gatk AddOrReplaceReadGroups -I $FILE_PATH/$R -O ${FILE_PATH}/RG_${R} -RGLB $LIBNAME -RGPL ILLUMINA -SORT_ORDER coordinate -RGPU $RGPU -RGSM $SAMPLENAME
+
+
 
 
 
