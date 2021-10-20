@@ -24,7 +24,7 @@ R2=$2
 	OUTPUT_PATH=/home/xlorda/anna_tmp/msi_output
 	
 	# Set variable for reference genome.fasta
-	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+	REFERENCE=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.site
 
 
 # Create a function to extract sample name
@@ -38,7 +38,7 @@ samplename_extract $R1
 
 # Run MSIsensor-pro for paired blood-tumor BAM files
 
-msisensor-pro msi -d $HG38 -n ${FILE_PATH}/${R1} -t ${FILE_PATH}/${R2} -o ${OUTPUT_PATH}/msi_${SAMPLENAME}
+msisensor-pro msi -d $REFERENCE -n ${FILE_PATH}/${R1} -t ${FILE_PATH}/${R2} -o ${OUTPUT_PATH}/msi_${SAMPLENAME}
 
 
 
