@@ -9,9 +9,10 @@
 #$ -pe mpi 10
 #$ -q batch.q
 
+# Set variable for input
 R=$1
 
-#Set variable for path to read files
+# Set variable for path to read files
 FILE_PATH=/seqstore/remote/share/anna_tmp/mapped_bam_files
 
 # Create prefix that will be added to output files
