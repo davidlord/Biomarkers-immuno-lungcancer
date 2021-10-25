@@ -12,12 +12,18 @@
 #$ -q batch.q
 #$ -l excl=1
 
-#Create a variable to reference genome symlink.
-HG38=/home/xlorda/mapping/GRCh38.primary_assembly.genome.fa
-
 #Assign input to variables
 R1=$1
 R2=$2
+
+# Set file variables: 
+
+  #Reference genome
+  HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+  
+  #Files (input and output)
+  FILE_PATH=/seqstore/remote/share/anna_tmp/fastq_files
+
 
 #Remove 'fasta' from name
 OUTNAME=`basename -s fastq.gz $1`
@@ -25,10 +31,9 @@ OUTNAME=`basename -s fastq.gz $1`
 #Set variable for additional suffix to output
 OUT_SUFFIX=bam
 
-#Set variable for path to read files
-FILE_PATH=/seqstore/remote/share/anna_tmp/fastq_files/
+
 
 
 #run mapping with bwa and convert to bam format with samtools
 
-bwa mem -t 40 $HG38 $FILE_PATH$R1 $FILE_PATH$R2 | samtools sort - -@ 40 > $FILE_PATH$OUTNAME$OUT_SUFFIX
+bwa mem -t 40 $HG38 $FILE_PATH/$R1 $FILE_PATH/$R2 | samtools sort - -@ 40 > $FILE_PATH/${OUTNAME}${OUT_SUFFIX}
