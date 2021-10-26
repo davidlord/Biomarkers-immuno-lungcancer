@@ -1,0 +1,9 @@
+# Index reference genome (symlink of HG38) with BWA: 
+bwa index -a bwtsw <HG38>
+
+# Index reference genome (symlink of HG38) with Samtools: 
+samtools faidx <HG38>
+
+# Create sequence dictionary with GATK: 
+gatk CreateSequenceDictionary -R <HG38> -O <HG38.dict>
+
