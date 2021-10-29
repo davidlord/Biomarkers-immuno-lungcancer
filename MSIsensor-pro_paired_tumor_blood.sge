@@ -1,14 +1,14 @@
 #!/bin/bash -l
 
-# Base quality score recalibration (BQSR) through GATK.
+# Script to run MSIsensor-pro on paired normal-tumor sample files (bam).
 # Script defined for one bam file. Run on a list of bam files through a loop.
 # Example: 'cat bam_files.txt | while read R1 R2; do qsub script $R $R2; done'
-# Input: 2x BAM files, Output: MSI table. 
+# Input: 2x BAM files, Output: MSI report files. 
 
 # queue in batch
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 5
+#$ -pe mpi 10
 #$ -q batch.q
 
 # Rename input variable
