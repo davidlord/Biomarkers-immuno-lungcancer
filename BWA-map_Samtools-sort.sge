@@ -20,7 +20,7 @@ R2=$2
 # Set file variables: 
 
   # Reference genome
-  HG38=/home/xlorda/anna_tmp/test_rerun/reference_files/GRCh38.primary_assembly.genome.fa
+  HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
   
   # Files (input and output)
   FILE_PATH=/seqstore/remote/share/anna_tmp/fastq_files
