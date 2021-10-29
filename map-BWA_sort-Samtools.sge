@@ -1,0 +1,34 @@
+#!/bin/bash -l
+
+# Script defined for one pair of reads. Run on a list of read pairs (R1 = Read1, R2 = Read2) through a loop. 
+# Example: 'cat samples.txt | while read R1 R2; do qsub .script $R1 $R2; done'
+
+# queue in batch
+#$ -cwd
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
+#$ -S /bin/bash
+#$ -pe mpi 40
+#$ -q batch.q
+#$ -l excl=1
+
+#Create a variable to reference genome symlink.
+HG38=/home/xlorda/mapping/GRCh38.primary_assembly.genome.fa
+
+#Assign input to variables
+R1=$1
+R2=$2
+
+#Remove 'fasta' from name
+OUTNAME=`basename -s fastq.gz $1`
+
+#Set variable for additional suffix to output
+OUT_SUFFIX=bam
+
+#Set variable for path to read files
+FILE_PATH=/seqstore/remote/share/anna_tmp/fastq_files/
+
+
+#run mapping with bwa and convert to bam format with samtools
+
+bwa mem -t 40 $HG38 $FILE_PATH$R1 $FILE_PATH$R2 | samtools sort - -@ 40 > $FILE_PATH$OUTNAME$OUT_SUFFIX
