@@ -20,7 +20,7 @@ R=$1
 	FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
 
 	# Set variable to reference genome.fasta
-	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa	
 
 	# Set variable to known sites SNPS.VCF
 	KNOWN_SNPS=/home/xlorda/anna_tmp/reference_and_misc_files/Homo_sapiens_assembly38.dbsnp138.vcf
@@ -28,7 +28,7 @@ R=$1
 	# Set variable to known sites INDELS.VCF
 	KNOWN_INDELS=/home/xlorda/anna_tmp/reference_and_misc_files/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 
-	# Set variable for table file, output from BQSR, input for downstream analysis
+	# Set variable for table file, output from BQSR, input for apply BQSR.
 	TABLE_FILE=${FILE_PATH}/BQSR_table_${R}
 
 

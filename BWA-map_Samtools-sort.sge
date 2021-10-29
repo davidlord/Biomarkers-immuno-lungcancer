@@ -2,8 +2,9 @@
 
 # Script defined for one pair of reads. Run on a list of read pairs (R1 = Read1, R2 = Read2) through a loop. 
 # Example: 'cat samples.txt | while read R1 R2; do qsub .script $R1 $R2; done'
+# INPUT: fastq_1 (forward), fastq_2 (reverse). OUTPUT: BAM file. 
 
-# queue in batch
+# Queue in batch
 #$ -cwd
 #$ -o logs/stdout.txt
 #$ -e logs/stderr.txt
@@ -12,28 +13,26 @@
 #$ -q batch.q
 #$ -l excl=1
 
-#Assign input to variables
+# Assign input to variables
 R1=$1
 R2=$2
 
 # Set file variables: 
 
-  #Reference genome
+  # Reference genome
   HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
   
-  #Files (input and output)
+  # Files (input and output)
   FILE_PATH=/seqstore/remote/share/anna_tmp/fastq_files
 
 
-#Remove 'fasta' from name
+# Remove 'fasta' from name
 OUTNAME=`basename -s fastq.gz $1`
 
-#Set variable for additional suffix to output
-OUT_SUFFIX=bam
 
 
 
 
-#run mapping with bwa and convert to bam format with samtools
+# Run mapping with bwa and convert to bam format with samtools
 
-bwa mem -t 40 $HG38 $FILE_PATH/$R1 $FILE_PATH/$R2 | samtools sort - -@ 40 > $FILE_PATH/${OUTNAME}${OUT_SUFFIX}
+bwa mem -t 40 $HG38 $FILE_PATH/$R1 $FILE_PATH/$R2 | samtools sort -@ 40 > $FILE_PATH/${OUTNAME}bam
