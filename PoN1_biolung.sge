@@ -1,0 +1,26 @@
+#!/bin/bash -l
+
+# First step in generating PoN: Run Mutect2 in tumor-only mode. 
+# Script defined for one bam file. Run on a list of bam files through a loop.
+# Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
+
+R=$1
+
+# Set variables to file paths
+
+	FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
+
+	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+
+
+# Remove .bam from file name
+
+	OUTNAME=`basename -s .bam $R`
+
+# Run GATK Mutect2 tumor only mode on input
+
+
+gatk Mutect2 -R $HG38 -I $FILE_PATH/$R --max-mnp-distance 0 -O $FILE_PATH/${OUTNAME}.vcf.gz
+
+
+
