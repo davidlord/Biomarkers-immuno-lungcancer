@@ -1,0 +1,29 @@
+# Queue in batch
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 1
+#$ -q batch.q
+
+
+# Second step in generating PoN: Run GenomicsDBImport on VCF files generated in previous step. 
+
+R=$1
+
+# Set variables to file paths
+
+        FILE_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/PoN
+
+        HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+
+	INTERVALS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
+
+	OUTPATH=/home/xlorda/anna_tmp/somatic_variant_calling/PoN
+
+	WSPATH=/home/xlorda/anna_tmp/reference_and_misc_files/GenomicsDBWorkSpace
+
+# Run GATK GenomicsDBImport
+
+gatk GenomicsDBImport -R $HG38 -L $INTERVALS_LIST --genomicsdb-workspace-path
+
+
