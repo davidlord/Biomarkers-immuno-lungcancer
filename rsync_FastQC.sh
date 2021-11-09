@@ -15,7 +15,7 @@ function f_rsync
 set timeout -1
 spawn rsync -P xlorda@medair.sahlgrenska.gu.se:/seqstore/remote/share/AR_forskning/$FOLDERNAME/*fastq.gz ./$FOLDERNAME
 expect "Enter passphrase for key '/home/xlorda/.ssh/id_rsa':"
-# Can direct password to a private password file for security reasons
+# Rediirect password to a private password file for security reasons
 send "PASSWORD\n"
 expect eof
 wait
