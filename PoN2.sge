@@ -1,0 +1,69 @@
+# Queue in batch
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 10
+#$ -q batch.q
+
+
+# Second step in generating PoN: Run GenomicsDBImport on VCF files generated in previous step. 
+
+R=$1
+
+# Set variables to file paths
+
+        FILE_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/PoN
+
+        HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+
+	INTERVALS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
+
+	OUTPATH=/home/xlorda/anna_tmp/somatic_variant_calling/PoN
+
+	WSPATH=/home/xlorda/anna_tmp/reference_and_misc_files/GenomicsDBWorkSpace
+
+# Run GATK GenomicsDBImport
+
+gatk GenomicsDBImport \
+-R $HG38 \
+-L $INTERVALS_LIST \
+--genomicsdb-workspace-path /home/xlorda/anna_tmp/somatic_variant_calling/PoN PoN_DB \
+-V BQSR_RG_RMDUP_NG-21449_Bl_001_C_B_lib349017_6538_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-21449_Bl_002_C_B_lib349018_6538_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-21449_Bl_005_C_B_lib349019_6538_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-23498_BL_008C_lib370153_6652_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-23498_BL_009D_lib370154_6652_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24493_BL_010_lib385827_6751_2_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24493_BL_014_lib385829_6751_2_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24493_BL_019_lib385831_6751_2_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24494_BL_010_P_lib385832_6741_2_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24495_141_B_lib393518_6751_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24495_265_B_lib393520_6751_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24495_279_B_lib393522_6751_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24495_289_B_lib393524_6751_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-24495_320_B_lib393531_6751_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_015_B_lib405710_6905_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_016_B_lib405712_6905_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_017_B_lib405714_6905_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_018_B_lib405716_6905_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_021_B_lib405718_6905_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_024_B_lib405720_6905_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_025_B_lib405722_6905_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_104_B_lib405724_6905_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-25405_BL_109_B_lib405726_6905_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_176_Normal_lib444219_7213_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_236_Normal_lib453703_7209_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_254_Normal_lib453702_7209_1_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_026_B_lib444197_7213_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_029_B_lib444199_7213_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_033_B_lib453022_7213_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_036_B_lib444203_7213_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_038_B_lib444205_7213_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_043_B_lib444207_7213_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_045_B_lib453023_7213_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-26484_BL_048_B_lib444212_7213_4_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-27109_BL_101_B_lib470094_7389_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-27109_BL_103_B_lib470096_7389_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-27109_BL_106_B_lib470098_7389_3_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-27743_BL_027_B_lib491772_7525_2_1.vcf.gz \
+-V BQSR_RG_RMDUP_NG-27743_BL_032_B_lib491773_7525_2_1.vcf.gz
