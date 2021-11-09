@@ -1,5 +1,13 @@
 #!/bin/bash -l
 
+# Queue in batch
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 1
+#$ -q batch.q
+
+
 # First step in generating PoN: Run Mutect2 in tumor-only mode.
 # Script defined for one bam file. Run on a list of bam files through a loop.
 # Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
@@ -12,6 +20,8 @@ R=$1
 
         HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
+	OUTPATH=/home/xlorda/anna_tmp/somatic_variant_calling/PoN_colon_cancer
+
 
 # Remove .bam from file name
 
@@ -20,4 +30,4 @@ R=$1
 # Run GATK Mutect2 tumor only mode on input
 
 
-gatk Mutect2 -R $HG38 -I $FILE_PATH/$R --max-mnp-distance 0 -O $FILE_PATH/${OUTNAME}.vcf.gz
+gatk Mutect2 -R $HG38 -I $FILE_PATH/$R --max-mnp-distance 0 -O $OUTPATH/${OUTNAME}.vcf.gz
