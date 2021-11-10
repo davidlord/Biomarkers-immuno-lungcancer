@@ -37,7 +37,8 @@ rgpu_extract $R
 function samplename_extract
 {
 	FIRST=${R#*[0-9]_}
-	SAMPLENAME=`echo ${FIRST%%lib*}`
+	SECOND=${FIRST%%lib*}
+	SAMPLENAME=${SECOND%_}
 }
 samplename_extract $R
 
