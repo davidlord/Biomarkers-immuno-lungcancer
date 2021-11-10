@@ -1,3 +1,4 @@
+#!/bin/bash -l
 # Queue in batch
 
 #$ -cwd
@@ -27,7 +28,7 @@ R=$1
 gatk GenomicsDBImport \
 -R $HG38 \
 -L $INTERVALS_LIST \
---genomicsdb-workspace-path /home/xlorda/anna_tmp/somatic_variant_calling/PoN PoN_DB \
+--genomicsdb-workspace-path /home/xlorda/anna_tmp/somatic_variant_calling/PoN/PoN_DB \
 -V BQSR_RG_RMDUP_NG-21449_Bl_001_C_B_lib349017_6538_1_1.vcf.gz \
 -V BQSR_RG_RMDUP_NG-21449_Bl_002_C_B_lib349018_6538_1_1.vcf.gz \
 -V BQSR_RG_RMDUP_NG-21449_Bl_005_C_B_lib349019_6538_1_1.vcf.gz \
