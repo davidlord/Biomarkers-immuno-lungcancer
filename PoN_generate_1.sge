@@ -1,0 +1,21 @@
+#!/bin/bash -l
+
+# First step in generating PoN: Run Mutect2 in tumor-only mode on a list of normal samples. 
+# Script defined for one bam file. Run on a list of bam files through a loop.
+# Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
+
+# Queue in batch
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 1
+#$ -q batch.q
+
+
+# Run GATK Mutect2 tumor only mode on input
+
+
+gatk Mutect2 -R $1 -I $2 --max-mnp-distance 0 -O $3
+
+
+
