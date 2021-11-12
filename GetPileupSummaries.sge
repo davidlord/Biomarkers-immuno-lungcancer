@@ -1,23 +1,40 @@
 #!/bin/bash -l
 
-# Queue in batch or test
-# ...
+# Run GetPileUpSummaries (GATK). 
+# Script defined for one bam file. Run on a list of bam files through a loop.
+# Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
+# INPUT: Tumor BAM file, population resource of allele frequencies of common variants, including biallelic variants only. 
+# OUTPUT: Table of
 
+# queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 5?
+#$ -q test.q
 
-
-# INPUT: tumor BAM file, population resource of allele frequencies of common variants, including biallelic variants only. 
-# OUTPUT: Table of ...
-# Script defined for one file, run through loop. 
-# Example: cat FILE_LIST | while read R; do qsub SCRIPT $R; done
-
+R=$1
 
 # Set variables for file paths
+
+  IN_PATH=/home/xlorda/anna_tmp/mapped_bam_files
+  
+  OUT_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/cross_sample_contamination
+  
+  RES_FILE=/home/xlorda/anna_tmp/reference_and_misc_files/small_exac_common_3.hg38.vcf.gz
+  
+# Extract samplename from file  
+
+FIRST=${R#*[0-9]_}
+SAMPLENAME=${FIRST%%lib*}
+
 
 
 
 # Run GetPileupSummaries
 
 gatk GetPileupSummaries \
--I tumor.bam \
--V resource_file \
--O tumor_getpileupsumaries.table
+-I /home/xlorda/anna_tmp/mapped_bam_files/$R \
+-V $RES_FILE \
+-O /home/xlorda/anna_tmp/somatic_variant_calling/cross_sample_contamination/
+
+
