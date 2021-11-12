@@ -23,7 +23,7 @@ N=$2
 
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
-	PoN=/home/xlorda/anna_tmp/somatic_variant_calling/PoN/PoN.vcf.gz
+	PON=/home/xlorda/anna_tmp/somatic_variant_calling/PoN/PoN.vcf.gz
 
 	AF_VCF=/home/xlorda/anna_tmp/reference_and_misc_files/af-only-gnomad.hg38.vcf.gz
 
@@ -36,14 +36,21 @@ N=$2
 	OUTNAME=${FIRST%bam}
 
 
+# Extract samplename
+
+NFIRST=${N#*[0-9]_}
+SAMPLENAME=${NFIRST%%lib*}
+
+
+
 # Run Mutect2 on paired tumor-normal BAM files. 
 
 gatk Mutect2 \
 -R $HG38 \
 -I $WORK_DIR/${T} \
 -I $WORK_DIR/${N} \
--normal $N_SAMPLENAME \
--pon $PoN \
+-normal $SAMPLENAME \
+-pon $PON \
 --germline-resource $AF_VCF \
 -L $REGIONS_LIST \
 -O $WORK_DIR/${OUTNAME}unfiltered.vcf.gz \
