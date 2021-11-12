@@ -1,0 +1,23 @@
+#!/bin/bash -l
+
+# Queue in batch or test
+# ...
+
+
+
+# INPUT: tumor BAM file, population resource of allele frequencies of common variants, including biallelic variants only. 
+# OUTPUT: Table of ...
+# Script defined for one file, run through loop. 
+# Example: cat FILE_LIST | while read R; do qsub SCRIPT $R; done
+
+
+# Set variables for file paths
+
+
+
+# Run GetPileupSummaries
+
+gatk GetPileupSummaries \
+-I tumor.bam \
+-V resource_file \
+-O tumor_getpileupsumaries.table
