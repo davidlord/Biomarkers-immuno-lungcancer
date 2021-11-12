@@ -30,20 +30,10 @@ N=$2
 	REGIONS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
 
 
-# Extract readgroup from each file
+# Remove prefixes and suffix from name
 
-	FIRST1=${N#*[0-9]_}
-	N_SAMPLENAME=${FIRST1%%lib*}
-
-	FIRST2=${T#*[0-9]_}
-	T_SAMPLENAME=${FIRST2%%lib*}
-
-
-# Change output vcf name
-
-	OUTVCF=${T_SAMPLENAME}unfiltered.vcf.gz
-
-	OUTBAM=${T_SAMPLENAME}normal_tumor.bam
+	FIRST=${T#*[0-9]_}
+	OUTNAME=${FIRST%bam}
 
 
 # Run Mutect2 on paired tumor-normal BAM files. 
@@ -56,7 +46,7 @@ gatk Mutect2 \
 -pon $PoN \
 --germline-resource $AF_VCF \
 -L $REGIONS_LIST \
--O $WORK_DIR/$OUTVCF \
--bamout $WORK_DIR/$OUTBAM
+-O $WORK_DIR/${OUTNAME}unfiltered.vcf.gz \
+-bamout $WORK_DIR/${OUTNAME}normal_tumor.bam
 
 
