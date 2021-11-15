@@ -1,10 +1,15 @@
 #!/bin/bash -l
 
+# Script runs Picard tools Mark Duplicates function (through gatk) on BAM files. 
 # Script defined for one bam file. Run on a list of bam files through a loop.
 # Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
+# INPUT: BAM. 
+# OUTPUT: BAM. 
 
 # Queue in batch
 #$ -cwd
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
 #$ -S /bin/bash
 #$ -pe mpi 10
 #$ -q batch.q
@@ -12,14 +17,13 @@
 # Set variable for input
 R=$1
 
-# Set variable for file path
-FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
-
+# Set variable for work dir
+WORK_DIR=/home/xlorda/anna_tmp/mapped_bam_files
 
 # Run Picard tools MarkDuplicates through GATK
 
 gatk MarkDuplicates \
--I ${FILE_PATH}/${R} \
--O ${FILE_PATH}/RMDUP_${R} \
--M $FILE_PATH/${R}_metrics.txt
+-I ${WORK_DIR}/${R} \
+-O ${WORK_DIR}/RMDUP_${R} \
+-M $WORK_DIR/${R}_metrics.txt
 
