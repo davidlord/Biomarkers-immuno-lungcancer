@@ -1,46 +1,43 @@
 #!/bin/bash -l
 
-# Script to run MSIsensor-pro on paired normal-tumor sample files (bam).
-# Script defined for one bam file. Run on a list of bam files through a loop.
-# Example: 'cat bam_files.txt | while read R1 R2; do qsub script $R $R2; done'
-# Input: 2x BAM files, Output: MSI report files. 
+# Script runs MSIsensor-pro on paired normal-tumor sample files (BAM).
+# Script defined for one pair of BAM files. Run on a list of paired BAM files through a loop.
+# Example: 'cat bam_files.txt | while read N T; do qsub script $N $T; done'
+# INPUT: 2x BAM files (normal- and tumor). 
+# OUTPUT: Report files, tabulated text files.  
 
 # queue in batch
 #$ -cwd
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
 #$ -S /bin/bash
 #$ -pe mpi 10
 #$ -q batch.q
 
 # Rename input variable
-R1=$1
-R2=$2
+N=$1
+T=$2
 
 # Set file variables
 
-	# Set variable for file path
-	FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
-
-	# Set variable path for output
-	OUTPUT_PATH=/home/xlorda/anna_tmp/msi_output
+	# Working directory
+	WORK_DIR=/home/xlorda/anna_tmp/mapped_bam_files
 	
-	# Set variable for reference genome.fasta
-	REFERENCE=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.site
+	# Reference genome
+	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.site
 
 
 # Create a function to extract sample name
 
 function samplename_extract
 {
-	FIRST=${R1#*[0-9]_}
-	SAMPLENAME=`echo ${FIRST%%_[A-Z]*}`
+	TFIRST=${T#*[0-9]_}	
+	SAMPLENAME=${TFIRST%%lib*}
 }
-samplename_extract $R1
+samplename_extract $T
 
 # Run MSIsensor-pro for paired blood-tumor BAM files
 
-msisensor-pro msi -d $REFERENCE -n ${FILE_PATH}/${R1} -t ${FILE_PATH}/${R2} -o ${OUTPUT_PATH}/msi_${SAMPLENAME}
-
-
-
+msisensor-pro msi -d $HG38 -n ${WORK_DIR}/${N} -t ${WORK_DIR}/${T} -o ${WORK_DIR}/msi_${SAMPLENAME}
 
 
