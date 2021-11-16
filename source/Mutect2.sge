@@ -1,18 +1,18 @@
 #!/bin/bash -l
 
+# Script to run Mutect2 somatic variant caller on paried normal-tumor processed BAM files.  
+# Script defined for one set of tumor-normal pair BAM files, run script through loop. 
+# Example: cat FILE | while read N T; do qsub /path/script $T $N; done
+# INPUT: normal_BAM, tumor_BAM. 
+# OUTPUT: VCF of somatic variants (unfiltered), vcf.stats file, BAM (of de-novo realigned regions during variant calling).
+
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
 #$ -pe mpi 4
 #$ -q test.q
 
-# Script to run Mutect2 somatic variant caller on paried normal-tumor processed bam files. 
-# INPUT: normal_BAM, tumor_BAM. 
-# OUTPUT: VCF of somatic variants (unfiltered), BAM (of de-novo realigned regions during variant calling). 
-# Script defined for one set of tumor-normal pair, run script through loop. 
-# Example: cat FILE | while read N T; do qsub /path/script $T $N; done
-
-
+# Set input variables
 
 T=$1
 N=$2
@@ -30,18 +30,16 @@ N=$2
 	REGIONS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
 
 
-# Remove prefixes and suffix from name
+# Remove prefixes and suffix from file name
 
 	FIRST=${T#*[0-9]_}
 	OUTNAME=${FIRST%bam}
 
-
 # Extract samplename
 
-NFIRST=${N#*[0-9]_}
-SAMPLENAME=${NFIRST%%lib*}
-
-
+	NFIRST=${N#*[0-9]_}
+	SECOND=${NFIRST%%lib*}
+	SAMPLENAME=${SECOND%_}
 
 # Run Mutect2 on paired tumor-normal BAM files. 
 
@@ -55,5 +53,4 @@ gatk Mutect2 \
 -L $REGIONS_LIST \
 -O $WORK_DIR/${OUTNAME}unfiltered.vcf.gz \
 -bamout $WORK_DIR/${OUTNAME}normal_tumor.bam
-
 

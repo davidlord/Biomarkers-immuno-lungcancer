@@ -1,0 +1,36 @@
+#!/bin/bash -l
+
+# Script runs BWA map, generating SAM files from fastq files, followed by Samtools sort, converting output to BAM format and sorting alignments by coordinates. 
+# Script is defined for one pair of reads (fastq format). Run on a list of read pairs (R1 = Read1, R2 = Read2) through a loop. 
+# Example: 'cat samples.txt | while read R1 R2; do qsub .script $R1 $R2; done'
+# INPUT: fastq_1 (forward), fastq_2 (reverse). 
+# OUTPUT: BAM file. 
+
+# Queue in batch or test
+#$ -cwd
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
+#$ -S /bin/bash
+#$ -pe mpi 40
+#$ -q batch.q
+#$ -l excl=1
+
+# Assign input to variables
+R1=$1
+R2=$2
+
+# Set file variables: 
+
+  # Reference genome
+  HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+  
+  # Working directory
+  WORK_DIR=/seqstore/remote/share/anna_tmp/fastq_files
+
+
+# Remove 'fasta' from name
+OUTNAME=`basename -s fastq.gz $1`
+
+# Run mapping with bwa and convert to bam format with samtools
+
+bwa mem -t 40 $HG38 $WORK_DIR/$R1 $WORK_DIR/$R2 | samtools sort -@ 40 > $WORK_DIR/${OUTNAME}bam
