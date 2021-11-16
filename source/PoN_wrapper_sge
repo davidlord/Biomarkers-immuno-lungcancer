@@ -1,38 +1,44 @@
 #!/bin/bash
 
-# Wrapper script for generating PoN. Script calls three other scripts, each running a step in the process of generating PoN. 
-# INPUT: File containing list of processed normal sample BAM files used to generate the PoN. 
+# Wrapper script for generating PoN. Script calls PoN1, PoN2, and PoN3, each running a step in the process of generating PoN. 
+# INPUT: File containing list of processed normal sample BAM files (used to generate the PoN).
+# OUTPUT:  
 
 # Script1 parameters: Reference fasta, input file, output file. 
-
+# Script2 parameters: 
+# Script3 parameters: 
 
 
 # Set script variables
 
-WD_PATH=/home/xlorda/code_and_such
+	WD_PATH=/home/xlorda/code_and_such
 
-SCRIPT_PATH=/home/xlorda/Biomarkers-immuno-lungcancer
+	SCRIPT_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source
 
-HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
 
 INPUT=$1
 
 # Create an array, consisting of each line in the input file
+
 declare -a LIST
 while read LINE; do
-LIST+=`echo $LINE`
+INPUT_LIST+=`echo $LINE`
 done < $INPUT
+
+echo $INPUT_LIST
 
 
 # Run PoN1 script for each entry of the list
 # Create a string consisting of all names in the list, comma separated.  
 
-INPUT_NAMES=""
-for i in ${LIST[@]}; do
-echo $i
-OUTNAME=`basename -s .bam $i`
-echo $OUTNAME
+JOBLIST=""
+for i in ${INPUT_LIST[@]}; do
+	JOBNAME=${i%.bam}
+	JOBLIST+= `echo ${JOBNAME}`
+	# echo "qsub -N $JOBNAME -cwd $SCRIPT_PATH/PoN1.sge -I $i -O ${i%.bam}.vcf.gz -R $HG38"
+
 
 # echo $SCRIPT_PATH/script1 $HG38 $WD_PATH/${i} $WD_PATH/${i%.bam}.vcf.gz
 done

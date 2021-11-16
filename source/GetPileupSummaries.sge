@@ -1,40 +1,37 @@
 #!/bin/bash -l
 
-# Run GetPileUpSummaries (GATK). 
+# Script runs GetPileUpSummaries function (GATK), summarizing read support for any given read in table format. 
 # Script defined for one bam file. Run on a list of bam files through a loop.
 # Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
-# INPUT: Tumor BAM file, population resource of allele frequencies of common variants, including biallelic variants only. 
-# OUTPUT: Table of
+# INPUT: BAM file, population resource of allele frequencies of common variants, including biallelic variants only. 
+# OUTPUT: Table of support for reference- or alternate allele for each given site. 
 
 # queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 5?
+#$ -pe mpi 5
 #$ -q test.q
 
 R=$1
 
 # Set variables for file paths
 
-  IN_PATH=/home/xlorda/anna_tmp/mapped_bam_files
-  
-  OUT_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/cross_sample_contamination
-  
-  RES_FILE=/home/xlorda/anna_tmp/reference_and_misc_files/small_exac_common_3.hg38.vcf.gz
-  
-# Extract samplename from file  
+	IN_PATH=/home/xlorda/anna_tmp/mapped_bam_files
 
-FIRST=${R#*[0-9]_}
-SAMPLENAME=${FIRST%%lib*}
+	OUT_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/cross_sample_contamination
 
+	RES_FILE=/home/xlorda/anna_tmp/reference_and_misc_files/small_exac_common_3.hg38.vcf.gz
 
+	OUTSUFFIX="normal_gps.table"
 
 
 # Run GetPileupSummaries
 
 gatk GetPileupSummaries \
--I /home/xlorda/anna_tmp/mapped_bam_files/$R \
+-I $IN_PATH/$R \
 -V $RES_FILE \
--O /home/xlorda/anna_tmp/somatic_variant_calling/cross_sample_contamination/
+-L $RES_FILE \
+-O $OUT_PATH/${R%.bam}_${OUTSUFFIX}
+
 
 
