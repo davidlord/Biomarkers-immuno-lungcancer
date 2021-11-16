@@ -31,10 +31,6 @@ R2=$2
 # Remove 'fasta' from name
 OUTNAME=`basename -s fastq.gz $1`
 
-
-
-
-
 # Run mapping with bwa and convert to bam format with samtools
 
 bwa mem -t 40 $HG38 $WORK_DIR/$R1 $WORK_DIR/$R2 | samtools sort -@ 40 > $WORK_DIR/${OUTNAME}bam
