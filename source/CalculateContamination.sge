@@ -1,0 +1,39 @@
+#!/bin/bash -l
+
+# Script runs CalculateConatmination function (GATK), calculating fraction of estimated cross-sample contamination. 
+# Script defined for one pair of input files, run through loop. 
+# Example: 'cat LIST.txt | while read N T; do qsub script $N $T; done'
+# INPUT: Paired table files (normal- and tumor) generated in the previous step (GetPileUpSummaries). 
+# OUTPUT: Contamination table, tumor segmentation table. 
+
+# queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 4
+#$ -q test.q
+
+N=$1
+T=$2
+
+# Set script variables
+
+	IN_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/pileup_summaries_tables
+
+	OUT_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/contamination_tables
+
+
+# Set output names
+
+	FIRST=${T#*[0-9]_}
+	SECOND=${FIRST%bam}	
+	OUTNAME=${SECOND%tumor_gps.table}
+
+
+# Run CalculateContamination (GATK)
+
+gatk CalculateContamination \
+-I $IN_PATH/$T \
+-matched $IN_PATH/$N \
+-tumor-segmentation $OUT_PATH/${OUTNAME}segments.table \
+-O $OUT_PATH/${OUTNAME}pair_calculateconamination.table
+
