@@ -1,0 +1,42 @@
+#!/bin/bash -l
+
+# Script to run FilterMutectCalls on unfiltered VCF files, generates filtered VCF files. 
+# Script defined for one input file, run through loop.
+# Example: cat FILE | while read R; do qsub /path/script $R; done
+# INPUT: Unfiltered VCF, tumor segmentation table, contamination table, read orientation model.
+# OUTPUT: Filtered VCF. 
+
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 4
+#$ -q test.q
+
+INPUT=$1
+
+# Set input variables
+
+	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling
+
+	ORIENTATION_MODEL=/home/xlorda/anna_tmp/somatic_variant_calling/all_paired_read-orientation_model.tar.gz
+
+
+# Names of inputs
+
+
+
+
+
+
+
+# Test names
+
+echo INPUT: $INPUT
+
+
+
+
+
+
+

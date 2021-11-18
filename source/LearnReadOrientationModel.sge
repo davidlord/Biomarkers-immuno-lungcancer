@@ -34,5 +34,4 @@ gatk LearnReadOrientationModel \
 -O $WORK_DIR/$OUTNAME
 
 
-echo $OUTNAME
 
