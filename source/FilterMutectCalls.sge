@@ -10,7 +10,7 @@
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 4
+#$ -pe mpi 5
 #$ -q test.q
 
 INPUT=$1
@@ -32,17 +32,6 @@ INPUT=$1
 
 	CONTAMINATION_TABLE=${SAMPLENAME}_pair_calculateconamination.table
 
-
-
-# Test names
-
-echo INPUT: $INPUT
-
-echo SAMPLENAME: $SAMPLENAME
-
-echo SEGMENTS FILE: $SEGMENTS_FILE
-
-echo CONTAMINATION TABLE: $CONTAMINATION_TABLE
 
 
 
