@@ -4,14 +4,14 @@
 # INPUT: File containing list of processed normal sample BAM files (used to generate the PoN).
 # OUTPUT:  
 
-# Script1 parameters: Reference fasta, input file, output file. 
+# PoN1 parameters: $1 = R, $2 = I, $3 = O 
 # Script2 parameters: 
 # Script3 parameters: 
 
 
 # Set script variables
 
-	WD_PATH=/home/xlorda/code_and_such
+	WD_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source
 
 	SCRIPT_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source
 
@@ -22,26 +22,42 @@ INPUT=$1
 
 # Create an array, consisting of each line in the input file
 
-declare -a LIST
+
+index=0
 while read LINE; do
-INPUT_LIST+=`echo $LINE`
+	INPUT_LIST[index]="$LINE"
+	$index=$(( $index + 1 ))
 done < $INPUT
 
 echo $INPUT_LIST
 
 
+# declare -A INPUT_LIST
+# while read LINE; do
+# INPUT_LIST+=`echo $LINE`
+# done < $INPUT
+
+# echo $INPUT_LIST
+
+
+
+
+# Create a string consisting of all names in the lost, comma separated. 
+
+
+
 # Run PoN1 script for each entry of the list
 # Create a string consisting of all names in the list, comma separated.  
 
-JOBLIST=""
-for i in ${INPUT_LIST[@]}; do
-	JOBNAME=${i%.bam}
-	JOBLIST+= `echo ${JOBNAME}`
-	# echo "qsub -N $JOBNAME -cwd $SCRIPT_PATH/PoN1.sge -I $i -O ${i%.bam}.vcf.gz -R $HG38"
+# JOBLIST=""
+# for i in ${INPUT_LIST[@]}; do
+# 	JOBNAME=${i%.bam}
+# 	JOBLIST+= `echo ${JOBNAME}`
+#	# echo "qsub -N $JOBNAME -cwd $SCRIPT_PATH/PoN1.sge -I $i -O ${i%.bam}.vcf.gz -R $HG38"
 
 
 # echo $SCRIPT_PATH/script1 $HG38 $WD_PATH/${i} $WD_PATH/${i%.bam}.vcf.gz
-done
+# done
 
 
 
