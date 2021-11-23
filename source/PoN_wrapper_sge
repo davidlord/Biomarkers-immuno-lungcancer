@@ -2,63 +2,70 @@
 
 # Wrapper script for generating PoN. Script calls PoN1, PoN2, and PoN3, each running a step in the process of generating PoN. 
 # INPUT: File containing list of processed normal sample BAM files (used to generate the PoN).
-# OUTPUT:  
+# OUTPUT: Panel of normals, used for downstream processing in Mutect2 somatic variant calling (normal-tumor mode).  
 
-# PoN1 parameters: $1 = R, $2 = I, $3 = O 
-# Script2 parameters: 
+# PoN1 parameters: $1 = Ref, $2 = Input, $3 = Output
+# PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input
 # Script3 parameters: 
 
 
 # Set script variables
 
-	WD_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source
+	BAM_FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
 
-	SCRIPT_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source
+	WORK_DIR=/home/xlorda/anna_tmp/PoN_wrapper_test
+
+	PON1=/home/xlorda/Biomarkers-immuno-lungcancer/source/PoN1.sge
+
+	PON2=/home/xlorda/Biomarkers-immuno-lungcancer/source/PoN2.sge
+
+	PON3=/home/xlorda/Biomarkers-immuno-lungcancer/source/PoN3.sge
 
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+
+	INTERVALS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
+
+	#PoN_DB is generated during the PoN2 step:
+	PON_DB=$WORK_DIR/PON_DB
 
 
 INPUT=$1
 
 # Create an array, consisting of each line in the input file
+# Note: Instances in input file are separated by newlines, convert to spaces before appending to an array. 
 
-
-index=0
 while read LINE; do
-	INPUT_LIST[index]="$LINE"
-	$index=$(( $index + 1 ))
+	FIRST=`echo $LINE | tr '\n' ' '`
+	IN_FILES+=$FIRST
 done < $INPUT
 
-echo $INPUT_LIST
+
+# Run PoN1.sge for each item in input list
+# PoN1 parameters: $1 = Ref, $2 = Input, $3 = Output
+# Create a comma separated string, jobnames, used for parallelisation in qsub. 
+
+for i in ${IN_FILES[@]}; do
+	JOBNAME=${i}_mutect2
+	JOBLIST+=`echo ${JOBNAME},`
+	qsub -N $JOBNAME -cwd $PON1 $HG38 ${BAM_FILE_PATH}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
+done
+
+# Remove comma from last item in list
+JOBLIST=${JOBLIST%,}
 
 
-# declare -A INPUT_LIST
-# while read LINE; do
-# INPUT_LIST+=`echo $LINE`
-# done < $INPUT
+# Create a string holding all outputs of PoN1, string will be passed as input parameter for PoN2. 
 
-# echo $INPUT_LIST
-
-
+V_STR=""
+for i in ${IN_FILES[@]}; do
+	V_STR+="-V ${i%.bam}.vcf.gz "
+done
 
 
-# Create a string consisting of all names in the lost, comma separated. 
+# Start PoN2 when all PoN1 jobs are finished running
+# PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input
 
-
-
-# Run PoN1 script for each entry of the list
-# Create a string consisting of all names in the list, comma separated.  
-
-# JOBLIST=""
-# for i in ${INPUT_LIST[@]}; do
-# 	JOBNAME=${i%.bam}
-# 	JOBLIST+= `echo ${JOBNAME}`
-#	# echo "qsub -N $JOBNAME -cwd $SCRIPT_PATH/PoN1.sge -I $i -O ${i%.bam}.vcf.gz -R $HG38"
-
-
-# echo $SCRIPT_PATH/script1 $HG38 $WD_PATH/${i} $WD_PATH/${i%.bam}.vcf.gz
-# done
-
+# echo qsub -hold_jid $JOBLIST -N "PON2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST $WORK_DIR PON_DB $V_STR
 
 
 

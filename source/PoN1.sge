@@ -4,12 +4,12 @@
 # Script defined for one bam file. Run on a list of bam files through a loop.
 # Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
 
-# Queue in batch
+# Queue in test
 
 #$ -cwd
 #$ -S /bin/bash
 #$ -pe mpi 1
-#$ -q batch.q
+#$ -q test.q
 
 
 # Run GATK Mutect2 tumor only mode on input
