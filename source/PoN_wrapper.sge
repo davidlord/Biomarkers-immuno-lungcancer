@@ -38,7 +38,7 @@ INPUT=$1
 
 while read LINE; do
 	FIRST=`echo $LINE | tr '\n' ' '`
-	IN_FILES+=$FIRST
+	IN_FILES+=($FIRST)
 done < $INPUT
 
 
@@ -49,7 +49,7 @@ done < $INPUT
 for i in ${IN_FILES[@]}; do
 	JOBNAME=Mutect2_${i}
 	JOBLIST+=`echo ${JOBNAME},`
-	qsub -N ${JOBNAME} -cwd $PON1 $HG38 ${BAM_FILE_PATH}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
+qsub -N ${JOBNAME} -cwd $PON1 $HG38 ${BAM_FILE_PATH}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
 done
 
 # Remove comma from last item in list
@@ -60,14 +60,15 @@ JOBLIST=${JOBLIST%,}
 
 V_STR=""
 for i in ${IN_FILES[@]}; do
-	V_STR+="-V ${WORK_DIR}/${i%.bam}.vcf.gz "
+	V_STR+="${WORK_DIR}/${i%.bam}.vcf.gz,"
 done
+
 
 # Start PoN2 when all PoN1 jobs are finished running
 # PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input
 
-qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST $WORK_DIR/PON_DB $V_STR
-
+# qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST $WORK_DIR PON_DB $V_STR
+# $PON2 $HG38 $INTERVALS_LIST $WORK_DIR/pon pon_db $V_STR
 
 # Start PoN3 when PoN2 is finished running
 # PoN3 parameters: $1 = Ref, $2 = germline resource (VCF from populational resource, containing allele frequencies only), $3 = Input, PoN_DB (generated in previous step), $4 = Output, PoN (VCF).
