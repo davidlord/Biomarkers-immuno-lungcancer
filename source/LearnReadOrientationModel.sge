@@ -1,0 +1,37 @@
+#!/bin/bash -l
+
+
+# Script to run LearReadOrientationModel (GATK)... 
+# Script defined for one file, run through loop. 
+# Example: cat FILE | while read R; do qsub /path/script $R; done
+# INPUT: F1R2 file (output from Mutect2). 
+# OUTPUT: 
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 4
+#$ -q test.q
+
+
+INPUT=$1
+
+# Set input variables
+
+	WORK_DIR=
+
+
+# Remove "f1r2.tar.gz" from input name
+
+FIRST=${INPUT%f1r2.tar.gz}
+OUTNAME=${FIRST}ROM.tar.gz
+
+
+# Run LearnReadOrientationModel
+
+gatk LearnReadOrientationModel \
+-I $WORK_DIR/$INPUT \
+-O $WORK_DIR/$OUTNAME
+
+
+

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Script runs Spring on a compressed .spring file, generating forward- and reverse fastq.gz files.
+# Script defined for one .spring file, run through loop.
+# Example: cat COMPRESSED_SPRING_FILES_LIST | while read R; do qsub SCRIPT $R; done
+# INPUT: R.spring
+# OUTPUT: R_1.fastq.gz (forward), R_2.fastq.gz (reverse). 
+
+# Queue in test
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 8
+#$ -q test.q
+
+R=$1
+
+# File path variable
+
+        WORK_DIR=/home/xlorda/anna_tmp/fastq_files
+
+# Name manipulation: Remove .spring from name, add _1/2.fastq.gz
+
+	NAME=${R%.spring}
+
+
+# Run Spring to decompress .spring file to forward and reverse .fastq.gz files
+
+spring -d -i ${WORK_DIR}/${R} -o ${WORK_DIR}/${NAME}_1.fastq.gz ${WORK_DIR}/${NAME}_2.fastq.gz -g
+

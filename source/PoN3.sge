@@ -1,0 +1,19 @@
+#!/bin/bash -l
+
+# PoN3: Third step in generating PoN: Script runs CreateSomaticPanelOfNormals, creating a panel of normals containing germline- and artifactual sites. PoN is then used as parameter in downstream somatic variant calling on normal-tumor paired samples (Mutect2).
+# PoN3 parameters: $1 = Ref, $2 = germline resource (VCF from populational resource, containing allele frequencies only), $3 = Input, PoN_DB (generated in previous step), $4 = Output, PoN (VCF). 
+
+# Queue in batch
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 10
+#$ -q batch.q
+
+
+gatk CreateSomaticPanelOfNormals \
+-R $1 \
+--germline-resource $2 \
+-V gendb://${3} \
+-O $4
+

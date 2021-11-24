@@ -1,0 +1,20 @@
+#!/bin/bash -l
+
+# PoN2: Second step in generating PoN: Script runs GenomicsDBImport on VCF files generated in the previous step, creating a data store used as parameter in downstream process.
+# PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input (VCF)
+
+# Queue in test
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 10
+#$ -q test.q
+
+
+# Run GATK GenomicsDBImport
+
+gatk GenomicsDBImport \
+-R $1 \
+-L $2 \
+--genomicsdb-workspace-path $3 \
+$4
