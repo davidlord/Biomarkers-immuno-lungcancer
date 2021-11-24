@@ -1,8 +1,7 @@
 #!/bin/bash -l
 
 # First step in generating PoN: Run Mutect2 in tumor-only mode on a list of normal samples. 
-# Script defined for one bam file. Run on a list of bam files through a loop.
-# Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
+# PoN1 parameters: $1 = Ref, $2 = Input (BAM) , $3 = Output (VCF)
 
 # Queue in test
 

@@ -4,8 +4,8 @@
 # INPUT: File containing list of processed normal sample BAM files (used to generate the PoN).
 # OUTPUT: Panel of normals, used for downstream processing in Mutect2 somatic variant calling (normal-tumor mode).  
 
-# PoN1 parameters: $1 = Ref, $2 = Input, $3 = Output
-# PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input
+# PoN1 parameters: $1 = Ref, $2 = Input (BAM), $3 = Output (VCF)
+# PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input (VCF)
 # Script3 parameters: 
 
 
@@ -24,6 +24,8 @@
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
 	INTERVALS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
+	
+	GERMLINE_RESOURCE=/home/xlorda/anna_tmp//reference_and_misc_files/af-only-gnomad.hg38.vcf.gz
 
 	#PoN_DB is generated during the PoN2 step:
 	PON_DB=$WORK_DIR/PON_DB
@@ -45,10 +47,12 @@ done < $INPUT
 # Create a comma separated string, jobnames, used for parallelisation in qsub. 
 
 for i in ${IN_FILES[@]}; do
-	JOBNAME=${i}_mutect2
+	JOBNAME=Mutect2_${i}
 	JOBLIST+=`echo ${JOBNAME},`
-	qsub -N $JOBNAME -cwd $PON1 $HG38 ${BAM_FILE_PATH}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
+echo PON1:	qsub -N ${JOBNAME} -cwd $PON1 $HG38 ${BAM_FILE_PATH}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
 done
+
+
 
 # Remove comma from last item in list
 JOBLIST=${JOBLIST%,}
@@ -61,17 +65,15 @@ for i in ${IN_FILES[@]}; do
 	V_STR+="-V ${i%.bam}.vcf.gz "
 done
 
-
 # Start PoN2 when all PoN1 jobs are finished running
 # PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input
 
-# echo qsub -hold_jid $JOBLIST -N "PON2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST $WORK_DIR PON_DB $V_STR
+echo PON2: qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST $WORK_DIR/PON_DB $V_STR
 
 
+# Start PoN3 when PoN2 is finished running
+# PoN3 parameters: $1 = Ref, $2 = germline resource (VCF from populational resource, containing allele frequencies only), $3 = Input, PoN_DB (generated in previous step), $4 = Output, PoN (VCF).
 
-
-
-
-
+# qsub -hold_jid "PoN2.sge" -N "PoN3.sge" -cwd $PON3 $HG38 $GERMLINE_RESOURCE $PON_DB ${WORK_DIR}/PoN.vcf.gz
 
 

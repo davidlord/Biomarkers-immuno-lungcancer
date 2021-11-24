@@ -1,5 +1,8 @@
 #!/bin/bash -l
 
+# PoN3: Third step in generating PoN: Script runs CreateSomaticPanelOfNormals, creating a panel of normals containing germline- and artifactual sites. PoN is then used as parameter in downstream somatic variant calling on normal-tumor paired samples (Mutect2).
+# PoN3 parameters: $1 = Ref, $2 = germline resource (VCF from populational resource, containing allele frequencies only), $3 = Input, PoN_DB (generated in previous step), $4 = Output, PoN (VCF). 
+
 # Queue in batch
 
 #$ -cwd
@@ -9,8 +12,8 @@
 
 
 gatk CreateSomaticPanelOfNormals \
--R /home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa \
---germline-resource /home/xlorda/anna_tmp//reference_and_misc_files/af-only-gnomad.hg38.vcf.gz \
--V gendb:///home/xlorda/anna_tmp/somatic_variant_calling/PoN/PoN_DB \
--O /home/xlorda/anna_tmp/somatic_variant_calling/PoN/PoN.vcf.gz
+-R $1 \
+--germline-resource $2 \
+-V gendb://${3} \
+-O $4
 

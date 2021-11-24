@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Script runs Spring on .fastq.gz files (forward and reverse), generating a compressed .spring file. 
+# Script defined for one set of paired input files, run through loop.
+# Example: cat NORMAL_TUMOR_fastq_list | while read R1 R2; do qsub SCRIPT $R1 $R2; done
+# INPUT: R1_fastq.gz, R2_fastq.gz
+# OUTPUT: R.spring
+
+# Queue in test
+
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 8
+#$ -q test.q
+
+R1=$1
+R2=$2
+
+# File path variable
+
+	WORK_DIR=/home/xlorda/anna_tmp/fastq_files
+
+# Name manipulation: Remove .fastq.gz and _1 or _2 from file name
+
+FIRST=`echo ${R1%.fastq.gz}`
+SUFFIX=`echo ${FIRST: -2}`
+NAME=`echo ${FIRST%$SUFFIX}`
+
+# Run Spring to compress forward and reverse input .fastq.gz files to singular .spring file.
+
+spring -c -i ${WORK_DIR}/${R1} ${WORK_DIR}/${R2} -o ${WORK_DIR}/${NAME}.spring -g
+
