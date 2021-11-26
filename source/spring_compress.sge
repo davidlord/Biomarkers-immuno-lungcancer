@@ -20,12 +20,12 @@ R2=$2
 
 	WORK_DIR=/home/xlorda/anna_tmp/fastq_files
 
-	ENV=/home/xlorda/envs/biolung
+###	ENV=/home/xlorda/envs/biolung
 
 # Load environment
 
-	source activate $ENV
-	module load spring
+###	source activate $ENV
+###	module load spring
 
 # Name manipulation: Remove .fastq.gz and _1 or _2 from file name
 
