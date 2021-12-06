@@ -20,7 +20,7 @@ V=$1
 
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
-	DATA_SOURCES=/home/xlorda/anna_tmp/reference_and_misc_files/Funcotator_data_sources/funcotator_dataSources.v1.7.20200521s
+	DATA_SOURCES="/home/xlorda/anna_tmp/reference_and_misc_files/Funcotator_data_sources/funcotator_dataSources.v1.7.20200521s"
 
 
 # Run Funcotator (GATK) on VCF files
@@ -30,6 +30,6 @@ gatk Funcotator \
 --reference $HG38 \
 --ref-version hg38 \
 --data-sources-path $DATA_SOURCES \
---output ${WORK_DIR}/${V%.vcf.gz}_annotated.vcf.gz?? \
+--output ${WORK_DIR}/${V}_annotated.vcf.gz \
 --output-file-format VCF
 

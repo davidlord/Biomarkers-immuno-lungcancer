@@ -8,7 +8,7 @@
 #$ -cwd
 #$ -S /bin/bash
 #$ -pe mpi 10
-#$ -q batch.q
+#$ -q test.q
 
 
 gatk CreateSomaticPanelOfNormals \
