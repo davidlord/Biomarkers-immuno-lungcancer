@@ -26,7 +26,7 @@ R2=$2
 
 	IN_PATH=/home/xlorda/anna_tmp/fastq_files
 
-	OUT_PATH=/home/xlorda/anna_tmp/test_rerun
+	OUT_PATH=/home/xlorda/anna_tmp/test_rerun/test_mapping_2
 
 
 # Remove 'fastq.gz' and '_1' / '_2' from file name

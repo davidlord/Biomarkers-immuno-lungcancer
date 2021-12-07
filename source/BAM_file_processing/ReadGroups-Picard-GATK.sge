@@ -1,4 +1,3 @@
-#!/bin/bash -l
 
 # Script runs Picard tools AddOrReplaceReadGroups function (through gatk) on BAM files. 
 # Script defined for one bam file. Run on a list of bam files through a loop.

@@ -1,0 +1,18 @@
+#!/bin/bash -l
+
+# Reoccuring step in processing BAM files: Script runs Samtools index, generating a .bai file for each BAM. 
+# Samtools index parameters: $1 = Input (BAM).
+
+# Queue in batch or test
+
+#$ -cwd
+#$ -o logs/stdout_samtools_index.txt
+#$ -e logs/stderr_samtools_index.txt
+#$ -S /bin/bash
+#$ -pe mpi 1
+#$ -q test.q
+
+# Run samtools index
+
+samtools index $1
+

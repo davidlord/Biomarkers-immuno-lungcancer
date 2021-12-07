@@ -34,9 +34,10 @@
 
 INPUT=$1
 
-# Create an array, consisting of each line in the input file
-# Note: Instances in input file are separated by newlines, convert to spaces before appending to an array. 
+# Create a list, consisting of each entry (line) in the input file.
+# Note: Instances in input file are separated by newlines, convert to spaces before appending to a list. 
 
+IN_FILES=""
 while read LINE; do
 	FIRST=`echo $LINE | tr '\n' ' '`
 	IN_FILES+=($FIRST)
@@ -50,7 +51,7 @@ done < $INPUT
 for i in ${IN_FILES[@]}; do
 	JOBNAME=Mutect2_${i}
 	JOBLIST+=`echo ${JOBNAME},`
-### qsub -N ${JOBNAME} -cwd $PON1 $HG38 ${BAM_FILE_PATH}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
+	qsub -N ${JOBNAME} -cwd $PON1 $HG38 ${BAM_FILE_PATH}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
 done
 
 # Remove comma from last item in list
@@ -68,7 +69,7 @@ done
 # Start PoN2 when all PoN1 jobs are finished running
 # PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input
 
-### qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST PON_DB $V_STR
+qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST PON_DB $V_STR
 
 
 # Start PoN3 when PoN2 is finished running
