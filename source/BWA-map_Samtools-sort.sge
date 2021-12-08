@@ -12,7 +12,7 @@
 #$ -e logs/stderr.txt
 #$ -S /bin/bash
 #$ -pe mpi 40
-#$ -q batch.q
+#$ -q test.q
 #$ -l excl=1
 
 # Assign input to variables
@@ -21,16 +21,21 @@ R2=$2
 
 # Set file variables: 
 
-  # Reference genome
-  HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
-  
-  # Working directory
-  WORK_DIR=/seqstore/remote/share/anna_tmp/fastq_files
+	# Reference genome
+	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+
+	IN_PATH=/home/xlorda/anna_tmp/fastq_files
+
+	OUT_PATH=/home/xlorda/anna_tmp/test_rerun/test_mapping_2
 
 
-# Remove 'fasta' from name
-OUTNAME=`basename -s fastq.gz $1`
+# Remove 'fastq.gz' and '_1' / '_2' from file name
+
+	FIRST=`echo ${R1%.fastq.gz}`
+	SUFFIX=`echo ${FIRST: -2}`
+	OUTNAME=`echo ${FIRST%$SUFFIX}`
+
 
 # Run mapping with bwa and convert to bam format with samtools
 
-bwa mem -t 40 $HG38 $WORK_DIR/$R1 $WORK_DIR/$R2 | samtools sort -@ 40 > $WORK_DIR/${OUTNAME}bam
+bwa mem -t 40 $HG38 ${IN_PATH}/${R1} ${IN_PATH}/${R2} | samtools sort -@ 40 > ${OUT_PATH}/${OUTNAME}.bam

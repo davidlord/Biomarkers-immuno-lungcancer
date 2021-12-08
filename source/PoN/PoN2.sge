@@ -10,6 +10,12 @@
 #$ -pe mpi 10
 #$ -q test.q
 
+# Change VCF input format: Exchange ',' to ' ', add -V between each instance, remove newlines
+
+IN_STRING=`echo $4 | tr ',' ' '`
+for i in $IN_STRING; do
+	V_STRING+=`echo "-V $i "`
+done
 
 # Run GATK GenomicsDBImport
 
@@ -17,4 +23,6 @@ gatk GenomicsDBImport \
 -R $1 \
 -L $2 \
 --genomicsdb-workspace-path $3 \
-$4
+$V_STRING
+
+
