@@ -9,7 +9,7 @@
 # MarkDuplicates parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Metrics_file (txt).
 # AddOrReplaceReadGroups parameters: $1 = Input (BAM), $2 = Output (BAM). 
 # BaseRecalibrator parameters: $1 = Input (BAM), $2 = Output (base recalibration model, table file), $3 = Reference genome (HG38), $4 = Known SNPs file, $5 = Known Indels file.
-# ApplyBQSR parameters: 
+# ApplyBQSR parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Reference genome (HG38), $4 = Base recalibration table file.
 
 
 # Set script variables 
@@ -40,6 +40,8 @@
 		AddOrReplaceReadGroups=${SCRIPT_PATH}/BAM_file_processing_2_AddOrReplaceReadGroups.sge
 
 		BaseRecalibrator=${SCRIPT_PATH}/BAM_file_processing_3_BaseRecalibrator.sge
+
+		ApplyBQSR=${SCRIPT_PATH}/BAM_file_processing_4_ApplyBQSR.sge
 
 
 
@@ -90,7 +92,7 @@ JOBLIST2=${JOBLIST2%,}
 
 
 
-# Run samtools index for each entry in list.
+# Run samtools index for each output from MarkDuplicates
 # Samtools index parameters: $1 = Input (BAM).
 
 JOBLIST3=""
@@ -106,10 +108,8 @@ JOBLIST3=${JOBLIST3%,}
 
 # Run AddOrReplaceReadGroups (GATK) for each entry in list.
 # AddOrReplaceReadGroups parameters: $1 = Input (BAM), $2 = Output (BAM).
-
-
-	#Set prefix for AddOrReplaceReadGroups output.
-	PREFIX2=RG_RMDUP_
+	# Set prefix for AddOrReplaceReadGroups output.
+	PREFIX2=RG_${PREFIX1}
 
 JOBLIST4=""
 for i in ${IN_FILES[@]}; do
@@ -117,25 +117,49 @@ for i in ${IN_FILES[@]}; do
 	JOBLIST4+=`echo $JOBNAME,`
 	qsub -hold_jid $JOBLIST3 -N $JOBNAME -cwd $AddOrReplaceReadGroups ${WORK_DIR}/${PREFIX1}${i} ${WORK_DIR}/${PREFIX2}${i}
 done
- 
+
+# Remove comma from last item in list
+JOBLIST4=${JOBLIST4%,}
 
 
+JOBLIST5=""
+for i in ${IN_FILES[@]}; do
+	JOBNAME=samtools_index_${PREFIX2}${i}
+	JOBLIST5+=`echo $JOBNAME,`
+	qsub -hold_jid $JOBLIST4 -N $JOBNAME -cwd $SamtoolsIndex ${WORK_DIR}/${PREFIX2}${i}
+done
+
+# Remove comma from last item in list
+JOBLIST5=${JOBLIST5%,}
 
 
+# Run BaseRecalibrator (GATK) for each entry in list
+# BaseRecalibrator parameters: $1 = Input (BAM), $2 = Output (base recalibration model, table file), $3 = Reference genome (HG38), $4 = Known SNPs file, $5 = Known Indels file
+	# Set prefix for BaseRecalibrator output (table file)
+	PREFIX3=TABLE_BQSR_${PREFIX2}
+
+JOBLIST6=""
+for i in ${IN_FILES[@]}; do
+	JOBNAME=BaseRecalibrator_${PREFIX2}${i}
+	JOBLIST6+=`echo $JOBNAME,`
+	qsub -hold_jid $JOBLIST5 -N $JOBNAME -cwd $BaseRecalibrator ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX3}${i} $HG38 $KNOWN_SNPS $KNOWN_INDELS
+done
+
+# Remove comma from last item in list
+JOBLIST6=${JOBLIST6%,}
 
 
-# Run Index output? 
+# Run ApplyBQSR (GATK) for each entry in the list
+# ApplyBQSR parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Reference genome (HG38), $4 = Base recalibration table file.
+	# Set prefix for ApplyBQSR output (processed BAM file)
+	PREFIX4=BQSR_${PREFIX2}
 
-# Run AddOrReplaceReadGroups
-
-# Index output? 
-
-# Run BaseRecalibrator (BQSR step 1)
-
-# Run ApplyBQSR (BQSR step 2)
-
+JOBLIST7=""
+for i in ${IN_FILES[@]}; do
+	JOBNAME=ApplyBQSR_${PREFIX2}${i}
+	JOBLIST7+=`echo $JOBNAME,`
+	qsub -hold_jid $JOBLIST6 -N $JOBNAME -cwd $ApplyBQSR ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX4}${i} $HG38 ${WORK_DIR}/${PREFIX3}${i}
+done
 	
-
-
 
 

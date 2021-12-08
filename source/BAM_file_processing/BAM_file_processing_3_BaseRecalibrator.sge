@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 # Third step in processing BAM files: Script runs BaseRecalibrator (GATK) on BAM files, generating a base recalibration model (table) for each BAM file input. 
-# BaseRecalibrator parameters: 
+# BaseRecalibrator parameters: $1 = Input (BAM), $2 = Output (base recalibration model, table file), $3 = Reference genome (HG38), $4 = Known SNPs file, $5 = Known Indels file.
 
 # queue in batch or test
 #$ -cwd
