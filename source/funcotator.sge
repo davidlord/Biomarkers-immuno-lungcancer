@@ -16,7 +16,7 @@ V=$1
 
 # Set script variables
 
-	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling/filtered_vcf_files
+	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling/hard_filtered_vcf_files
 
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
