@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Wrapper script for processing BAM files, script calls BAM_file_processing_1_MarkDuplicates.sge, BAM_file_processing_2_AddOrReplaceReadGroups.sge, X, and Y, each running a step in BAM-file processing
+# Wrapper script for processing BAM files, script calls: BAM_file_processing_0_Samtools_index.sge, BAM_file_processing_1_MarkDuplicates.sge, BAM_file_processing_2_AddOrReplaceReadGroups.sge, BAM_file_processing_3_BaseRecalibrator.sge, and BAM_file_processing_4_ApplyBQSR.sge. 
 # INPUT: List (text file) of unprocessed BAM files. 
 # OUTPUT: Processed BAM files, ready for variant calling. 
 # NOTE: 
@@ -13,19 +13,16 @@
 
 
 # Set script variables 
-### Remove unused script variables
 
 	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
 
-	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+	REF_DIR=/home/xlorda/anna_tmp/reference_and_misc_files
 
-	INTERVALS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
+	HG38=${REF_DIR}/GRCh38.primary_assembly.genome.fa
 
-	GERMLINE_RESOURCE=/home/xlorda/anna_tmp//reference_and_misc_files/af-only-gnomad.hg38.vcf.gz
+	KNOWN_SNPS=${REF_DIR}/Homo_sapiens_assembly38.dbsnp138.vcf
 
-	KNOWN_SNPS=/home/xlorda/anna_tmp/reference_and_misc_files/Homo_sapiens_assembly38.dbsnp138.vcf
-
-	KNOWN_INDELS=/home/xlorda/anna_tmp/reference_and_misc_files/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+	KNOWN_INDELS=${REF_DIR}/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 	
 
 
