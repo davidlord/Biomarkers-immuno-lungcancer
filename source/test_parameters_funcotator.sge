@@ -31,5 +31,7 @@ gatk Funcotator \
 --ref-version hg38 \
 --data-sources-path $DATA_SOURCES \
 --output ${WORK_DIR}/${V}_annotated.vcf.gz \
---output-file-format VCF
+--output-file-format VCF \
+--ignore-filtered-variants true
+
 

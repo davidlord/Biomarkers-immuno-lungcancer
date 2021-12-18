@@ -1,0 +1,50 @@
+#!/bin/bash -l
+
+# Script to run FilterMutectCalls on unfiltered VCF files, generates filtered VCF files. 
+# Script defined for one input file, run through loop.
+# Example: cat FILE | while read R; do qsub /path/script $R; done
+# INPUT: Unfiltered VCF, tumor segmentation table, contamination table, read orientation model.
+# OUTPUT: Filtered VCF. 
+
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 5
+#$ -q test.q
+
+INPUT=$1
+
+# Set input variables
+
+	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling
+
+	ORIENTATION_MODEL=/home/xlorda/anna_tmp/somatic_variant_calling/all_paired_read-orientation_model.tar.gz
+
+	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+
+
+# Names of inputs
+
+	SAMPLENAME=${INPUT%.unfiltered.vcf.gz}
+
+	SEGMENTS_FILE=${SAMPLENAME}_segments.table
+
+	CONTAMINATION_TABLE=${SAMPLENAME}_pair_calculateconamination.table
+
+
+
+
+# Run FilterMutectCalls (GATK)
+
+gatk FilterMutectCalls \
+-V $WORK_DIR/$INPUT \
+-R $HG38 \
+--tumor-segmentation $WORK_DIR/$SEGMENTS_FILE \
+--contamination-table $WORK_DIR/$CONTAMINATION_TABLE \
+--ob-priors $ORIENTATION_MODEL \
+--min-allele-fraction 0.05 \
+--min-reads-per-strand 10 \
+-O $WORK_DIR/${SAMPLENAME}.filtered_hard_filters.vcf.gz
+
+
