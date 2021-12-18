@@ -1,0 +1,37 @@
+#!/bin/bash -l
+
+# Script to run Funcotator (GATK), adding functional annotations to VCF files. Annotations derived from data sources (a range of databases). Script is defined for annotating somatic VCF files. 
+# Script defined for one VCF file, run script through loop.
+# Example: cat FILE | while read V; do qsub /PATH/SCRIPT $V; done
+# INPUT: Unannotated VCF.
+# OUTPUT: Annotated VCF.
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 4
+#$ -q test.q
+
+V=$1
+
+# Set script variables
+
+	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling/hard_filtered_vcf_files
+
+	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
+
+	DATA_SOURCES="/home/xlorda/anna_tmp/reference_and_misc_files/Funcotator_data_sources/funcotator_dataSources.v1.7.20200521s"
+
+
+# Run Funcotator (GATK) on VCF files
+
+gatk Funcotator \
+--variant ${WORK_DIR}/${V} \
+--reference $HG38 \
+--ref-version hg38 \
+--data-sources-path $DATA_SOURCES \
+--output ${WORK_DIR}/${V}_annotated.vcf.gz \
+--output-file-format VCF \
+--ignore-filtered-variants true
+
+
