@@ -12,9 +12,9 @@
 
 # Set script variables
 
-	BAM_FILE_PATH=/home/xlorda/anna_tmp/mapped_bam_files
+	BAM_FILE_PATH=/home/xlorda/anna_tmp/test_rerun
 
-	WORK_DIR=/home/xlorda/anna_tmp/PoN_wrapper_test
+	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
 
 	PON1=/home/xlorda/Biomarkers-immuno-lungcancer/source/PoN/PoN1.sge
 
