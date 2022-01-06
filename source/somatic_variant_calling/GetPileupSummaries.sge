@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-# Script runs GetPileUpSummaries function (GATK), summarizing read support for any given read in table format. 
+# Script runs GetPileUpSummaries function (GATK), summarizing read support for the ref vs. alt allele at any given read in table format. 
 # Script defined for one bam file. Run on a list of bam files through a loop.
 # Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
 # INPUT: BAM file, population resource of allele frequencies of common variants, including biallelic variants only. 
@@ -9,6 +9,8 @@
 # queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
+#$ -o logs/stdout_GetPileupSummaries.txt
+#$ -e logs/stderr_GetPileUpSummaries.txt
 #$ -pe mpi 5
 #$ -q test.q
 
@@ -16,22 +18,22 @@ R=$1
 
 # Set variables for file paths
 
-	IN_PATH=/home/xlorda/anna_tmp/mapped_bam_files
+	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
 
 	OUT_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/cross_sample_contamination
 
 	RES_FILE=/home/xlorda/anna_tmp/reference_and_misc_files/small_exac_common_3.hg38.vcf.gz
 
-	OUTSUFFIX="normal_gps.table"
+	OUTSUFFIX="pileups.table"
 
 
 # Run GetPileupSummaries
 
 gatk GetPileupSummaries \
--I $IN_PATH/$R \
+-I ${WORK_DIR}/$R \
 -V $RES_FILE \
 -L $RES_FILE \
--O $OUT_PATH/${R%.bam}_${OUTSUFFIX}
+-O ${WORK_DIR}/${R%.bam}_${OUTSUFFIX}
 
 
 
