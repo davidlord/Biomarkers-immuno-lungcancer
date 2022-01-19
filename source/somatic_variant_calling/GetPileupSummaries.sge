@@ -11,7 +11,7 @@
 #$ -S /bin/bash
 #$ -o logs/stdout_GetPileupSummaries.txt
 #$ -e logs/stderr_GetPileUpSummaries.txt
-#$ -pe mpi 5
+#$ -pe mpi 1
 #$ -q test.q
 
 R=$1

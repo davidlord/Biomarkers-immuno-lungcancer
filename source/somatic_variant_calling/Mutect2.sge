@@ -40,30 +40,21 @@ N=$2
 # Extract samplename
 
 	NFIRST=${N#*[0-9]_}
-	# SECOND=${NFIRST%%lib*}
-	# SAMPLENAME=${SECOND%_}
-	SAMPLENAME=${NFIRST%%lib*}
-
-
-#####################
-echo OUTNAME: ${OUTNAME}unfiltered.vcf.gz
-echo BAMOUT: ${OUTNAME}normal_tumor.bam
-echo F1E2: ${OUTNAME}f1r2.tar.gz
-echo SAMPLENAME: $SAMPLENAME
-
+	SECOND=${NFIRST%%lib*}
+	SAMPLENAME=${SECOND%_}
 
 
 # Run Mutect2 on paired tumor-normal BAM files. 
 
-# gatk Mutect2 \
-# -R $HG38 \
-# -I $WORK_DIR/${T} \
-# -I $WORK_DIR/${N} \
-# -normal $SAMPLENAME \
-# -pon $PON \
-# --germline-resource $AF_VCF \
-# -L $REGIONS_LIST \
-# --f1r2-tar-gz $WORK_DIR/${OUTNAME}f1r2.tar.gz \
-# -O $WORK_DIR/${OUTNAME}unfiltered.vcf.gz \
-# -bamout $WORK_DIR/${OUTNAME}normal_tumor.bam
+gatk Mutect2 \
+-R $HG38 \
+-I $WORK_DIR/${T} \
+-I $WORK_DIR/${N} \
+-normal $SAMPLENAME \
+-pon $PON \
+--germline-resource $AF_VCF \
+-L $REGIONS_LIST \
+--f1r2-tar-gz $WORK_DIR/${OUTNAME}f1r2.tar.gz \
+-O $WORK_DIR/${OUTNAME}unfiltered.vcf.gz \
+-bamout $WORK_DIR/${OUTNAME}normal_tumor.bam
 
