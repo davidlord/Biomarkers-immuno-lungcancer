@@ -8,11 +8,10 @@ setwd(WORK_DIR)
 
 # Read all .tsv files in the folder into a list
 MYFILES <- list.files(path = WORK_DIR, 
-                      pattern = "\\.tsv$")
+                        pattern = "\\.tsv$")
 
 # Read all files in the list
 MYDATA <- lapply(MYFILES, read.delim)
-
 
 
 # Get column names of all data frames in list, store in object
@@ -20,22 +19,18 @@ MYDATA <- lapply(MYFILES, read.delim)
     # Count number of lists in MYDATA
     LEN <- (length(MYDATA))
 
-    # Write better later, do manually for now... 
-      # Count number of columns in total in all dataframes in MYDATA
-###      COL_COUNT = 0
-###      for (i in 1:LEN) {
-###      N <- (length(MYDATA[[i]]))
-###      COL_COUNT = COL_COUNT + N
-###      }
-
-    # 
-    COLNAMES = 0
+    # Create an empty list COLNAMES
+    COLNAMES <- list()
+    # Store column names for each dataset in object COLNAMES
     for (i in 1:LEN) {
       Z <- colnames(MYDATA[[i]])
       COLNAMES <- append(COLNAMES, Z)
-    }
-length(COLNAMES)    
-print(COLNAMES)
+      }
 
-
-
+      # Identify unique column names, only present in one dataset
+      unique_ind <- !duplicated(COLNAMES)
+      
+      # Store unique column names in object
+      UNIQUE_COLNAMES <- COLNAMES[unique_ind]
+      
+      length(UNIQUE_COLNAMES)
