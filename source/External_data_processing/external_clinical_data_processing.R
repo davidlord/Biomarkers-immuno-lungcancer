@@ -8,11 +8,10 @@ setwd(WORK_DIR)
 
 # Read all .tsv files in the folder into a list
 MYFILES <- list.files(path = WORK_DIR, 
-                        pattern = "\\.tsv$")
+                      pattern = "\\.tsv$")
 
 # Read all files in the list
 MYDATA <- lapply(MYFILES, read.delim)
-
 
 # Get column names of all data frames in list, store in object
 
@@ -28,9 +27,11 @@ MYDATA <- lapply(MYFILES, read.delim)
       }
 
       # Identify unique column names, only present in one dataset
-      unique_ind <- !duplicated(COLNAMES)
+      ### unique_ind <- !duplicated(COLNAMES)
       
       # Store unique column names in object
-      UNIQUE_COLNAMES <- COLNAMES[unique_ind]
-      
-      length(UNIQUE_COLNAMES)
+      ### UNIQUE_COLNAMES <- COLNAMES[unique_ind]
+
+      ### length(UNIQUE_COLNAMES)
+
+
