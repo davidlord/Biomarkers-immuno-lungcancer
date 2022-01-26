@@ -17,7 +17,9 @@ OUTPUT:
 
 ### BAM_file_processing_0_Samtools_index.sge
 Runs Samtools Index. 
+
 **INPUT**: .bam file
+
 **OUTPUT**: .bai file
 
 ### BAM_file_processing_1_MarkDuplicates.sge
