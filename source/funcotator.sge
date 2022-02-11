@@ -9,14 +9,16 @@
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 4
+#$ -o logs/stdout_Funcotator
+#$ -e logs/stderr_Funcotator
+#$ -pe mpi 1
 #$ -q test.q
 
 V=$1
 
 # Set script variables
 
-	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling/hard_filtered_vcf_files
+	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
 
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
@@ -30,6 +32,6 @@ gatk Funcotator \
 --reference $HG38 \
 --ref-version hg38 \
 --data-sources-path $DATA_SOURCES \
---output ${WORK_DIR}/${V}_annotated.vcf.gz \
+--output ${WORK_DIR}/${V%.vcf.gz}.annotated.vcf.gz \
 --output-file-format VCF
 
