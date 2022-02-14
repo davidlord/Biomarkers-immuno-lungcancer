@@ -1,37 +1,28 @@
 #!/bin/bash -l
 
+# Script runs LearnReadOrientationModel (GATK) on f1r2 files, outputting orientation bias table files. 
+# Script is defined for one input file, run on a list of files through a loop. 
+# Example: 'cat f1r2_files.txt | while read R; do qsub script $R; done'
+# INPUT: f1r2 file. 
+# OUTPUT: read-orientation-model.tar.gz
 
-# Script to run LearReadOrientationModel (GATK)... 
-# Script defined for one file, run through loop. 
-# Example: cat FILE | while read R; do qsub /path/script $R; done
-# INPUT: F1R2 file (output from Mutect2). 
-# OUTPUT: 
 
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 4
+#$ -o logs/stdout_LearnReadOrientationModel
+#$ -e logs/stderr_LearnReadOrientationModel
+#$ -pe mpi 1
 #$ -q test.q
 
+R=$1
 
-INPUT=$1
+Set script variables
 
-# Set input variables
+	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
 
-	WORK_DIR=
-
-
-# Remove "f1r2.tar.gz" from input name
-
-FIRST=${INPUT%f1r2.tar.gz}
-OUTNAME=${FIRST}ROM.tar.gz
-
-
-# Run LearnReadOrientationModel
 
 gatk LearnReadOrientationModel \
--I $WORK_DIR/$INPUT \
--O $WORK_DIR/$OUTNAME
-
-
+-I ${WORK_DIR}/$R \
+-O ${WORK_DIR}/${R%.f1r2.tar.gz}.read-orientation-model.tar.gz
 

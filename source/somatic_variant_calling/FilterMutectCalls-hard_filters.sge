@@ -10,28 +10,28 @@
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 5
+#$ -o logs/stdout_FilterMutectCalls
+#$ -e logs/stderr_FilterMutectCalls
+#$ -pe mpi 4
 #$ -q test.q
+
 
 INPUT=$1
 
 # Set input variables
 
-	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling
-
-	ORIENTATION_MODEL=/home/xlorda/anna_tmp/somatic_variant_calling/all_paired_read-orientation_model.tar.gz
+	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
 
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
 
-# Names of inputs
+# Input name variables
 
-	SAMPLENAME=${INPUT%.unfiltered.vcf.gz}
+	SEGMENTS_FILE=${INPUT%.unfiltered.vcf.gz}_segments.table
 
-	SEGMENTS_FILE=${SAMPLENAME}_segments.table
+	CONTAMINATION_TABLE=${INPUT%.unfiltered.vcf.gz}_contamination.table
 
-	CONTAMINATION_TABLE=${SAMPLENAME}_pair_calculateconamination.table
-
+	ORIENTATION_MODEL=${INPUT%.unfiltered.vcf.gz}.read-orientation-model.tar.gz
 
 
 
@@ -45,6 +45,6 @@ gatk FilterMutectCalls \
 --ob-priors $ORIENTATION_MODEL \
 --min-allele-fraction 0.05 \
 --min-reads-per-strand 10 \
--O $WORK_DIR/${SAMPLENAME}.filtered_hard_filters.vcf.gz
+-O $WORK_DIR/${INPUT%.unfiltered.vcf.gz}.filtered.vcf.gz
 
 
