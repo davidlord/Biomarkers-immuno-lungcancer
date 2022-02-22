@@ -1,1 +1,0 @@
-fhand = open('example.vcf')
