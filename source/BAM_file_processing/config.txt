@@ -1,0 +1,30 @@
+# Config file for BAM file processing process. 
+
+# Script variables
+
+        WORK_DIR=/home/xlorda/anna_tmp/test_rerun
+
+        REF_DIR=/home/xlorda/anna_tmp/reference_and_misc_files
+
+        HG38=${REF_DIR}/GRCh38.primary_assembly.genome.fa
+
+        KNOWN_SNPS=${REF_DIR}/Homo_sapiens_assembly38.dbsnp138.vcf
+
+        KNOWN_INDELS=${REF_DIR}/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+
+
+
+# Calling scripts
+
+	SCRIPT_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source/BAM_file_processing
+
+	SamtoolsIndex=${SCRIPT_PATH}/BAM_file_processing_0_Samtools_index.sge
+
+	MarkDuplicates=${SCRIPT_PATH}/BAM_file_processing_1_MarkDuplicates.sge
+
+	AddOrReplaceReadGroups=${SCRIPT_PATH}/BAM_file_processing_2_AddOrReplaceReadGroups.sge
+
+	BaseRecalibrator=${SCRIPT_PATH}/BAM_file_processing_3_BaseRecalibrator.sge
+
+	ApplyBQSR=${SCRIPT_PATH}/BAM_file_processing_4_ApplyBQSR.sge
+
