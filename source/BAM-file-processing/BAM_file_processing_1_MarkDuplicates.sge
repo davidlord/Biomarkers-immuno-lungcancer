@@ -1,0 +1,20 @@
+#!/bin/bash -l
+
+# First step in processing BAM files: Script runs MarkDuplicates (Picard tools, GATK) on BAM files.
+# MarkDuplicates parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Metrics_file.txt 
+
+# Queue in batch or test
+#$ -cwd
+#$ -o logs/stdout_Mark_Duplicates.txt
+#$ -e logs/stderr_Mark_Duplicates.txt
+#$ -S /bin/bash
+#$ -pe mpi 10
+#$ -q test.q
+
+# Run MarkDuplicates (Picard tools, GATK)
+
+gatk MarkDuplicates \
+-I $1 \
+-O $2 \
+-M $3
+

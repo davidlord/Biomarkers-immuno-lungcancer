@@ -1,0 +1,23 @@
+#!/bin/bash -l
+
+# Fourth step in processing BAM files: Runs ApplyBQSR (GATK), recalibrating base quality scores in input BAM based on the base recalibration table (generated in the previous step).
+# Apply BQSR parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Reference genome (HG38), $4 = Base recalibration table file. 
+
+# queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 5
+#$ -q test.q
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
+
+
+# Run ApplyBQSR (GATK)
+
+gatk ApplyBQSR \
+-I $1 \
+-O $2 \
+-R $3 \
+--bqsr-recal-file $4 
+
+
