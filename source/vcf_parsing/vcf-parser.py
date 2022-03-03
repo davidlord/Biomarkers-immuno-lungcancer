@@ -3,8 +3,8 @@ import click
 import json
 
 
-# Genes of interest:
-gene_list = ['EGFR', 'BRAF', 'TP53', 'PAK3']
+# Genes of interest (will be moved to config file):
+gene_list = ['EGFR', 'BRAF', 'TP53', 'PAK3', 'ATRX']
 
 # For each variant in VCF file, print FUNCOTATION[0] in info field if filter is PASS. 
 @click.command()
@@ -22,12 +22,6 @@ def main(vcffile):
 				print(gene_name)			
 
 # Change: Read as list, get first element as gene_name
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

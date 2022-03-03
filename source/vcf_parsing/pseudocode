@@ -7,15 +7,15 @@
 
 	# For each vcf in list: 
 
-	# Get sample name 'BL_xxx	
+		# Get sample name 'BL_xxx'
 
-	# Parse through VCF: 
+		# Parse through VCF: 
 
-		# Get INFO:FUNCOTATION: gene name + (may include more, such as variant type, predicted oncogenic?)
+			# Get INFO:FUNCOTATION: gene name + (may include more, such as variant type, predicted oncogenic?)
 
-		# Store as sample name in dict. 
+		# Store gene info + possibly additional field info as sample name in dict. 
 
-
+	
 
 
 
