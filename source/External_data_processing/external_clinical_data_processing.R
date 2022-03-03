@@ -10,7 +10,6 @@ setwd(WORK_DIR)
 # Read all .tsv files in the folder into a list
 MYFILES <- list.files(path = WORK_DIR, 
                       pattern = "\\.tsv$")
-
 # Read all files in the list
 MYDATA <- lapply(MYFILES, read.delim)
 
@@ -86,12 +85,35 @@ colnames(df5_trimmed) [2] <- "Age"
 
 df_cbioportal_clinical <- rbind(df1_trimmed, df2_trimmed, df3_trimmed, df4_trimmed, df5_trimmed)
 
+
+length(df_cbioportal_clinical)
+
+str(df_cbioportal_clinical)
+
+# Replace entries in columns
+
+  # Smoking status
+  table(df_cbioportal_clinical$Smoking.Status)
+    # Former heavy -> Former
+    # Former light -> Former
+    # Current heavy -> Current
+    df_cbioportal_clinical$Smoking.Status[df_cbioportal_clinical$Smoking.Status == "Former heavy" | df_cbioportal_clinical$Smoking.Status == "Former light"] <- "Former"
+    df_cbioportal_clinical$Smoking.Status[df_cbioportal_clinical$Smoking.Status == "Current heavy"] <- "Current"
+  
+  # Durable clinical benefit
+  table(df_cbioportal_clinical$Durable.Clinical.Benefit)
+    # DCB | Durable clinical benefit beyond 6 months | YES -> Durable Clinical Benefit
+    df_cbioportal_clinical$Durable.Clinical.Benefit[df_cbioportal_clinical$Durable.Clinical.Benefit == "DCB" | df_cbioportal_clinical$Durable.Clinical.Benefit == "Durable clinical benefit beyond 6 months" | df_cbioportal_clinical$Durable.Clinical.Benefit == "YES"] <- "Durable Clinical Benefit"
+    # No durable benefit | NDB | NO -> No Durable Benefit
+    df_cbioportal_clinical$Durable.Clinical.Benefit[df_cbioportal_clinical$Durable.Clinical.Benefit == "NDB" | df_cbioportal_clinical$Durable.Clinical.Benefit == "No durable benefit" | df_cbioportal_clinical$Durable.Clinical.Benefit == "NO"] <- "No Durable Benefit"
+    # await | Not reached 6 months follow-up -> NA
+    df_cbioportal_clinical$Durable.Clinical.Benefit[df_cbioportal_clinical$Durable.Clinical.Benefit == "await" | df_cbioportal_clinical$Durable.Clinical.Benefit == "Not reached 6 months follow-up"] <- NA
+    # Filter away NAs 
+    df_cbioportal_clinical <- df_cbioportal_clinical %>% filter(!is.na(Durable.Clinical.Benefit))
+
+# Check so that no NAs left:
+sum(is.na(df_cbioportal_clinical))
+
 # Export clinical data frame in excel format to work dir
 write_xlsx(df_cbioportal_clinical, paste(WORK_DIR, "cbioportal_clinical_data.xlsx", sep = "/"))
-
-
-df_cbioportal_clinical %>% ggplot(aes(TMB..nonsynonymous.)) + geom_histogram(binwidth = 1) + facet_wrap(~Study.ID)
-
-
-
 
