@@ -1,0 +1,22 @@
+
+# Take txt file containing list of vcf files (input files) as input. 
+
+# Read list file
+
+	# Create dictionary to store mutation info
+
+	# For each vcf in list: 
+
+		# Get sample name 'BL_xxx'
+
+		# Parse through VCF: 
+
+			# Get INFO:FUNCOTATION: gene name + (may include more, such as variant type, predicted oncogenic?)
+
+		# Store gene info + possibly additional field info as sample name in dict. 
+
+	
+
+
+
+

@@ -1,0 +1,54 @@
+
+# Script runs Picard tools AddOrReplaceReadGroups function (through gatk) on BAM files. 
+# Script defined for one bam file. Run on a list of bam files through a loop.
+# Example: 'cat bam_files.txt | while read R; do qsub script $R; done'
+# INPUT: BAM.
+# OUTPUT: BAM. 
+
+# queue in batch
+#$ -cwd
+#$ -S /bin/bash
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
+#$ -pe mpi 2
+#$ -q batch.q
+
+
+# Set variable for input
+R=$1
+
+# Set variable for work path
+WORK_DIR=/home/xlorda/anna_tmp/mapped_bam_files
+
+
+# Create a function to extract library name
+function lib_extract
+{
+	FIRST=${R#*lib}
+	LIBNAME=${FIRST%%_*}
+}
+lib_extract $R
+
+# Create function to extract read group platform(?)
+function rgpu_extract
+{
+	FIRST=${R#*N?-}
+	RGPU=${FIRST%%_*}
+}
+rgpu_extract $R
+
+# Create function to extract sample name
+function samplename_extract
+{
+	FIRST=${R#*[0-9]_}
+	SECOND=${FIRST%%lib*}
+	SAMPLENAME=${SECOND%_}
+}
+samplename_extract $R
+
+gatk AddOrReplaceReadGroups -I $WORK_DIR/$R -O ${WORK_DIR}/RG_${R} -RGLB $LIBNAME -RGPL ILLUMINA -SORT_ORDER coordinate -RGPU $RGPU -RGSM $SAMPLENAME
+
+
+
+
+
