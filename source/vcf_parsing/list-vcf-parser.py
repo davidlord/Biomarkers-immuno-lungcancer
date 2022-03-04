@@ -1,6 +1,8 @@
 from cyvcf2 import VCF
 import click
+import pandas as pd
 
+# Add later so that input is path to dir in which vcf files are located. Read all *.vcf files in list (import re), get filename (import os andimport glob)
 
 # Define gene list (will be moved to config file):
 gene_list = ['EGFR', 'BRAF', 'TP53', 'PAK3', 'ATRX']
@@ -26,11 +28,15 @@ def main(vcf_list):
 				info = variant.INFO.get('FUNCOTATION')
 				gene_name = info.split('|')[0][1:]
 				if gene_name in gene_list:
-					#Store in dict
+					# Samples and mutated genes for each sample in dict: 
 					gene_name_list.append(gene_name)
 				gene_dict[samplename] = gene_name_list
+				#df = pd.DataFrame.from_dict(gene_dict)
+	print("dict: ")
 	print(gene_dict)
-					##print(samplename + " " + gene_name)
+	print("df: ")
+	#print(df)
+
 
 
 
