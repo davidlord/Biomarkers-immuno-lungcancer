@@ -13,16 +13,6 @@ MYFILES <- list.files(path = WORK_DIR,
 # Read all files in the list
 MYDATA <- lapply(MYFILES, read.delim)
 
-length(MYDATA)
-
-# Create a df for each data frame in MYDATA
-### Fix this later... 
-for(i in 1:length(MYDATA)){
-  istr <- as.character(i)
-  print(istr)
-  x = (paste("df", istr, sep = "_"))
-  x <- as.data.frame(MYDATA[[i]])
-}
 
 # Read each data sets as data frames
 df1 <- as.data.frame(MYDATA[[1]])
@@ -117,3 +107,5 @@ sum(is.na(df_cbioportal_clinical))
 # Export clinical data frame in excel format to work dir
 write_xlsx(df_cbioportal_clinical, paste(WORK_DIR, "cbioportal_clinical_data.xlsx", sep = "/"))
 
+# Export dataframe as 
+write.table(df_cbioportal_clinical, file = "cbioportal_clinical_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
