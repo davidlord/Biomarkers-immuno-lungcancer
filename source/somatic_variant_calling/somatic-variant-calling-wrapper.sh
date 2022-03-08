@@ -2,6 +2,13 @@
 
 # Wrapper script for somatic variant calling and variant filtering, script calls: X, Y, Z, I, N. 
 # INPUT: List (text file) of normal-tumor (N-T) paired processed BAM files; N T.
+#
+# 1. Run Mutect2 on NT paired processed bam files. Outputting unfiltered vcf files and f1r2 files. 
+# 2. LearnReadOrientationModel: Inputs f1r2, outputs read-orientation-model. 
+# 3. GetPileupSummaries: Input: .bam, outout: Getpileupsummaries.table
+# 4. CalculateContamination, input: Getpileupsummaries.table
+# 5. Filtermutectcalls. 
+
 # 
 
 

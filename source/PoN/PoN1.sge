@@ -7,8 +7,8 @@
 
 #$ -cwd
 #$ -S /bin/bash
-#$ -o logs/stdout/PoN1.txt
-#$ -e logs/stderr/PoN1.txt
+#$ -o logs/stdout_PoN1_Mutect2.txt
+#$ -e logs/stderr_PoN1_Mutect2.txt
 #$ -pe mpi 1
 #$ -q test.q
 

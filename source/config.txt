@@ -1,53 +1,38 @@
 # Config file for: BAM-file processing, Panel of Normals (PoN) generation, and Somatic variant calling.
 
+# Set working directory
+WORK_DIR=/home/xlorda/anna_tmp/rerun_2
 
-# Common variables
+# Scrip paths
 
-        WORK_DIR=/home/xlorda/anna_tmp/test_rerun:
-
-
-	# Reference files: 
-
-        REF_DIR=/home/xlorda/anna_tmp/reference_and_misc_files
-
-        HG38=${REF_DIR}/GRCh38.primary_assembly.genome.fa
-
-        KNOWN_SNPS=${REF_DIR}/Homo_sapiens_assembly38.dbsnp138.vcf
-
-        KNOWN_INDELS=${REF_DIR}/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
-
-	INTERVALS_LIST=${REF_DIR}/wgs_calling_regions.hg38.list
-
-	GERMLINE_RESOURCE=${REF_DIR}/af-only-gnomad.hg38.vcf.gz
+	# BAM file processing script
+	BAMFP_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source/BAM-file-processing
 
 
 
+# Reference files: 
 
-# BAM file processing variables:
+# Path to directory containing reference files:
+REF_DIR=/home/xlorda/anna_tmp/reference_and_misc_files
 
-        BAM_SCRIPT_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source/BAM_file_processing
+# Path to the HG38 reference genome:
+HG38=${REF_DIR}/GRCh38.primary_assembly.genome.fa
 
-        SamtoolsIndex=${BAM_SCRIPT_PATH}/BAM_file_processing_0_Samtools_index.sge
+# 
+KNOWN_SNPS=${REF_DIR}/Homo_sapiens_assembly38.dbsnp138.vcf
 
-        MarkDuplicates=${BAM_SCRIPT_PATH}/BAM_file_processing_1_MarkDuplicates.sge
+# 
+KNOWN_INDELS=${REF_DIR}/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 
-        AddOrReplaceReadGroups=${BAM_SCRIPT_PATH}/BAM_file_processing_2_AddOrReplaceReadGroups.sge
+# Path to intervals list:
+INTERVALS_LIST=${REF_DIR}/wgs_calling_regions.hg38.list
 
-        BaseRecalibrator=${BAM_SCRIPT_PATH}/BAM_file_processing_3_BaseRecalibrator.sge
-
-        ApplyBQSR=${BAM_SCRIPT_PATH}/BAM_file_processing_4_ApplyBQSR.sge
-
+# 
+GERMLINE_RESOURCE=${REF_DIR}/af-only-gnomad.hg38.vcf.gz
 
 
-# PoN generation variables:
 
-        PON1=/home/xlorda/Biomarkers-immuno-lungcancer/source/PoN/PoN1.sge
 
-        PON2=/home/xlorda/Biomarkers-immuno-lungcancer/source/PoN/PoN2.sge
-
-        PON3=/home/xlorda/Biomarkers-immuno-lungcancer/source/PoN/PoN3.sge
-
-	PON_DB=${WORK_DIR}/PON_DB
 
 
 
