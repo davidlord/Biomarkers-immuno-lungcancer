@@ -7,8 +7,8 @@
 
 #$ -cwd
 #$ -S /bin/bash
-#$ -o logs/stdout/PoN2.txt
-#$ -e logs/stderr/PoN2.txt
+#$ -o logs/stdout_PoN2_GenomicsDBImport.txt
+#$ -e logs/stderr_PoN2_GenomicsDBImport.txt
 #$ -pe mpi 10
 #$ -q test.q
 

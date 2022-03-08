@@ -7,8 +7,8 @@
 #$ -S /bin/bash
 #$ -pe mpi 1
 #$ -q test.q
-#$ -o logs/stdout_intermediate_file_cleanup.txt
-#$ -e logs/stderr_intermediate_file_cleanup.txt
+#$ -o logs/stdout_BAM_processing_intermediate_file_cleanup.txt
+#$ -e logs/stderr_BAM_processing_intermediate_file_cleanup.txt
 
 source ../config.txt
 

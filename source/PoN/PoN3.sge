@@ -7,8 +7,8 @@
 
 #$ -cwd
 #$ -S /bin/bash
-#$ -o logs/stdout/PoN3.txt
-#$ -e logs/stderr/PoN3.txt
+#$ -o logs/stdout_PoN3_CreateSomaticPanelOfNormals.txt
+#$ -e logs/stderr_PoN3_CreateSomaticPanelOfNormals.txt
 #$ -pe mpi 10
 #$ -q test.q
 
