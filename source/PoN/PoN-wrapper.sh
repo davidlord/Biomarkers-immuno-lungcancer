@@ -14,6 +14,9 @@
 # Source config file
 source ../config.txt
 
+#### POTENTIAL SOURCE OF ERROR, first step to debug if script error. 
+PON_DB=${WORK_DIR}/PON_DB
+
 
 INPUT=$1
 
@@ -34,7 +37,7 @@ done < $INPUT
 for i in ${IN_FILES[@]}; do
 	JOBNAME=Mutect2_${i}
 	JOBLIST+=`echo ${JOBNAME},`
-	qsub -N ${JOBNAME} -cwd $PON1 $HG38 ${WORK_DIR}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
+	qsub -N ${JOBNAME} -cwd ./PoN1.sge $HG38 ${WORK_DIR}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
 done
 
 # Remove comma from last item in list
@@ -52,13 +55,13 @@ done
 # Start PoN2 when all PoN1 jobs are finished running
 # PoN2 parameters: $1 = Ref, $2 = Intervals list, $3 = Work dir, $4 = Input
 
-qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd $PON2 $HG38 $INTERVALS_LIST PON_DB $V_STR
+qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd ./PoN2.sge $HG38 $INTERVALS_LIST PON_DB $V_STR
 
 
 # Start PoN3 when PoN2 is finished running
 # PoN3 parameters: $1 = Ref, $2 = germline resource (VCF from populational resource, containing allele frequencies only), $3 = Input, PoN_DB (generated in previous step), $4 = Output, PoN (VCF).
 
-qsub -hold_jid "PoN2.sge" -N "PoN3.sge" -cwd $PON3 $HG38 $GERMLINE_RESOURCE $PON_DB ${WORK_DIR}/PoN.vcf.gz
+qsub -hold_jid "PoN2.sge" -N "PoN3.sge" -cwd ./PoN3.sge $HG38 $GERMLINE_RESOURCE $PON_DB ${WORK_DIR}/PoN.vcf.gz
 
 
 

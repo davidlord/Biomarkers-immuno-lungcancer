@@ -1,16 +1,9 @@
 #!/bin/bash
 
-# Wrapper script for processing BAM files, script calls: BAM_file_processing_0_Samtools_index.sge, BAM_file_processing_1_MarkDuplicates.sge, BAM_file_processing_2_AddOrReplaceReadGroups.sge, BAM_file_processing_3_BaseRecalibrator.sge, and BAM_file_processing_4_ApplyBQSR.sge. 
+# Wrapper script for processing BAM files, script calls: Samtools-index.sge, MarkDuplicates.sge, AddOrReplaceReadGroups.sge, BaseRecalibrator.sge, and ApplyBQSR.sge. 
 # INPUT: List (text file) of unprocessed BAM files. 
 # OUTPUT: Processed BAM files, ready for variant calling. 
 # NOTE: 
-
-# Samtools index parameters: $1 = Input (BAM).
-# MarkDuplicates parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Metrics_file (txt).
-# AddOrReplaceReadGroups parameters: $1 = Input (BAM), $2 = Output (BAM). 
-# BaseRecalibrator parameters: $1 = Input (BAM), $2 = Output (base recalibration model, table file), $3 = Reference genome (HG38), $4 = Known SNPs file, $5 = Known Indels file.
-# ApplyBQSR parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Reference genome (HG38), $4 = Base recalibration table file.
-
 
 
 # Read config file
@@ -18,8 +11,8 @@ source ../config.txt
 
 INPUT=$1
 
-# Create a list, consisting of each entry (line) in the input file.
-# Note: Instances in input file are separated by newlines, convert to spaces before appending to a list.
+# Create a list consisting of each entry (line) in the input file.
+# Set separator as spaces instead of newlines.
 
 IN_FILES=""
 while read LINE; do
@@ -29,22 +22,21 @@ done < $INPUT
 
 
 # Create a comma separated string (JOBLIST) used for parallelisation in qsub.
-# Run samtools index for each entry in list.
+# Run Samtools index for each entry in list.
 # Samtools index parameters: $1 = Input (BAM).
-
 
 JOBLIST=""
 for i in ${IN_FILES[@]}; do
         JOBNAME=samtools_index_${i}
         JOBLIST+=`echo ${JOBNAME},`
-	qsub -N ${JOBNAME} -cwd $SamtoolsIndex ${WORK_DIR}/${i}
+	qsub -N ${JOBNAME} -cwd ./Samtools-index.sge ${WORK_DIR}/${i}
 done
 
-# Remove comma from last item in list
+# Remove comma from last item in joblist
 JOBLIST=${JOBLIST%,}
 
 
-# Run MarkDuplicates (GATK) for each entry in the list.
+# Run MarkDuplicates (GATK) on BAM files. 
 # MarkDuplicates parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Metrics_file (txt).
 
 	# Set prefix for MarkDuplicates output
@@ -54,10 +46,10 @@ JOBLIST2=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=MarkDuplicates_${i}
 	JOBLIST2+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST -N $JOBNAME -cwd $MarkDuplicates ${WORK_DIR}/${i} ${WORK_DIR}/${PREFIX1}${i} ${WORK_DIR}/${PREFIX1}${i%.bam}_metrics.txt
+	qsub -hold_jid $JOBLIST -N $JOBNAME -cwd ./MarkDuplicates.sge ${WORK_DIR}/${i} ${WORK_DIR}/${PREFIX1}${i} ${WORK_DIR}/${PREFIX1}${i%.bam}_metrics.txt
 done
 
-# Remove comma from last item in list
+# Remove comma from last item in joblist2
 JOBLIST2=${JOBLIST2%,}
 
 
@@ -69,14 +61,14 @@ JOBLIST3=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=samtools_index_${PREFIX1}${i}
 	JOBLIST3+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST2 -N $JOBNAME -cwd $SamtoolsIndex ${WORK_DIR}/${PREFIX1}${i}
+	qsub -hold_jid $JOBLIST2 -N $JOBNAME -cwd ./Samtools-index.sge ${WORK_DIR}/${PREFIX1}${i}
 done
 
 # Remove comma from last item in list
 JOBLIST3=${JOBLIST3%,}
 
 
-# Run AddOrReplaceReadGroups (GATK) for each entry in list.
+# Run AddOrReplaceReadGroups (GATK) for each output BAM from last step. 
 # AddOrReplaceReadGroups parameters: $1 = Input (BAM), $2 = Output (BAM).
 	# Set prefix for AddOrReplaceReadGroups output.
 	PREFIX2=RG_${PREFIX1}
@@ -85,10 +77,10 @@ JOBLIST4=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=AddOrReplaceReadGroups_${PREFIX1}${i}
 	JOBLIST4+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST3 -N $JOBNAME -cwd $AddOrReplaceReadGroups ${WORK_DIR}/${PREFIX1}${i} ${WORK_DIR}/${PREFIX2}${i}
+	qsub -hold_jid $JOBLIST3 -N $JOBNAME -cwd ./AddOrReplaceReadGroups.sge ${WORK_DIR}/${PREFIX1}${i} ${WORK_DIR}/${PREFIX2}${i}
 done
 
-# Remove comma from last item in list
+# Remove comma from last item in joblist4
 JOBLIST4=${JOBLIST4%,}
 
 
@@ -96,10 +88,10 @@ JOBLIST5=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=samtools_index_${PREFIX2}${i}
 	JOBLIST5+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST4 -N $JOBNAME -cwd $SamtoolsIndex ${WORK_DIR}/${PREFIX2}${i}
+	qsub -hold_jid $JOBLIST4 -N $JOBNAME -cwd ./Samtools-index.sge ${WORK_DIR}/${PREFIX2}${i}
 done
 
-# Remove comma from last item in list
+# Remove comma from last item in joblist5
 JOBLIST5=${JOBLIST5%,}
 
 
@@ -112,10 +104,10 @@ JOBLIST6=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=BaseRecalibrator_${PREFIX2}${i}
 	JOBLIST6+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST5 -N $JOBNAME -cwd $BaseRecalibrator ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX3}${i} $HG38 $KNOWN_SNPS $KNOWN_INDELS
+	qsub -hold_jid $JOBLIST5 -N $JOBNAME -cwd ./BaseRecalibrator.sge ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX3}${i} $HG38 $KNOWN_SNPS $KNOWN_INDELS
 done
 
-# Remove comma from last item in list
+# Remove comma from last item in joblist6
 JOBLIST6=${JOBLIST6%,}
 
 
@@ -128,8 +120,15 @@ JOBLIST7=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=ApplyBQSR_${PREFIX2}${i}
 	JOBLIST7+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST6 -N $JOBNAME -cwd $ApplyBQSR ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX4}${i} $HG38 ${WORK_DIR}/${PREFIX3}${i}
+	qsub -hold_jid $JOBLIST6 -N $JOBNAME -cwd ./ApplyBQSR.sge ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX4}${i} $HG38 ${WORK_DIR}/${PREFIX3}${i}
 done
 	
+# Remove comma from last item in joblist7
+JOBLIST7=${JOBLIST7%,}
+
+# Run intermediate_file_cleanup, removing intermediate files.
+qsub -hold_jid $JOBLIST7 -cwd ./intermediate_file_cleanup.sh
+
+
 
 

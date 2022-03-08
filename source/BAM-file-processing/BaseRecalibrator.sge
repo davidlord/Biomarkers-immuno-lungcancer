@@ -8,8 +8,8 @@
 #$ -S /bin/bash
 #$ -pe mpi 5
 #$ -q test.q
-#$ -o logs/stdout.txt
-#$ -e logs/stderr.txt
+#$ -o logs/stdout_BaseRecalibrator.txt
+#$ -e logs/stderr_BaseRecalibrator.txt
 
 # Run BaseRecalibrator (GATK) 
 
