@@ -100,9 +100,16 @@ str(df_cbioportal_clinical)
     df_cbioportal_clinical$Durable.Clinical.Benefit[df_cbioportal_clinical$Durable.Clinical.Benefit == "await" | df_cbioportal_clinical$Durable.Clinical.Benefit == "Not reached 6 months follow-up"] <- NA
     # Filter away NAs 
     df_cbioportal_clinical <- df_cbioportal_clinical %>% filter(!is.na(Durable.Clinical.Benefit))
-
+    # Remove duplicates
+    df_cbioportal_clinical <- df_cbioportal_clinical %>% distinct()
+    
 # Check so that no NAs left:
 sum(is.na(df_cbioportal_clinical))
+
+# Remove duplicated entries (same Patient ID)
+
+
+
 
 # Export clinical data frame in excel format to work dir
 write_xlsx(df_cbioportal_clinical, paste(WORK_DIR, "cbioportal_clinical_data.xlsx", sep = "/"))
