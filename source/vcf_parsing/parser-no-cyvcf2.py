@@ -1,1 +1,0 @@
-import reVCF = open('example.vcf')for LINE in VCF:    if: LINE == '^##'    skip    else: print(LINE)        

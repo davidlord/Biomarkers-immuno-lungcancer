@@ -1,0 +1,7 @@
+# May move the contents of this config file to the general project config later. 
+
+work_dir = 
+
+
+
+
