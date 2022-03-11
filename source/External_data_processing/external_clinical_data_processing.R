@@ -1,7 +1,9 @@
+library(plyr)
 library(dplyr)
 library(tidyverse)
 library(stringr)
 library(writexl)
+
 
 # Set working directory (also place data to read in working directory).
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
@@ -53,82 +55,103 @@ Rivzi_2018_trimmed <- Rivzi_2018 %>% select("Study.ID", "Patient.ID", "Sample.ID
 Chen_2020_trimmed <- LUAD_Chen_2020 %>% filter(TKI.Treatment == 'Yes'& Sequencing.Type != 'RNA-Seq') %>% select("Cancer.Study", "Patient.ID", "Sample.ID", "Cancer.Type.Detailed", "Age", "Sex", "Stage", "Smoking.status", "TMB..nonsynonymous.")
 
 
-### Select name conventions for columns: 
+### Set same name for columns to enable merge
 
 ## Study ID = 'Study.ID'
 ## Patient ID = 'Patient.ID'
 ## Sample ID = 'Sample.ID'
-## Cancer type = 'Cancer.Type'
-## Age = 'Age'
+## Cancer type = 'Cancer.Type.Detailed'
+## Age = 'Diagnosis.Age'
 ## Sex = 'Sex'
 ## TMB = 'TMB..nonsynonymous.'
-## Smoking status = 'Smoking.Status'
+## Smoking status = 'Smoking.History'
 ## Clinical benefit = 'Durable.Clinical.Benefit'
-## Gene panel = Gene.Panel
-## PD.L1 score = PD-L1_score
-## Progression free survival = 'Progression.Free.Survival'
+## Gene panel = 'Sequencing.Type'
+## PD.L1 = 'PD.L1.Expression'
+## Progression free survival = 'Progress.Free.Survival..Months.'
 
 # Change column names using: 
 colnames(df)[which(names(df) == "colname")] <- "newcolname"
 
-# Rename columns prior to data merge
-
 # Hellmann_2018
 colnames(Hellmann_2018_trimmed)[which(names(Hellmann_2018_trimmed) == "Age..yrs.")] <- "Diagnosis.Age"
+colnames(Hellmann_2018_trimmed)[which(names(Hellmann_2018_trimmed) == "Smoking.Status")] <- "Smoking.History"
+colnames(Hellmann_2018_trimmed)[which(names(Hellmann_2018_trimmed) == "PD.L1.expression..Percentage.")] <- "PDL1.Expression"
 
 # Jordan_2017
-colnames(Jordan_2017_trimmed)[which(names(Jordan_2017_trimmed) == "Diagnosis.Age")] <- "Age"
-
-
+colnames(Jordan_2017_trimmed)[which(names(Jordan_2017_trimmed) == "Gene.Panel")] <- "Sequencing.Type"
 
 # LUAD_Rivzi_2015
 
-
 # Rivzi_2015
-colnames(Hellmann_2018_trimmed)[which(names(Hellmann_2018_trimmed) == "Patient.Current.Age")] <- "Diagnosis.Age"
+colnames(Rivzi_2015_trimmed)[which(names(Rivzi_2015_trimmed) == "Patient.Current.Age")] <- "Diagnosis.Age"
 
 # Rivzi_2018
+colnames(Rivzi_2018_trimmed)[which(names(Rivzi_2018_trimmed) == "Smoker")] <- "Smoking.History"
+colnames(Rivzi_2018_trimmed)[which(names(Rivzi_2018_trimmed) == "PD.L1.Score....")] <- "PDL1.Expression"
+colnames(Rivzi_2018_trimmed)[which(names(Rivzi_2018_trimmed) == "Gene.Panel")] <- "Sequencing.Type"
 
 
 
-# Merge data sets by columns
 
-df_cbioportal_clinical <- rbind(df1_trimmed, df2_trimmed, df3_trimmed, df4_trimmed, df5_trimmed)
+# Merge data sets by columns, missing columns will be NA
 
-
-length(df_cbioportal_clinical)
-
-str(df_cbioportal_clinical)
-
-# Replace entries in columns
-
-  # Smoking status
-  table(df_cbioportal_clinical$Smoking.Status)
-    # Former heavy -> Former
-    # Former light -> Former
-    # Current heavy -> Current
-    df_cbioportal_clinical$Smoking.Status[df_cbioportal_clinical$Smoking.Status == "Former heavy" | df_cbioportal_clinical$Smoking.Status == "Former light"] <- "Former"
-    df_cbioportal_clinical$Smoking.Status[df_cbioportal_clinical$Smoking.Status == "Current heavy"] <- "Current"
-  
-  # Durable clinical benefit
-  table(df_cbioportal_clinical$Durable.Clinical.Benefit)
-    # DCB | Durable clinical benefit beyond 6 months | YES -> Durable Clinical Benefit
-    df_cbioportal_clinical$Durable.Clinical.Benefit[df_cbioportal_clinical$Durable.Clinical.Benefit == "DCB" | df_cbioportal_clinical$Durable.Clinical.Benefit == "Durable clinical benefit beyond 6 months" | df_cbioportal_clinical$Durable.Clinical.Benefit == "YES"] <- "Durable Clinical Benefit"
-    # No durable benefit | NDB | NO -> No Durable Benefit
-    df_cbioportal_clinical$Durable.Clinical.Benefit[df_cbioportal_clinical$Durable.Clinical.Benefit == "NDB" | df_cbioportal_clinical$Durable.Clinical.Benefit == "No durable benefit" | df_cbioportal_clinical$Durable.Clinical.Benefit == "NO"] <- "No Durable Benefit"
-    # await | Not reached 6 months follow-up -> NA
-    df_cbioportal_clinical$Durable.Clinical.Benefit[df_cbioportal_clinical$Durable.Clinical.Benefit == "await" | df_cbioportal_clinical$Durable.Clinical.Benefit == "Not reached 6 months follow-up"] <- NA
-    # Filter away NAs 
-    df_cbioportal_clinical <- df_cbioportal_clinical %>% filter(!is.na(Durable.Clinical.Benefit))
-    # Remove duplicates
-    df_cbioportal_clinical <- df_cbioportal_clinical %>% distinct()
-    
-# Check so that no NAs left:
-sum(is.na(df_cbioportal_clinical))
-
-# Remove duplicated entries (same Patient ID)
+clinical_df <- rbind.fill(Hellmann_2018_trimmed, Jordan_2017_trimmed, LUAD_Rivzi_2015_trimmed, Rivzi_2015_trimmed, Rivzi_2018_trimmed)
+clinical_df <- as.data.frame(merged_df, StringAsFactors = F)
 
 
+# Add sequencing type to Hellmann_2018, LUAD_Rivzi_2015, and Rivzi_2018 (All WES)
+
+clinical_df <- clinical_df %>% mutate(Sequencing.Type = ifelse(Study.ID %in% c("luad_mskcc_2015", "nsclc_mskcc_2018", "nsclc_mskcc_2015"), "WES", Sequencing.Type))
+
+
+# Replace entries in columns so they match
+
+# Smoking history, this may later be converted to ordinal data. 
+table(clinical_df$Smoking.History)
+# Current <- Current heavy
+# Ever <- Current-Former
+# Former <- 'Former heavy', 'Former light'
+# Never <- Never
+clinical_df$Smoking.History[clinical_df$Smoking.History == "Former heavy" | clinical_df$Smoking.History == "Former light"] <- "Former"
+clinical_df$Smoking.History[clinical_df$Smoking.History == "Current heavy"] <- "Current"
+clinical_df$Smoking.History[clinical_df$Smoking.History == "Ever"] <- "Current/Former"
+table(clinical_df$Smoking.History)
+
+# Durable clinical benefit, two categories
+table(clinical_df$Durable.Clinical.Benefit)
+# NA <- 'await', 'Not reached 6 months follow-up', 'NE'
+# YES <- 'Durable Clinical Benefit', 'Durable clinical benefit beyond 6 months', 'DCB'
+# NO <- 'No durable benefit', 'No Durable Benefit', 'NDB', 
+
+clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "await" | clinical_df$Durable.Clinical.Benefit == "Not reached 6 months follow-up" | clinical_df$Durable.Clinical.Benefit == "NE"] <- NA
+clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "Durable Clinical Benefit" | clinical_df$Durable.Clinical.Benefit == "Durable clinical benefit beyond 6 months" | clinical_df$Durable.Clinical.Benefit == "DCB"] <- "YES"
+clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "No durable benefit" | clinical_df$Durable.Clinical.Benefit == "No Durable Benefit" | clinical_df$Durable.Clinical.Benefit == "NDB"] <- "NO"
+
+# PD-L1 expression: 
+table(clinical_df$PDL1.Expression)
+# May want to include but skip for now... Only roughly 200 samples include PDL1 expr. 
+sum(is.na(clinical_df$PDL1.Expression))
+
+
+# Remove NAs: 
+clinical_df <- clinical_df %>% filter(!is.na(Durable.Clinical.Benefit))
+
+# Remove duplicate patient IDs:
+clinical_df <- clinical_df %>% distinct(Patient.ID, .keep_all = TRUE)
+
+# Rename column names in data set
+
+
+
+# Visualize missing data (NAs) with heatmap
+library(naniar)
+vis_miss(clinical_df)
+
+
+# Create one data frame for regression model (including progression free survival, excluding Durable clinical benefit)
+
+# Create one data frame for classification model (including durable clinical benefit, excluding progression free survival)
 
 
 # Export clinical data frame in excel format to work dir
