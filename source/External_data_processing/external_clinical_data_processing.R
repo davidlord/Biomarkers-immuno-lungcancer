@@ -104,6 +104,8 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   table(clinical_df$PDL1.Expression)
   # May want to include but skip for now... Only roughly 200 samples include PDL1 expr. 
   sum(is.na(clinical_df$PDL1.Expression))
+  
+# Change names in Study ID column
 
 
 # Remove NAs: 
