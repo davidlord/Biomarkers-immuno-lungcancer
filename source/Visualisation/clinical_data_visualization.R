@@ -12,51 +12,81 @@ setwd(WORK_DIR)
 # Read tsv as data frame:
   clinical_df <- as.data.frame(clinical_df)
 
-# Pie chart of sexes
-## NEEDS DEBUGGING
-percent_males <- sum(clinical_df$Sex=='Male') / length(clinical_df$Sex)
-percent_females <- sum(clinical_df$Sex=='Female') / length(clinical_df$Sex)
-sum(clinical_df$Sex=='Male')
-sum(clinical_df$Sex=='Female')
-clinical_df %>% ggplot(aes(x="", y=Sex, fill=Sex)) +
-  # First create barplot:
-  geom_bar(stat="identity", width=1) +
-  # Transformt o pie chart:
-  coord_polar("y", start=0) +
-  # Remove background grid:
-  theme_void() +
-  # Set cool color: 
-  scale_fill_brewer(palette="Blues")
-  # Set labels in pie chart instead and add percentages. 
+
+# Calculate summary statistics
+  # TMB:
+    # TMB for each cohort:
+    clinical_df %>% group_by(Study_ID) %>% summarize(
+      average_TMB = mean(TMB), standard_deviation_TMB = sd(TMB)
+    )
+    # TMB for entire dataset: 
+      clinical_df %>% summarize(average_TMB = mean(TMB), standard_deviation_TMB = sd(TMB))
+
+  # Age:
+      # Age for each cohort:
+      clinical_df %>% group_by(Study_ID) %>% summarize(
+        average_age = mean(Diagnosis_age), standard_deviation_age = sd(Diagnosis_age)
+      )
+      # Age for entire set:
+      clinical_df %>% summarize(average_age = mean(Diagnosis_age), standard_deviation_age = sd(Diagnosis_age))
+  
+  # Durable clinical benefit: 
+      # Fraction durable clinical benefit for each cohort:
+      clinical_df %>% group_by(Study_ID) %>% summarize(
+        fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
+        fraction_NDB = 1 - fraction_DCB
+      )
+      # Fraction durable clinical benefit for entire dataset: 
+      clinical_df %>% summarize(
+        fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
+        fraction_NDB = 1 - fraction_DCB
+      )
+  # Progression free survival:
+      clinical_df %>% 
+      
+      
+# Calculate some summary statistics, for each study and for all: 
+  clinical_df %>% summarize(
+  # Calculate sex ratio:
+  
+  # Calculate mean and sd Progression free survival: 
+  
+  # Smoking history distribution: 
+  
 
 
-# Histogram of TMB:
+
+
+
+# Histogram TMB
 TMB_hist <- clinical_df %>% ggplot(aes(x = TMB)) +
-  geom_histogram(binwidth = 1, fill = "lightblue", col = "darkblue") +
-  labs(x="Tumor Mutation Burden", y="Count")
-TMB_hist
-
-# Histogram of TMB x-scale log2-transformed (outlier, max value not included)
-TMB_hist +
-  scale_x_continuous(trans = "log2")
-
-# Histogram of TMB x-scale and y-scale log2-transformed (outlier, max value not included)
-TMB_hist +
+  geom_histogram(binwidth = 1, fill = "mediumpurple2", col = "mediumpurple4") +
+  labs(x = "Tumor Mutation Burden (Log2 scale)", y = "Count (Log2 scale") +
   scale_x_continuous(trans = "log2") +
   scale_y_continuous(trans = "log2")
-## Dev: Remove decimals from x-axis values. 
+TMB_hist
 
 
-# Boxplot comparison, responders vs non-responders all samples:
+# Boxplot comparison, TMB in responders vs non-responders all samples:
 clinical_df %>% ggplot(aes(x = Study_ID, y = TMB, fill = Durable_clinical_benefit)) +
   geom_boxplot() +
   scale_y_continuous(trans = "log2") +
-  scale_fill_brewer(palette = "Dark2", direction = -1) +
+  scale_fill_brewer(palette = "Accent", direction = -1) +
   labs(fill = "Durable Clinical Benefit", y = "Tumor Mutation Burden (Log2 scale)", x = "Cohort") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# Boxplot comparison, TMB across sequencing methods
+## NEEDS FIX: Reorder boxplots so that they are grouped by Sequencing type. 
+# https://www.r-graph-gallery.com/267-reorder-a-variable-in-ggplot2.html
+clinical_df %>%
+  ggplot(aes(x = Study_ID, y = TMB, fill = Sequencing_type)) +
+  geom_boxplot() +
+  scale_y_continuous(trans = "log2") +
+  scale_fill_brewer(palette = "Accent", direction = -1) +
+  labs(fill = "Sequencing type", y = "Tumor Mutation Burden (Log2 scale)", x = "Cohort") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-  
+
 
 
 # Grid of histograms displaying TMB from clinical data set (from cBioPortal), later also include Biolung data. 
