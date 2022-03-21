@@ -60,7 +60,7 @@ for vcf_file in vcf_files_list:
 print("final df: ")
 print(df)
 
-df.to_csv('test_output', sep = '\t', index = False)
+df.to_csv('variants_table.tsv', sep = '\t', index = False)
 
 
 
