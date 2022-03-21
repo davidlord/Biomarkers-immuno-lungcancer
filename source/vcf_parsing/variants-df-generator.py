@@ -2,10 +2,15 @@ from cyvcf2 import VCF
 import pandas as pd
 import os
 import glob
+import config
 
-# Define gene list
-	# Development: Move to config file.
-genes_of_interest = ['EGFR', 'BRAF', 'TP53', 'PAK3', 'ATRX']
+
+# Read genes of interest from config file
+genes_of_interest = config.genes_of_interest
+
+# Set working directory
+WORK_DIR = config.WORK_DIR
+os.chdir(WORK_DIR)
 
 # Read all vcf files in cwd: 
 	# Development: Move WD to config file. 
@@ -54,4 +59,10 @@ for vcf_file in vcf_files_list:
 
 print("final df: ")
 print(df)
+
+df.to_csv('test_output', sep = '\t', index = False)
+
+
+
+
 
