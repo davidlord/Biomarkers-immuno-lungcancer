@@ -1,3 +1,6 @@
+#=================================================================================
+# LOAD LIBRARIES & READ FILES
+#=================================================================================
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
@@ -12,6 +15,9 @@ setwd(WORK_DIR)
 # Read tsv as data frame:
   clinical_df <- as.data.frame(clinical_df)
 
+#=================================================================================
+# CALCULATE SUMMARY STATISTICS
+#=================================================================================
 
 # Calculate summary statistics
   # TMB:
@@ -52,28 +58,50 @@ setwd(WORK_DIR)
   # Calculate mean and sd Progression free survival: 
   
   # Smoking history distribution: 
-  
 
 
+#=================================================================================
+# Visualizations
+#=================================================================================
+
+# NOTE: Rstudio can be a bit moody sometimes and not allow us to create the 
+# plots. If Rstudio is in a bad mood, you can generate the plots in a new script file
+# (running on the same instance).
 
 
-
-# Histogram TMB
+# Non-transformed histogram:
 TMB_hist <- clinical_df %>% ggplot(aes(x = TMB)) +
   geom_histogram(binwidth = 1, fill = "mediumpurple2", col = "mediumpurple4") +
-  labs(x = "Tumor Mutation Burden (Log2 scale)", y = "Count (Log2 scale") +
-  scale_x_continuous(trans = "log2") +
-  scale_y_continuous(trans = "log2")
+  labs(x = 'Tumor Mutation Burden', y = 'Count')
+
 TMB_hist
+# Remove max TMB outlier from dataset:
+clinical_df <- clinical_df %>% filter(TMB < 75)
 
 
-# Boxplot comparison, TMB in responders vs non-responders all samples:
-clinical_df %>% ggplot(aes(x = Study_ID, y = TMB, fill = Durable_clinical_benefit)) +
-  geom_boxplot() +
+# Log2-transformed histogram (excluding maximum outlier)
+TMB_hist_trans <- TMB_hist +
+  scale_x_continuous(trans = "log2") +
   scale_y_continuous(trans = "log2") +
+  labs((x = "Tumor Mutation Burden (Log2 scale)"), (y = "Count (Log2 scale)"))
+TMB_hist_trans
+
+
+
+# TMB boxplot responders vs non-responders for each cohort
+TMB_boxp_DCB_vs_NCB <- clinical_df %>% ggplot(aes(x = Study_ID, y = TMB, fill = Durable_clinical_benefit)) +
+  geom_boxplot() +
   scale_fill_brewer(palette = "Accent", direction = -1) +
-  labs(fill = "Durable Clinical Benefit", y = "Tumor Mutation Burden (Log2 scale)", x = "Cohort") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(fill = "Durable Clinical Benefit", y = "Tumor Mutation Burden", x = "Cohort")
+TMB_boxp_DCB_vs_NCB
+
+# TMB boxplot responders vs non-responders for each cohort log2 transformed
+TMB_boxp_DCB_vs_NCB_log2 <- TMB_boxp_DCB_vs_NCB +
+  scale_y_continuous(trans = "log2") +
+  labs(y = "Tumor Mutation Burden (Log2 scale)")
+TMB_boxp_DCB_vs_NCB_log2
+
 
 # Boxplot comparison, TMB across sequencing methods
 ## NEEDS FIX: Reorder boxplots so that they are grouped by Sequencing type. 
@@ -81,7 +109,7 @@ clinical_df %>% ggplot(aes(x = Study_ID, y = TMB, fill = Durable_clinical_benefi
 clinical_df %>%
   ggplot(aes(x = Study_ID, y = TMB, fill = Sequencing_type)) +
   geom_boxplot() +
-  scale_y_continuous(trans = "log2") +
+  #scale_y_continuous(trans = "log2") +
   scale_fill_brewer(palette = "Accent", direction = -1) +
   labs(fill = "Sequencing type", y = "Tumor Mutation Burden (Log2 scale)", x = "Cohort") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
