@@ -4,6 +4,7 @@
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
+library(naniar)
 
 
 # Set working directory (also place data to read in working directory).
@@ -67,6 +68,12 @@ setwd(WORK_DIR)
 # NOTE: Rstudio can be a bit moody sometimes and not allow us to create the 
 # plots. If Rstudio is in a bad mood, you can generate the plots in a new script file
 # (running on the same instance).
+
+
+# Heatmap of missing data:
+# DEV: May make this one prettier...
+missing_data <- vis_miss(clinical_df)
+
 
 
 # Non-transformed histogram:

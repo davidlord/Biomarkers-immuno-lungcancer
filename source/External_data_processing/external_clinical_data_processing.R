@@ -1,3 +1,6 @@
+#================================================================================
+# LOAD LIBRARIES & READ FILES
+#================================================================================
 library(plyr)
 library(dplyr)
 library(tidyverse)
@@ -17,8 +20,12 @@ setwd(WORK_DIR)
     Rivzi_2018 <- read.delim("Rivzi_2018_clinical_data.tsv")
     # Skip for now
     Chen_2020 <- read.delim("LUAD_Chen_2020_clinical_data.tsv")
-    
-  
+
+
+
+#================================================================================
+# DATA PROCESSING
+#================================================================================
 
 # Select relevant columns and filter for immunotherapy when necessary. 
 Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Detailed", "Durable.Clinical.Benefit", "Sex", "TMB..nonsynonymous.")
@@ -30,9 +37,9 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   Rivzi_2018_trimmed <- Rivzi_2018 %>% select("Study.ID", "Patient.ID", "Sample.ID", "Diagnosis.Age", "Cancer.Type.Detailed", "Durable.Clinical.Benefit", "Gene.Panel", "PD.L1.Score....", "Progress.Free.Survival..Months.", "Sex", "Smoker", "TMB..nonsynonymous.")
 
   # Exclude for now since does not contain progression free survival status
-  Chen_2020_trimmed <- LUAD_Chen_2020 %>% filter(TKI.Treatment == 'Yes'& Sequencing.Type != 'RNA-Seq') %>% select("Cancer.Study", "Patient.ID", "Sample.ID", "Cancer.Type.Detailed", "Age", "Sex", "Stage", "Smoking.status", "TMB..nonsynonymous.")
+  #Chen_2020_trimmed <- LUAD_Chen_2020 %>% filter(TKI.Treatment == 'Yes'& Sequencing.Type != 'RNA-Seq') %>% select("Cancer.Study", "Patient.ID", "Sample.ID", "Cancer.Type.Detailed", "Age", "Sex", "Stage", "Smoking.status", "TMB..nonsynonymous.")
 
-
+  
 ### Set same name for columns to enable merge
   ## Study ID = 'Study.ID'
   ## Patient ID = 'Patient.ID'
@@ -46,7 +53,6 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   ## Gene panel = 'Sequencing.Type'
   ## PD.L1 = 'PD.L1.Expression'
   ## Progression free survival = 'Progress.Free.Survival..Months.'
-
 
 # Hellmann_2018
   colnames(Hellmann_2018_trimmed)[which(names(Hellmann_2018_trimmed) == "Age..yrs.")] <- "Diagnosis.Age"
@@ -65,8 +71,6 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   colnames(Rivzi_2018_trimmed)[which(names(Rivzi_2018_trimmed) == "Smoker")] <- "Smoking.History"
   colnames(Rivzi_2018_trimmed)[which(names(Rivzi_2018_trimmed) == "PD.L1.Score....")] <- "PDL1.Expression"
   colnames(Rivzi_2018_trimmed)[which(names(Rivzi_2018_trimmed) == "Gene.Panel")] <- "Sequencing.Type"
-
-
 
 
 # Merge data sets by columns, missing columns will be NA
@@ -108,7 +112,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 # Change names in Study ID column
 
 
-# Remove NAs: 
+# Filter NA's in Durable Clinical Benefit
 clinical_df <- clinical_df %>% filter(!is.na(Durable.Clinical.Benefit))
 
 # Remove duplicate patient IDs:
@@ -132,32 +136,12 @@ clinical_df <- clinical_df %>% distinct(Patient.ID, .keep_all = TRUE)
 # Reorder columns
   col_order <- c("Study_ID", "Patient_ID", "Sample_ID", "Sequencing_type", "Durable_clinical_benefit", "PFS_months", "Histology", "Smoking_history", "Diagnosis_age", "Sex", "Stage_at_diagnosis", "PD-L1_expression", "TMB")
   clinical_df <- clinical_df[, col_order]
-  
-# Visualize missing data (NAs) with heatmap
-library(naniar)
-vis_miss(clinical_df)
-  # Considering the result, will exclude 'Stage_at_diagnosis' and 'PD-L1_expression'.
-
-
-# Create one data frame for classification model (including durable clinical benefit, excluding progression free survival)
-clinical_data_for_classification_model <- clinical_df %>% select(Study_ID, Patient_ID, Sample_ID, Sequencing_type, Durable_clinical_benefit, Histology, Smoking_history, Diagnosis_age, Sex, TMB)
-# N = 377
-
-# Create one data frame for regression model (including progression free survival, excluding Durable clinical benefit)
-clinical_data_for_regression_model <- clinical_df %>% filter(!is.na(PFS_months)) %>% select(Study_ID, Patient_ID, Sample_ID, Sequencing_type, PFS_months, Histology, Smoking_history, Diagnosis_age, Sex, TMB)
-# N = 329
-
-
-
 
 
 
 # Export clinical data frame in excel format:
 write_xlsx(clinical_df, paste(WORK_DIR, "cbioportal_clinical_data.xlsx", sep = "/"))
-write_xlsx(clinical_data_for_classification_model, paste(WORK_DIR, "cbioportal_clinical_classification.xlsx", sep = "/"))
-write_xlsx(clinical_data_for_regression_model, paste(WORK_DIR, "cbioportal_clinical_regression.xlsx", sep = "/"))
 
 # Export dataframe as tsv: 
 write.table(clinical_df, file = "cbioportal_clinical_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
-write.table(clinical_data_for_classification_model, file = "cbioportal_clinical_classification.tsv", dec = ".", col.names = TRUE, sep = "\t")
-write.table(clinical_data_for_regression_model, file = "cbioportal_clinical_regression.tsv", dec = ".", col.names = TRUE, sep = "\t")
+
