@@ -13,7 +13,7 @@ OUTPUT: Processed .bam file, ready for variant calling.
 
 ## Sub-scripts: 
 
-**Samtools_index.sge**
+##### Samtools_index.sge
 Runs Samtools Index. 
 **INPUT**: .bam file
 **OUTPUT**: .bai file
