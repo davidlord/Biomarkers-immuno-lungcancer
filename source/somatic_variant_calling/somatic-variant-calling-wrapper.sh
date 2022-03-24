@@ -9,34 +9,62 @@
 # 4. CalculateContamination, input: Getpileupsummaries.table
 # 5. Filtermutectcalls. 
 
-# 
+# Source config file
+source ../config.txt
 
-
-
-
-
+# Read input file
 INPUT=$1
 
-# Create two lists, one containing each N entry of the input file and one containing each T entry of the input file. 
 
+# Reat input from paired list file, store N and T in separate lists.
+INPUT_LISTN=""
+INPUT_LISTT=""
 
-
-IN_FILES=""
+# Read paired input into separate lists
 while read N T; do
-	N_LIST+=`echo $N`
-	T_LIST+=`echo $T`
+	#echo $N | tr '\n' ' '
+	INPUT_LISTN+=`echo $N | tr '\n' ' '`
+	#echo $T | tr '\n' ' '
+	INPUT_LISTT+=`echo $T | tr '\n' ' '`
 done < $INPUT
 
 
-## echo N_LIST: $N_LIST
-## echo T_LIST: $T_LIST
+#Get length of paired inputs
+len=`wc -l $INPUT | cut -f 1 -d " "`
 
-while read N; do
-	FIRST=`echo $N | tr '\n' ' '`
-	N2_LIST=+=($FIRST)
-done < $N_LIST
+echo $INPUT_LISTN
+echo $INPUT_LISTT
+echo $len
+
+for (( i=0; i<$len; i++)); do
+	echo $INPUT_LISTN[$i]
+done
 
 
-# echo N2_LIST: $N2_LIST
+
+
+
+
+
+
+
+# Create a comma separated string (JOBLIST) used for parallelisation in qsub.
+# Run Samtools index for each entry in list.
+# Samtools index parameters: $1 = Input (BAM).
+
+#JOBLIST=""
+#for i in ${IN_FILES[@]}; do
+#        JOBNAME=samtools_index_${i}
+#        JOBLIST+=`echo ${JOBNAME},`
+#        qsub -N ${JOBNAME} -cwd ./Samtools-index.sge ${WORK_DIR}/${i}
+#done
+
+
+
+### ISSUE: Can not iterate over two lists at the same time, can thus not pass in items from both lists as parameters to mutect2. 
+### Possible solution: Pass in each line both to Mutect2 and GetPileUpSummaries instead?  
+
+
+
 
 
