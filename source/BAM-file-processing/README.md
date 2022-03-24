@@ -1,6 +1,6 @@
 # Wrapper script for BAM-file processing
 
-
+**NOTE**: This wrapper was designed to run in a Sun Grid Engine 
 
 Wrapper script calls sub-scripts located in the same directory, each conducting a step in the processing of the input bam-files. 
 INPUT: Unprocessed .bam file.
