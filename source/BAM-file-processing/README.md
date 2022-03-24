@@ -13,27 +13,27 @@ OUTPUT: Processed .bam file, ready for variant calling.
 
 ## Sub-scripts: 
 
-### BAM_file_processing_0_Samtools_index.sge
+#### BAM_file_processing_0_Samtools_index.sge
 Runs Samtools Index. 
 **INPUT**: .bam file
 **OUTPUT**: .bai file
 
-### BAM_file_processing_1_MarkDuplicates.sge
+#### BAM_file_processing_1_MarkDuplicates.sge
 Runs MarkDuplicates (GATK).
 **INPUT**: Duplicated .bam file
 **OUTPUT**: .bam file with duplicates marked. 
 
-### BAM_file_processing_2_AddOrReplaceReadGroups.sge
+#### BAM_file_processing_2_AddOrReplaceReadGroups.sge
 Runs AddOrReplaceReadGroups (GATK)
 **INPUT**: .bam file. 
 **OUTPUT**: .bam file.
 
-### BAM_file_processing_3_BaseRecalibrator.sge
+#### BAM_file_processing_3_BaseRecalibrator.sge
 Runs BaseRecalibrator (GATK)
 **INPUT**: .bam file. 
 **OUTPUT**: table file, base recalibration model. 
 
-### BAM_file_processing_4_ApplyBQSR.sge
+#### BAM_file_processing_4_ApplyBQSR.sge
 Runs ApplyBQSR (GATK)
 **INPUT**: .bam file, base recalibration table. 
 **OUTPUT**: .bam file. 
