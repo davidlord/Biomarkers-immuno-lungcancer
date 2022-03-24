@@ -16,36 +16,24 @@ source ../config.txt
 INPUT=$1
 
 
+# Reat input from paired list file, store N and T in separate lists.
+INPUT_LISTN=""
+INPUT_LISTT=""
 # Read paired input into separate lists
-#while read N T; do
-#	#echo $N | tr '\n' ' '
-#	INPUT_LISTN+=`echo $N | tr '\n' ' '`
-#	#echo $T | tr '\n' ' '
-#	INPUT_LISTT+=`echo $T | tr '\n' ' '`
-#done < $INPUT
-
-#Get length of paired inputs
-#len=`wc -l $INPUT | cut -f 1 -d " "`
-
-# Create a comma separated string (JOBLIST) used for parallelisation in qsub.
-JOBLIST=""
-
 while read N T; do
-	JOBNAME1=Mutect2_${T}
-	JOBLIST1+=`echo ${JOBNAME1},`
-	echo qsub -N $JOBNAME1 -cwd ./Mutect2.sge NORMAL_BAM: $N TUMOR_BAM: $T PARAMETER1 PARAMETER2
-	JOBNAME2=GetPileUpSummaries_${T}
-	JOBLIST2=`echo ${JOBNAME2},`
-echo 
+	#echo $N | tr '\n' ' '
+	INPUT_LISTN+=`echo $N | tr '\n' ' '`
+	#echo $T | tr '\n' ' '
+	INPUT_LISTT+=`echo $T | tr '\n' ' '`
 done < $INPUT
 
-# Remove comma from last item in joblist
-JOBLIST1=${JOBLIST1%,}
-JOBLIST2=${JOBLIST2%,}
 
-JOBLIST3=""
+#Get length of paired inputs
+len=`wc -l $INPUT | cut -f 1 -d " "`
 
-echo qsub -hold_jid $JOBLIST 
+
+
+
 
 
 
