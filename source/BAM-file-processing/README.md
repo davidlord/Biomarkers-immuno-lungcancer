@@ -1,9 +1,7 @@
 # Wrapper script for BAM-file processing
 
 Wrapper script calls sub-scripts located in the same directory, each conducting a step in the processing of the input bam-files. 
-
 INPUT: Unprocessed .bam file.
-
 OUTPUT: Processed .bam file, ready for variant calling.
 
 ## Notes:
