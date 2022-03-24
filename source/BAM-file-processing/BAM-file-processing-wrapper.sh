@@ -40,7 +40,7 @@ JOBLIST=${JOBLIST%,}
 # MarkDuplicates parameters: $1 = Input (BAM), $2 = Output (BAM), $3 = Metrics_file (txt).
 
 	# Set prefix for MarkDuplicates output
-	PREFIX1=RMDUP_
+	REFIX1=RMDUP_
 
 JOBLIST2=""
 for i in ${IN_FILES[@]}; do

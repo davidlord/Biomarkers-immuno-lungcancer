@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Wrapper script for processing BAM files, script calls: Samtools-index.sge, MarkDuplicates.sge, AddOrReplaceReadGroups.sge, BaseRecalibrator.sge, and ApplyBQSR.sge.
+# INPUT: List (text file) of unprocessed BAM files.
+# OUTPUT: Processed BAM files, ready for variant calling.
+# NOTE:
+
+
+# Read config file
+source ../config.txt
+
+INPUT=$1
+
+# Create a list consisting of each entry (line) in the input file.
+# Set separator as spaces instead of newlines.
+
+IN_FILES=""
+while read LINE; do
+        FIRST=`echo $LINE | tr '\n' ' '`
+        IN_FILES+=($FIRST)
+done < $INPUT
+
+
+for i in ${IN_FILES[@]}; do
+	echo ${i}
+done
+
