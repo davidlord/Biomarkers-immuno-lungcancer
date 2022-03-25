@@ -1,7 +1,7 @@
 # Config file for: BAM-file processing, Panel of Normals (PoN) generation, and Somatic variant calling.
 
 # Set working directory
-WORK_DIR=/home/xlorda/anna_tmp/rerun_2
+WORK_DIR=/home/xlorda/anna_tmp/fastq_files
 
 # Scrip paths
 
