@@ -16,6 +16,7 @@ source ../config.txt
 INPUT=$1
 
 
+<<<<<<< HEAD
 #Get length of paired inputs
 #len=`wc -l $INPUT | cut -f 1 -d " "`
 
@@ -64,8 +65,36 @@ while read N T; do
 done < $INPUT
 # Remove last comma from JOBLIST3
 JOBLIST3=${JOBLIST3%,}
+=======
+# Read paired input into separate lists
+#while read N T; do
+#	#echo $N | tr '\n' ' '
+#	INPUT_LISTN+=`echo $N | tr '\n' ' '`
+#	#echo $T | tr '\n' ' '
+#	INPUT_LISTT+=`echo $T | tr '\n' ' '`
+#done < $INPUT
 
+#Get length of paired inputs
+#len=`wc -l $INPUT | cut -f 1 -d " "`
 
+# Create a comma separated string (JOBLIST) used for parallelisation in qsub.
+JOBLIST=""
+
+while read N T; do
+	JOBNAME1=Mutect2_${T}
+	JOBLIST1+=`echo ${JOBNAME1},`
+	echo qsub -N $JOBNAME1 -cwd ./Mutect2.sge NORMAL_BAM: $N TUMOR_BAM: $T PARAMETER1 PARAMETER2
+	JOBNAME2=GetPileUpSummaries_${T}
+	JOBLIST2=`echo ${JOBNAME2},`
+echo 
+done < $INPUT
+>>>>>>> 79ba509881ef9629e33c023ed503ae7f39b32cd2
+
+# Remove comma from last item in joblist
+JOBLIST1=${JOBLIST1%,}
+JOBLIST2=${JOBLIST2%,}
+
+<<<<<<< HEAD
 # Run CalculateContamination on pileups.table files when previous GetPileupSummaries processes are done running
 echo Running CalculateContamination.
 JOBLIST4=""
@@ -105,6 +134,33 @@ done < $INPUT
                 #M2_OUT_1=${T_FIRST#*[0-9]_}
                 #M2_OUT_2=${M2_OUT_1%lib*}
                 #M2_OUT=${M2_OUT_2%_}
+=======
+JOBLIST3=""
+
+echo qsub -hold_jid $JOBLIST 
+
+
+
+
+
+
+# Create a comma separated string (JOBLIST) used for parallelisation in qsub.
+# Run Samtools index for each entry in list.
+# Samtools index parameters: $1 = Input (BAM).
+
+#JOBLIST=""
+#for i in ${IN_FILES[@]}; do
+#        JOBNAME=samtools_index_${i}
+#        JOBLIST+=`echo ${JOBNAME},`
+#        qsub -N ${JOBNAME} -cwd ./Samtools-index.sge ${WORK_DIR}/${i}
+#done
+
+
+
+### ISSUE: Can not iterate over two lists at the same time, can thus not pass in items from both lists as parameters to mutect2. 
+### Possible solution: Pass in each line both to Mutect2 and GetPileUpSummaries instead?  
+
+>>>>>>> 79ba509881ef9629e33c023ed503ae7f39b32cd2
 
 
 
