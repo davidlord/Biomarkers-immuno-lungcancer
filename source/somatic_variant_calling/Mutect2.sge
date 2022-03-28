@@ -1,0 +1,46 @@
+#!/bin/bash -l
+
+# Script to run Mutect2 somatic variant caller on paried normal-tumor processed BAM files.  
+# Script defined for one set of tumor-normal pair BAM files, run script through loop. 
+# Example: cat FILE | while read N T; do qsub /path/script $T $N; done
+# INPUT: normal_BAM, tumor_BAM. 
+# OUTPUT: VCF of somatic variants (unfiltered), vcf.stats file, BAM (of de-novo realigned regions during variant calling).
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -o logs/stdout/Mutect2.txt
+#$ -e logs/stderr/Mutect2.txt
+#$ -pe mpi 4
+#$ -q test.q
+
+# First step in somatic variant calling pipeline: Script runs somatic variant caller Mutect2 (GATK) on paired processed .bam files input.
+# Mutect2 parameters: -I = tumor.bam, -I = normal.bam, -R = reference genome, -pon = panel_of_normals.vcf, -L = intervals list, -O = Output.
+
+# Source config file
+source ../config.txt
+
+N=$1
+T=$2
+
+
+# Extract samplename
+
+	NFIRST=${N#*[0-9]_}
+	SECOND=${NFIRST%%lib*}
+	SAMPLENAME=${SECOND%_}
+
+
+# Run Mutect2
+gatk Mutect2 \
+-I ${WORK_DIR}/${T} \
+-I ${WORK_DIR}/${N} \
+-R $HG38 \
+-normal $SAMPLENAME \
+-pon $PON \
+--germline-resource $GERMLINE_RESOURCE \
+-L $INTERVALS_LIST \
+--f1r2-tar-gz $3 \
+-O ${WORK_DIR}/$4 \
+-bamout ${WORK_DIR}/$5
+

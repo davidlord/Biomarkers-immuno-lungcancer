@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!bin/bash -l
 
 # Second step in processing BAM files: Script runs AddOrReplaceReadGroups (GATK) on BAM files. 
 # AddOrReplaceReadGroups parameters: $1 = Input (BAM), $2 = Output (BAM).
@@ -10,6 +10,9 @@
 #$ -e logs/stderr_AddOrReplaceReadGroups.txt
 #$ -pe mpi 2
 #$ -q test.q
+
+# Source config file
+source ../config.txt
 
 
 # Extract library name
@@ -30,8 +33,8 @@
 # Run AddOrReplaceReadGroups (GATK)
 
 gatk AddOrReplaceReadGroups \
--I $1 \
--O $2 \
+-I ${WORK_DIR}/$1 \
+-O ${WORK_DIR}/$2 \
 -RGLB $LIBNAME \
 -RGPL ILLUMINA \
 -SORT_ORDER coordinate \

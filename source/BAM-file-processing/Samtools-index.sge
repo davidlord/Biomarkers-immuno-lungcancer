@@ -12,7 +12,10 @@
 #$ -pe mpi 1
 #$ -q test.q
 
+# Source config file
+source ../config.txt
+
 # Run samtools index
 
-samtools index $1
+samtools index ${WORK_DIR}/$1
 

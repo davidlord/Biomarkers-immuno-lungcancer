@@ -29,7 +29,7 @@ JOBLIST=""
 for i in ${IN_FILES[@]}; do
         JOBNAME=samtools_index_${i}
         JOBLIST+=`echo ${JOBNAME},`
-	qsub -N ${JOBNAME} -cwd ./Samtools-index.sge ${WORK_DIR}/${i}
+	qsub -N ${JOBNAME} -cwd ./Samtools-index.sge ${i}
 done
 
 # Remove comma from last item in joblist
@@ -46,7 +46,7 @@ JOBLIST2=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=MarkDuplicates_${i}
 	JOBLIST2+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST -N $JOBNAME -cwd ./MarkDuplicates.sge ${WORK_DIR}/${i} ${WORK_DIR}/${PREFIX1}${i} ${WORK_DIR}/${PREFIX1}${i%.bam}_metrics.txt
+	qsub -hold_jid $JOBLIST -N $JOBNAME -cwd ./MarkDuplicates.sge ${i} ${PREFIX1}${i} ${PREFIX1}${i%.bam}_metrics.txt
 done
 
 # Remove comma from last item in joblist2
@@ -61,7 +61,7 @@ JOBLIST3=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=samtools_index_${PREFIX1}${i}
 	JOBLIST3+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST2 -N $JOBNAME -cwd ./Samtools-index.sge ${WORK_DIR}/${PREFIX1}${i}
+	qsub -hold_jid $JOBLIST2 -N $JOBNAME -cwd ./Samtools-index.sge ${PREFIX1}${i}
 done
 
 # Remove comma from last item in list
@@ -77,7 +77,7 @@ JOBLIST4=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=AddOrReplaceReadGroups_${PREFIX1}${i}
 	JOBLIST4+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST3 -N $JOBNAME -cwd ./AddOrReplaceReadGroups.sge ${WORK_DIR}/${PREFIX1}${i} ${WORK_DIR}/${PREFIX2}${i}
+	qsub -hold_jid $JOBLIST3 -N $JOBNAME -cwd ./AddOrReplaceReadGroups.sge ${PREFIX1}${i} ${PREFIX2}${i}
 done
 
 # Remove comma from last item in joblist4
@@ -88,7 +88,7 @@ JOBLIST5=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=samtools_index_${PREFIX2}${i}
 	JOBLIST5+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST4 -N $JOBNAME -cwd ./Samtools-index.sge ${WORK_DIR}/${PREFIX2}${i}
+	qsub -hold_jid $JOBLIST4 -N $JOBNAME -cwd ./Samtools-index.sge ${PREFIX2}${i}
 done
 
 # Remove comma from last item in joblist5
@@ -104,7 +104,7 @@ JOBLIST6=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=BaseRecalibrator_${PREFIX2}${i}
 	JOBLIST6+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST5 -N $JOBNAME -cwd ./BaseRecalibrator.sge ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX3}${i} $HG38 $KNOWN_SNPS $KNOWN_INDELS
+	qsub -hold_jid $JOBLIST5 -N $JOBNAME -cwd ./BaseRecalibrator.sge ${PREFIX2}${i} ${PREFIX3}${i}
 done
 
 # Remove comma from last item in joblist6
@@ -120,7 +120,7 @@ JOBLIST7=""
 for i in ${IN_FILES[@]}; do
 	JOBNAME=ApplyBQSR_${PREFIX2}${i}
 	JOBLIST7+=`echo $JOBNAME,`
-	qsub -hold_jid $JOBLIST6 -N $JOBNAME -cwd ./ApplyBQSR.sge ${WORK_DIR}/${PREFIX2}${i} ${WORK_DIR}/${PREFIX4}${i} $HG38 ${WORK_DIR}/${PREFIX3}${i}
+	qsub -hold_jid $JOBLIST6 -N $JOBNAME -cwd ./ApplyBQSR.sge ${PREFIX2}${i} ${PREFIX4}${i} ${PREFIX3}${i}
 done
 	
 # Remove comma from last item in joblist7

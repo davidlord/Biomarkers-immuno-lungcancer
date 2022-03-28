@@ -12,10 +12,12 @@
 #$ -pe mpi 10
 #$ -q test.q
 
+# Source config file
+source ../config.txt
 
 gatk CreateSomaticPanelOfNormals \
--R $1 \
---germline-resource $2 \
--V gendb://${3} \
--O $4
+-R $HG38 \
+--germline-resource $GERMLINE_RESOURCE \
+-V gendb://${1} \
+-O $2
 

@@ -14,26 +14,17 @@
 #$ -pe mpi 1
 #$ -q test.q
 
-R=$1
+# Source config file
+source ../config.txt
 
-# Set variables for file paths
-
-	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
-
-	OUT_PATH=/home/xlorda/anna_tmp/somatic_variant_calling/cross_sample_contamination
-
-	RES_FILE=/home/xlorda/anna_tmp/reference_and_misc_files/small_exac_common_3.hg38.vcf.gz
-
-	OUTSUFFIX="pileups.table"
 
 
 # Run GetPileupSummaries
-
 gatk GetPileupSummaries \
--I ${WORK_DIR}/$R \
--V $RES_FILE \
--L $RES_FILE \
--O ${WORK_DIR}/${R%.bam}_${OUTSUFFIX}
+-I ${WORK_DIR}/$1 \
+-V $CGV_RESOURCE \
+-L $CGV_RESOURCE \
+-O ${WORK_DIR}/$2
 
 
 

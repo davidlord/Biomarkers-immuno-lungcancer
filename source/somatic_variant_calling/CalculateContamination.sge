@@ -14,22 +14,18 @@
 #$ -pe mpi 1
 #$ -q test.q
 
+# Source config file
+source ../config.txt
+
 
 N=$1
 T=$2
 
-# Set variable for working directory
-
-WORK_DIR=/home/xlorda/anna_tmp/test_rerun
-
-
-
 
 # Run CalculateContamination (GATK)
-
 gatk CalculateContamination \
--I $WORK_DIR/${T%.bam}_pileups.table \
--matched $WORK_DIR/${N%.bam}_pileups.table \
---tumor-segmentation $WORK_DIR/${T%.bam}_segments.table \
--O $WORK_DIR/${T%.bam}_contamination.table
+-I ${WORK_DIR}/$1 \
+-matched ${WORK_DIR}/$2 \
+--tumor-segmentation $WORK_DIR/$3 \
+-O $WORK_DIR/$4
 

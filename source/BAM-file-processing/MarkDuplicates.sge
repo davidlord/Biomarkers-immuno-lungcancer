@@ -11,10 +11,12 @@
 #$ -pe mpi 10
 #$ -q test.q
 
-# Run MarkDuplicates (Picard tools, GATK)
+# Source config file
+source ../config.txt
 
+# Run MarkDuplicates (Picard tools, GATK)
 gatk MarkDuplicates \
--I $1 \
--O $2 \
--M $3
+-I ${WORK_DIR}/$1 \
+-O ${WORK_DIR}/$2 \
+-M ${WORK_DIR}/$3
 

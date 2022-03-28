@@ -56,13 +56,13 @@ done
 # PoN2 parameters: $1 = Ref. genome, $2 = Intervals list, $3 = Work dir, $4 = Input
 ### PON_DB step potential source of error: Script only worked when run in bam file dir earlier. Debug. 
 
-qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd ./PoN2.sge $HG38 $INTERVALS_LIST ${WORK_DIR}/PON_DB $V_STR
+qsub -hold_jid $JOBLIST -N "PoN2.sge" -cwd ./PoN2.sge ${WORK_DIR}/PON_DB $V_STR
 
 
 # Start PoN3 when PoN2 is finished running
 # PoN3 parameters: $1 = Ref, $2 = germline resource (VCF from populational resource, containing allele frequencies only), $3 = Input, PoN_DB (generated in previous step), $4 = Output, PoN (VCF).
 
-qsub -hold_jid "PoN2.sge" -N "PoN3.sge" -cwd ./PoN3.sge $HG38 $GERMLINE_RESOURCE $PON_DB ${WORK_DIR}/PoN.vcf.gz
+qsub -hold_jid "PoN2.sge" -N "PoN3.sge" -cwd ./PoN3.sge $PON_DB ${WORK_DIR}/PoN.vcf.gz
 
 
 

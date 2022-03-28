@@ -13,7 +13,9 @@
 #$ -pe mpi 5
 #$ -q test.q
 
-INPUT=$1
+# Source config file
+source ../config.txt
+
 
 # Set input variables
 
@@ -38,12 +40,12 @@ INPUT=$1
 # Run FilterMutectCalls (GATK)
 
 gatk FilterMutectCalls \
--V $WORK_DIR/$INPUT \
+-V $WORK_DIR/$1 \
 -R $HG38 \
---tumor-segmentation $WORK_DIR/$SEGMENTS_FILE \
---contamination-table $WORK_DIR/$CONTAMINATION_TABLE \
---ob-priors $ORIENTATION_MODEL \
--O $WORK_DIR/${SAMPLENAME}.filtered.vcf.gz
+--tumor-segmentation $WORK_DIR/$2 \
+--contamination-table $WORK_DIR/$3 \
+--ob-priors $4 \
+-O $WORK_DIR/$5
 
 
 
