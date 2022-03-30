@@ -14,10 +14,7 @@
 # Source config file
 source ../config.txt
 
-#### POTENTIAL SOURCE OF ERROR, first step to debug if script error. 
 PON_DB=${WORK_DIR}/PON_DB
-
-
 INPUT=$1
 
 # Create a list, consisting of each entry (line) in the input file.
@@ -37,7 +34,7 @@ done < $INPUT
 for i in ${IN_FILES[@]}; do
 	JOBNAME=Mutect2_${i}
 	JOBLIST+=`echo ${JOBNAME},`
-	qsub -N ${JOBNAME} -cwd ./PoN1.sge $HG38 ${WORK_DIR}/${i} ${WORK_DIR}/${i%.bam}.vcf.gz
+	qsub -N ${JOBNAME} -cwd ./PoN1.sge ${i} ${i%.bam}.vcf.gz
 done
 
 # Remove comma from last item in JOBLIST

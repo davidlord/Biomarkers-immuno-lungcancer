@@ -1,15 +1,21 @@
 #!/bin/bash -l
 
+# Script runs quality control on fastq files. 
+
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -o logs/stdout_LearnReadOrientationModel
+#$ -e logs/stderr_LearnReadOrientationModel
+#$ -pe mpi 1
+#$ -q test.q
+
 
 # Source config file
 source ../config
 
-INPUT=$1
 
-mkdir ${WORK_DIR}/fastqc_output
-echo Running FastQC.
-while read F; do
-	qsub fastqc -t 1 ${WORK_DIR}/${F} -o ${WORK_DIR}/fastqc_output
-done < $INPUT
+
 
 
