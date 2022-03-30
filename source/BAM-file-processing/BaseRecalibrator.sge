@@ -7,7 +7,7 @@
 #$ -cwd
 #$ -S /bin/bash
 #$ -pe mpi 5
-#$ -q test.q
+#$ -q batch.q
 #$ -o logs/stdout_BaseRecalibrator.txt
 #$ -e logs/stderr_BaseRecalibrator.txt
 

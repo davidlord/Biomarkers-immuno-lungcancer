@@ -13,40 +13,19 @@
 #$ -pe mpi 4
 #$ -q test.q
 
-INPUT=$1
-
-# Set script variables
-
-	IN_PATH=/home/xlorda/anna_tmp/colon_cancer_bam
-
-	OUT_PATH=/home/xlorda/anna_tmp/indels_realigned_bam_files/colon-cancer
-
-	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
-
-	INTERVALS_LIST=/home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list
-
-	KNOWN_INDELS=/home/xlorda/anna_tmp/reference_and_misc_files/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+# Source config file
+source ../config.txt
 
 
-# String manipulation
-
-	FIRST=${INPUT%.bam}
-	OUTNAME=${FIRST}.intervals
 
 # Run RealignerTargetCreator (gatk3)
-
 java -jar gatk3 \
 -T RealignerTargetCreator \
 -R $HG38 \
 -L $INTERVALS_LIST \
 -known $KNOWN_INDELS \
--I $IN_PATH/$INPUT \
--o $OUT_PATH/$OUTNAME
-
-
-
-
-
+-I ${WORK_DIR}/$1 \
+-o ${WORK_DIR}/$2
 
 
 

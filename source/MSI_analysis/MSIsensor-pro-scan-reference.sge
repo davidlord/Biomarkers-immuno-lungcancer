@@ -1,0 +1,16 @@
+#!/bin/bash -l
+
+# queue in batch
+#$ -cwd
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
+#$ -S /bin/bash
+#$ -pe mpi 20
+#$ -q test.q
+
+# Source config file
+source ../config.txt
+
+# Run MSIsensor-pro in scan mode on reference genome, generating a 
+msisensor-pro scan -d $HG38 -o ${WORK_DIR}/Reference_MSI.site
+

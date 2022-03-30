@@ -1,4 +1,4 @@
-#!bin/bash -l
+#!/bin/bash -l
 
 # Second step in processing BAM files: Script runs AddOrReplaceReadGroups (GATK) on BAM files. 
 # AddOrReplaceReadGroups parameters: $1 = Input (BAM), $2 = Output (BAM).
@@ -8,8 +8,8 @@
 #$ -S /bin/bash
 #$ -o logs/stdout_AddOrReplaceReadGroups.txt
 #$ -e logs/stderr_AddOrReplaceReadGroups.txt
-#$ -pe mpi 2
-#$ -q test.q
+#$ -pe mpi 1
+#$ -q batch.q
 
 # Source config file
 source ../config.txt

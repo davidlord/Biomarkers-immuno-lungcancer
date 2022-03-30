@@ -8,8 +8,8 @@
 #$ -o logs/stdout_Mark_Duplicates.txt
 #$ -e logs/stderr_Mark_Duplicates.txt
 #$ -S /bin/bash
-#$ -pe mpi 10
-#$ -q test.q
+#$ -pe mpi 1
+#$ -q batch.q
 
 # Source config file
 source ../config.txt
