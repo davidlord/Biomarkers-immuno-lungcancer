@@ -18,14 +18,10 @@
 source ../config.txt
 
 
-N=$1
-T=$2
-
-
 # Run CalculateContamination (GATK)
 gatk CalculateContamination \
 -I ${WORK_DIR}/$1 \
 -matched ${WORK_DIR}/$2 \
---tumor-segmentation $WORK_DIR/$3 \
+--tumor-segmentation ${WORK_DIR}/$3 \
 -O $WORK_DIR/$4
 

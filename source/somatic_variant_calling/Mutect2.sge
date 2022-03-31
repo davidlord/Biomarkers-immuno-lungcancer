@@ -9,9 +9,9 @@
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -o logs/stdout/Mutect2.txt
-#$ -e logs/stderr/Mutect2.txt
-#$ -pe mpi 4
+#$ -o logs/stdout_Mutect2.txt
+#$ -e logs/stderr_Mutect2.txt
+#$ -pe mpi 1
 #$ -q test.q
 
 # First step in somatic variant calling pipeline: Script runs somatic variant caller Mutect2 (GATK) on paired processed .bam files input.
@@ -40,7 +40,7 @@ gatk Mutect2 \
 -pon $PON \
 --germline-resource $GERMLINE_RESOURCE \
 -L $INTERVALS_LIST \
---f1r2-tar-gz $3 \
+--f1r2-tar-gz ${WORK_DIR}/$3 \
 -O ${WORK_DIR}/$4 \
 -bamout ${WORK_DIR}/$5
 

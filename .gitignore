@@ -3,3 +3,5 @@ source/External_data_processing/.DS_Store
 .DS_Store
 source/External_data_processing/.DS_Store
 source/.DS_Store
+source/logs
+source/*/logs
