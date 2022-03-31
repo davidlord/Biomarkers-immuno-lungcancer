@@ -1,0 +1,31 @@
+#!/bin/bash -l
+
+# Script to run RealignerTargetCreator on bam files, outputting a target intervals file (input to the downstream IndelRealigner).
+# Script defined for one BAM file, run through loop.
+# Example: cat FILE | while read R; do qsub /path/script $R; done
+# INPUT: BAM
+# OUTPUT: Intervals list file. 
+
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 4
+#$ -q test.q
+
+# Source config file
+source ../config.txt
+
+
+
+# Run RealignerTargetCreator (gatk3)
+java -jar gatk3 \
+-T RealignerTargetCreator \
+-R $HG38 \
+-L $INTERVALS_LIST \
+-known $KNOWN_INDELS \
+-I ${WORK_DIR}/$1 \
+-o ${WORK_DIR}/$2
+
+
+

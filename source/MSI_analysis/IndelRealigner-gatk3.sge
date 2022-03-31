@@ -1,0 +1,31 @@
+#!/bin/bash -l
+
+# Script to run IndelRealigner (GATK3) on BAM files, performs local realignment on target reads (targets passed by target intervals file, output from RealignerTargetCreator). 
+# Script defined for one BAM file, run through loop.
+# Example: cat FILE | while read R; do qsub /path/script $R; done
+# INPUT: BAM (indexed).
+# OUTPUT: BAM (indexed). 
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -pe mpi 4
+#$ -q test.q
+
+# Source config file
+source ../config.txt
+
+
+
+# Run IndelRealigner (GATK3)
+
+java -jar gatk3 \
+-T IndelRealigner \
+-R $HG38 \
+-known $KNOWN_INDELS \
+-targetIntervals ${WORK_DIR}/$1 \
+-I ${WORK_DIR}/$2 \
+-o ${WORK_DIR}/$3
+
+
+

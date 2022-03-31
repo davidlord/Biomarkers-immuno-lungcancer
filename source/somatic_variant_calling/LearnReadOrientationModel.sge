@@ -15,14 +15,12 @@
 #$ -pe mpi 1
 #$ -q test.q
 
-R=$1
-
-Set script variables
-
-	WORK_DIR=/home/xlorda/anna_tmp/test_rerun
+# Source config file
+source ../config.txt
 
 
+# Run LearnReadOrientationModel
 gatk LearnReadOrientationModel \
--I ${WORK_DIR}/$R \
--O ${WORK_DIR}/${R%.f1r2.tar.gz}.read-orientation-model.tar.gz
+-I ${WORK_DIR}/$1 \
+-O ${WORK_DIR}/$2
 

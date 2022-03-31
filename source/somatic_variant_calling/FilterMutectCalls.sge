@@ -12,38 +12,23 @@
 #$ -S /bin/bash
 #$ -pe mpi 5
 #$ -q test.q
+#$ -o logs/stdout_FilterMutectCalls.sge
+#$ -e logs/stderr_FilterMutectCalls.sge
 
-INPUT=$1
-
-# Set input variables
-
-	WORK_DIR=/home/xlorda/anna_tmp/somatic_variant_calling
-
-	ORIENTATION_MODEL=/home/xlorda/anna_tmp/somatic_variant_calling/all_paired_read-orientation_model.tar.gz
-
-	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
-
-
-# Names of inputs
-
-	SAMPLENAME=${INPUT%.unfiltered.vcf.gz}
-
-	SEGMENTS_FILE=${SAMPLENAME}_segments.table
-
-	CONTAMINATION_TABLE=${SAMPLENAME}_pair_calculateconamination.table
-
+# Source config file
+source ../config.txt
 
 
 
 # Run FilterMutectCalls (GATK)
 
 gatk FilterMutectCalls \
--V $WORK_DIR/$INPUT \
+-V ${WORK_DIR}/$1 \
 -R $HG38 \
---tumor-segmentation $WORK_DIR/$SEGMENTS_FILE \
---contamination-table $WORK_DIR/$CONTAMINATION_TABLE \
---ob-priors $ORIENTATION_MODEL \
--O $WORK_DIR/${SAMPLENAME}.filtered.vcf.gz
+--tumor-segmentation ${WORK_DIR}/$2 \
+--contamination-table ${WORK_DIR}/$3 \
+--ob-priors ${WORK_DIR}/$4 \
+-O ${WORK_DIR}/$5
 
 
 

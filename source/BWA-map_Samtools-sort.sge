@@ -23,7 +23,7 @@ R2=$2
 	# Reference genome
 	HG38=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa
 
-	IN_PATH=/home/xlorda/anna_tmp/fastq_files
+	IN_PATH=/seqstore/remote/share/AR_forskning
 
 	OUT_PATH=/home/xlorda/anna_tmp/rerun_2/
 

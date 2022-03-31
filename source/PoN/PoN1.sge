@@ -4,7 +4,6 @@
 # PoN1 parameters: $1 = Ref, $2 = Input (BAM) , $3 = Output (VCF)
 
 # Queue in test
-
 #$ -cwd
 #$ -S /bin/bash
 #$ -o logs/stdout_PoN1_Mutect2.txt
@@ -12,11 +11,14 @@
 #$ -pe mpi 1
 #$ -q test.q
 
+# Source config file
+source ../config.txt
+
 
 # Run GATK Mutect2 tumor only mode on input
 
 
-gatk Mutect2 -R $1 -I $2 --max-mnp-distance 0 -O $3
+gatk Mutect2 -R $HG38 -I ${WORK_DIR}/$1 --max-mnp-distance 0 -O ${WORK_DIR}/$2
 
 
 

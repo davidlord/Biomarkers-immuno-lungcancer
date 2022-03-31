@@ -1,0 +1,47 @@
+#!/bin/bash -l
+
+# Script runs MSIsensor-pro on paired normal-tumor processed BAM files.
+# Script defined for one pair of BAM files. Run on a list of paired BAM files through a loop.
+# Example: 'cat bam_files.txt | while read N T; do qsub script $N $T; done'
+# INPUT: 2x BAM files (normal- and tumor). 
+# OUTPUT: Report files, tabulated text files.  
+
+# queue in batch
+#$ -cwd
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
+#$ -S /bin/bash
+#$ -pe mpi 10
+#$ -q test.q
+
+# Rename input variable
+N=$1
+T=$2
+
+# Set file variables
+
+	# Working directory
+	WORK_DIR=/home/xlorda/anna_tmp/indels_realigned_bam_files/colon-cancer
+	
+	# Reference genome
+	HG38site=/home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.site
+
+
+# Create a function to extract sample name
+
+function samplename_extract
+{
+	TFIRST=${T#*[0-9]_}
+	SECOND=${TFIRST%%lib*}
+	SAMPLENAME=${SECOND%_}
+}
+samplename_extract $T
+
+OUTSUFFIX=indels_realigned
+
+
+# Run MSIsensor-pro for paired blood-tumor BAM files
+
+msisensor-pro msi -d $HG38site -n ${WORK_DIR}/${N} -t ${WORK_DIR}/${T} -o ${WORK_DIR}/msi_${SAMPLENAME}_${OUTSUFFIX}
+
+
