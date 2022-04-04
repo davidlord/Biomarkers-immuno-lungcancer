@@ -10,7 +10,7 @@
 #$ -e logs/stderr_samtools_index.txt
 #$ -S /bin/bash
 #$ -pe mpi 1
-#$ -q batch.q
+#$ -q test.q
 
 # Source config file
 source ../config.txt

@@ -9,7 +9,7 @@
 #$ -o logs/stdout_AddOrReplaceReadGroups.txt
 #$ -e logs/stderr_AddOrReplaceReadGroups.txt
 #$ -pe mpi 1
-#$ -q batch.q
+#$ -q test.q
 
 # Source config file
 source ../config.txt
@@ -35,10 +35,10 @@ source ../config.txt
 gatk AddOrReplaceReadGroups \
 -I ${WORK_DIR}/$1 \
 -O ${WORK_DIR}/$2 \
--RGLB $LIBNAME \
--RGPL ILLUMINA \
--SORT_ORDER coordinate \
--RGPU $RGPU \
--RGSM $SAMPLENAME
+--RGLB $LIBNAME \
+--RGPL ILLUMINA \
+--SORT_ORDER coordinate \
+--RGPU $RGPU \
+--RGSM $SAMPLENAME
 
 

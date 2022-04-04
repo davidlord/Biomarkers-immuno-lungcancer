@@ -9,7 +9,7 @@
 #$ -e logs/stderr_Mark_Duplicates.txt
 #$ -S /bin/bash
 #$ -pe mpi 1
-#$ -q batch.q
+#$ -q test.q
 
 # Source config file
 source ../config.txt
