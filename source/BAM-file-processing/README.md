@@ -14,7 +14,7 @@ This directory contains the script used for processing .bam files prior to varia
 ## Sub-scripts: 
 
 #### Samtools_index.sge
-Runs Samtools Index, enabling fast random access of the input bam file. 
+Runs Samtools Index, enabling fast random access of the input bam file. \n
 **INPUT**: .bam
 **OUTPUT**: .bai
 
