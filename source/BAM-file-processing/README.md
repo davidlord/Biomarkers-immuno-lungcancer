@@ -36,7 +36,8 @@ ApplyBQSR parameters: $1 = input (bam), $2 = output (bam), $3 = reference genome
 
 ## Running scripts manually
 
-Each script can be run manually, for single file input simply run e.g: './<script> <parameter_1> <parameter_2>'
+Each script can be run manually, for single input simply run E.g: './<script> <parameter_1> <parameter_2>'\
+For multiple file input the scripts can instead be run through a loop, E.g: 'cat <input_file_list> | while read FILE; do ./<script> <parameter_1> <Parameter2>; done'
 
 
 
