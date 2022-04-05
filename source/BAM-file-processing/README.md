@@ -15,7 +15,7 @@ This directory contains the script used for processing .bam files prior to varia
 
 #### Samtools_index.sge
 Runs Samtools Index, enabling fast random access of the input bam file.\
-Samtools-index.sge parameters: $1 = input (bam)\
+Samtools-index.sge parameters: $1 = input (bam)
 
 #### BAM_file_processing_1_MarkDuplicates.sge
 Runs MarkDuplicates (GATK), locating and tagging duplicate reads.\
