@@ -40,9 +40,6 @@ Each script can be run manually, for single input simply run E.g: './<script> <p
 For multiple file input the scripts can instead be run through a loop, E.g: 'cat <input_file_list> | while read FILE; do ./<script> <parameter_1> <Parameter2>; done'
 
 
-
-The following order applies when running the scripts manually:
-1. Samtools index.
-2. sfe
+The following order applies when running the scripts manually: Samtools index -> MarkDuplicates -> Samtools index -> AddOrReplaceReadGroups -> Samtools index -> BaseRecalibrator -> ApplyBQSR
 
 
