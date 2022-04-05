@@ -42,6 +42,7 @@ For multiple file input the scripts can instead be run through a loop, E.g: 'cat
 
 
 The following order applies when running the scripts manually:
-
+1. Samtools index.
+2. sfe
 
 
