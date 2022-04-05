@@ -15,32 +15,31 @@ This directory contains the script used for processing .bam files prior to varia
 
 #### Samtools_index.sge
 Runs Samtools Index, enabling fast random access of the input bam file.\
-**INPUT**: .bam\
-**OUTPUT**: .bai\
+Samtools-index.sge parameters: $1 = input (bam)\
 
 #### BAM_file_processing_1_MarkDuplicates.sge
 Runs MarkDuplicates (GATK), locating and tagging duplicate reads.\
-**INPUT**: .bam\
-**OUTPUT**: .bam\
+MarkDuplicates.sge parameters: $1 = input (bam), $2 = output (bam), $3 = metrics file (txt).
 
 #### BAM_file_processing_2_AddOrReplaceReadGroups.sge
 Runs AddOrReplaceReadGroups (GATK), assigning new read groups to the reads.\
-**INPUT**: .bam\
-**OUTPUT**: .bam\
+AddOrReplaceReagGroups.sge parameters: $1 = input (bam), $2 = output (bam).
 
 #### BAM_file_processing_3_BaseRecalibrator.sge
 Runs BaseRecalibrator (GATK), generating a recalibration table used for the downstream ApplyBQSR process.\
-**INPUT**: .bam\
-**OUTPUT**: base recalibration table\
+BaseRecalibrator parameters: $1 = input (bam), $2 = output (base recalibration table), $3 = reference genome, $4 = known SNPs resource file, $5 = known indels resource file. 
 
 #### BAM_file_processing_4_ApplyBQSR.sge
 Runs ApplyBQSR (GATK), recalibrating the base quality scores in the inputed bam file based on the recalibration table.\
-**INPUT**: .bam, base recalibration table\
-**OUTPUT**: .bam (processed), .bai\
+ApplyBQSR parameters: $1 = input (bam), $2 = output (bam), $3 = reference genome, $4 = base recalibration table.
 
 
 ## Running scripts manually
 
+Each script can be run manually, for single file input simply run e.g: './<script> <parameter_1> <parameter_2>'
+
+
+The order applies when running the scripts manually:
 
 
 
