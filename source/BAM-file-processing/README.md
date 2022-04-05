@@ -39,7 +39,8 @@ ApplyBQSR parameters: $1 = input (bam), $2 = output (bam), $3 = reference genome
 Each script can be run manually, for single file input simply run e.g: './<script> <parameter_1> <parameter_2>'
 
 
-The order applies when running the scripts manually:
+
+The following order applies when running the scripts manually:
 
 
 
