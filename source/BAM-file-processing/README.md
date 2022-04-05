@@ -15,28 +15,28 @@ This directory contains the script used for processing .bam files prior to varia
 
 #### Samtools_index.sge
 Runs Samtools Index, enabling fast random access of the input bam file.\
-**INPUT**: .bam
-**OUTPUT**: .bai
+**INPUT**: .bam\
+**OUTPUT**: .bai\
 
 #### BAM_file_processing_1_MarkDuplicates.sge
-Runs MarkDuplicates (GATK), locating and tagging duplicate reads.
-**INPUT**: .bam
-**OUTPUT**: .bam
+Runs MarkDuplicates (GATK), locating and tagging duplicate reads.\
+**INPUT**: .bam\
+**OUTPUT**: .bam\
 
 #### BAM_file_processing_2_AddOrReplaceReadGroups.sge
-Runs AddOrReplaceReadGroups (GATK), assigning new read groups to the reads. 
-**INPUT**: .bam
-**OUTPUT**: .bam
+Runs AddOrReplaceReadGroups (GATK), assigning new read groups to the reads.\
+**INPUT**: .bam\
+**OUTPUT**: .bam\
 
 #### BAM_file_processing_3_BaseRecalibrator.sge
-Runs BaseRecalibrator (GATK), generating a recalibration table used for the downstream ApplyBQSR process. 
-**INPUT**: .bam
-**OUTPUT**: base recalibration table
+Runs BaseRecalibrator (GATK), generating a recalibration table used for the downstream ApplyBQSR process.\
+**INPUT**: .bam\
+**OUTPUT**: base recalibration table\
 
 #### BAM_file_processing_4_ApplyBQSR.sge
-Runs ApplyBQSR (GATK), recalibrating the base quality scores in the inputed bam file based on the recalibration table. 
-**INPUT**: .bam, base recalibration table
-**OUTPUT**: .bam (processed), .bai
+Runs ApplyBQSR (GATK), recalibrating the base quality scores in the inputed bam file based on the recalibration table.\
+**INPUT**: .bam, base recalibration table\
+**OUTPUT**: .bam (processed), .bai\
 
 
 ## Running scripts manually
