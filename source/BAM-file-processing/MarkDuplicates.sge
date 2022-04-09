@@ -8,14 +8,14 @@
 #$ -o logs/stdout_Mark_Duplicates.txt
 #$ -e logs/stderr_Mark_Duplicates.txt
 #$ -S /bin/bash
-#$ -pe mpi 1
+#$ -pe mpi 20
 #$ -q test.q
 
 # Source config file
 source ../config.txt
 
 # Run MarkDuplicates (Picard tools, GATK)
-gatk MarkDuplicates \
+gatk --java-options "-XX:ParallelGCThreads=20" MarkDuplicates \
 -I ${WORK_DIR}/$1 \
 -O ${WORK_DIR}/$2 \
 -M ${WORK_DIR}/$3

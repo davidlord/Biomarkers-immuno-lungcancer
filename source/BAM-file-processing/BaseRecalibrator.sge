@@ -6,7 +6,7 @@
 # queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 1
+#$ -pe mpi 20
 #$ -q test.q
 #$ -o logs/stdout_BaseRecalibrator.txt
 #$ -e logs/stderr_BaseRecalibrator.txt

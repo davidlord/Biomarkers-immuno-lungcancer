@@ -6,7 +6,7 @@
 # queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 1
+#$ -pe mpi 10
 #$ -q test.q
 #$ -o logs/stdout_ApplyBQSR.txt
 #$ -e logs/stderr_ApplyBQSR.txt

@@ -11,7 +11,7 @@
 #$ -o logs/BWA_Samtools_stdout.txt
 #$ -e logs/BWA_Samtools_stderr.txt
 #$ -S /bin/bash
-#$ -pe mpi 20
+#$ -pe mpi 40
 #$ -q test.q
 
 # Assign input to variables
@@ -32,7 +32,7 @@ OUT_PATH=/home/xlorda/anna_tmp/rerun2
 
 # Run mapping through BWA and convert to bam format with samtools
 
-bwa mem -t 20 $HG38 ${WORK_DIR}/${R1} ${WORK_DIR}/${R2} | samtools sort -@ 20 > ${OUT_PATH}/${OUTNAME}.bam
+bwa mem -t 40 $HG38 ${WORK_DIR}/${R1} ${WORK_DIR}/${R2} | samtools sort -@ 40 > ${OUT_PATH}/${OUTNAME}.bam
 
 
 

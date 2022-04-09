@@ -1,0 +1,21 @@
+#!/bin/bash -l
+
+# Validate BAM files: Script runs ValidateSamFile (GATK), validating BAM files. 
+# Samtools index parameters: $1 = Input (BAM).
+
+# Queue in batch or test
+
+#$ -cwd
+#$ -o logs/stdout_ValidateSamFile.txt
+#$ -e logs/stderr_ValidateSamFile.txt
+#$ -S /bin/bash
+#$ -pe mpi 2
+#$ -q test.q
+
+# Source config file
+source ../config.txt
+
+# Run ValidateSamFile (GATK)
+gatk ValidateSamFile I=${WORK_DIR}/$1 MODE=SUMMARY >> ${WORK_DIR}/bam_file_validation.txt
+
+
