@@ -11,7 +11,7 @@
 #$ -o logs/stdout.txt
 #$ -e logs/stderr.txt
 #$ -S /bin/bash
-#$ -pe mpi 1
+#$ -pe mpi 5
 #$ -q test.q
 
 # Source config file

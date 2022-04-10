@@ -29,7 +29,7 @@ JOBLIST1=${JOBLIST1%,}
 JOBLIST2=${JOBLIST2%,}
 
 
-# Run RealignerTargetCreator (GATK3) on normal and tumor samples (separately)
+# Run RealignerTargetCreator (GATK3) on normal and tumor samples separately.
 # RealignerTargetCreator parameters: $1 = Input (BAM), $2 = output.target.intervals
 JOBLIST3=""
 JOBLIST4=""
@@ -67,7 +67,7 @@ while read N T; do
         # Run on tumor samples
         JOBNAME_T=IndelRealigner-${T}
         JOBLIST6+=`echo $JOBNAME_T,`
-        ###qsub -hold_jid $JOBLIST4 -N $JOBNAME_T -cwd ./IndelRealigner-gatk3.sge ${T%.bam}.target.intervals ${T} ${T%.bam}.indels-realigned.bam
+        qsub -hold_jid $JOBLIST4 -N $JOBNAME_T -cwd ./IndelRealigner-gatk3.sge ${T%.bam}.target.intervals ${T} ${T%.bam}.indels-realigned.bam
 done < $INPUT
 # Remove last commas from joblists
 JOBLIST5=${JOBLIST5%,}
@@ -78,11 +78,11 @@ JOBLIST6=${JOBLIST6%,}
 # MSIsensor-pro scan parameters: $1 = output.site
 echo MSIsensor-pro: Scanning reference genome for MSI sites.
 REF_MSI=${WORK_DIR}/Reference_MSI.site
-qsub -N MSIsensor-pro_scan_reference -cwd ./MSIsensor-pro-scan-reference.sge $REF_MSI
+qsub -hold_jid $JOBLIST5 -hold_jid $JOBLIST6 -N MSIsensor-pro_scan_reference -cwd ./MSIsensor-pro-scan-reference.sge $REF_MSI
 
 
 # Run MSIsensor-pro on paired normal-tumor bam files
-# MSIsensor-pro parameters: $1 = reference.sites, $2 = normal.bam, $3 = tumor.bam, output.msi
+# MSIsensor-pro parameters: $1 = reference.site, $2 = normal.bam, $3 = tumor.bam, output.msi
 JOBLIST7=""
 echo Running MSIsensor-pro on paired normal-tumor input.
 while read N T; do
@@ -93,7 +93,7 @@ while read N T; do
 	JOBNAME=MSIsensor-pro-${T}
 	JOBLIST7+=`echo $JOBNAME,`
 	# Run MSIsensor-pro
-	qsub -hold_jid MSIsensor-pro_scan_reference -hold_jid $JOBLIST5 -hold_jid $JOBLIST6 -N MSIsensor-pro-${T} -cwd ./MSIsensor-pro_normal-tumor.sge $REF_MSI ${N%.bam}.indels-realigned.bam ${T%.bam}.indels-realigned.bam ${SAMPLENAME}.msi
+	qsub -hold_jid MSIsensor-pro_scan_reference -N MSIsensor-pro-${T} -cwd ./MSIsensor-pro_normal-tumor.sge $REF_MSI ${N%.bam}.indels-realigned.bam ${T%.bam}.indels-realigned.bam ${SAMPLENAME}.msi
 done <$INPUT 
 # Remove last comma from joblist
 JOBLIST7=${JOBLIST7%,}

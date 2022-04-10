@@ -5,7 +5,7 @@
 #$ -o logs/stdout_MSIsensor-pro_scan_reference.txt
 #$ -e logs/stderr_MSIsensor-pro_scan_reference.txt
 #$ -S /bin/bash
-#$ -pe mpi 20
+#$ -pe mpi 40
 #$ -q test.q
 
 # Source config file
