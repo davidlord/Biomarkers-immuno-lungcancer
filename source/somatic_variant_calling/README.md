@@ -18,11 +18,11 @@ The "somatic-variant-calling-wrapper.sh" script is designed for automation & par
 ## Sub-scripts:
 
 #### Mutect2.sge
-Runs somatic variant caller Mutect2 (GATK) on paired normal-tumor processed .bam file input. Mutect2 identifies short somatic variants through de-novo assembly of active regions.
+Runs somatic variant caller Mutect2 (GATK) on paired normal-tumor processed .bam file input. Mutect2 identifies short somatic variants through de-novo assembly of active regions.\
 Mutect2.sge parameters: $1 = normal.bam, $2 = tumor.bam, $3 = Sample name, $4 = Panel of Normals, $5 = Germline resource file, $6 = intervals list file, $7 = output.f1r2, $8 = output.unfiltered.vcf, $9 = output.bamout
 
 #### GetPileUpSummaries.sge
-Runs GetPileUpSummaries (GATK), summarizing read support for reference- vs. alternate alleles at any given read in table format. 
+Runs GetPileUpSummaries (GATK), summarizing read support for reference- vs. alternate alleles at any given read in table format.\
 GetPileupSummaries.sge parameters: $1 = .bam file (processed), $2 = Germline resource, $3 = Germline resource, $4 = output.pileups.table
 
 #### CalculateContamination.sge
