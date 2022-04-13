@@ -21,7 +21,7 @@ The "somatic-variant-calling-wrapper.sh" script is designed for automation & par
 Runs somatic variant caller Mutect2 (GATK) on paired normal-tumor processed .bam file input. Mutect2 identifies short somatic variants through de-novo assembly of active regions.\
 Mutect2.sge parameters: $1 = normal.bam, $2 = tumor.bam, $3 = Sample name, $4 = Panel of Normals, $5 = Germline resource file, $6 = intervals list file, $7 = output.f1r2, $8 = output.unfiltered.vcf, $9 = output.bamout
 
-#### GetPileUpSummaries.sge
+#### GetPileupSummaries.sge
 Runs GetPileUpSummaries (GATK), summarizing read support for reference- vs. alternate alleles at any given read in table format.\
 GetPileupSummaries.sge parameters: $1 = .bam file (processed), $2 = Germline resource, $3 = Germline resource, $4 = output.pileups.table
 
@@ -38,7 +38,14 @@ Script runs FilterMutectCalls (GATK) on unfiltered.vcf files, emitting filtered.
 FilterMutectCalls.sge parameters: $1 = input.unfiltered.vcf, $2 = reference genome, $3 = tumor.segments, $4 = contamination.table, $5 = orientation.model, $6 = output.filtered.vcf
 
 
+## Running scripts manually
 
+Each script can be run manually, for single input simply run E.g.: './<script> <parameter_1> <parameter_2>'\
+When processing multiple input files the script can instead be run through a loop, E.g.: 'cat <input_file_list> | while read INPUT; do ./<script> <parameter_1> <Parameter2> <$INPUT>; done'\
+ When processing multiple input files with scripts taking paired input, a similar approach can be used, E.g.: 'cat <input_file_list> | while read NORMAL TUMOR; do ./<script> <parameter_1> <Parameter2> <$NORMAL> <$TUMOR>; done'\
+ 
+ 
+ The following order applies when running the scripts manually: Mutect2 -> GetPileupSummaries -> CalculateContamination -> LearnReadOrientationModel -> FilterMutectCalls
 
 
 
