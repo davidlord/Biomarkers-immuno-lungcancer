@@ -24053,3 +24053,755 @@ Runtime.totalMemory()=5068816384
 Using GATK jar /home/xlorda/bin/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar
 Running:
     java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -jar /home/xlorda/bin/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar GenomicsDBImport -R /home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa -L /home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list --genomicsdb-workspace-path /home/xlorda/anna_tmp/rerun2/PON_DB -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL053B_lib557932_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL061B_lib557933_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL063B_lib557934_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL064B_lib557935_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL110B_lib557936_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL112B_lib557937_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL113B_lib557938_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL117B_lib557939_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL120B_lib557940_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL122B_lib557941_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL123B_lib557942_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL124B_lib557943_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_141_B_lib393518_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_265_B_lib393520_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_279_B_lib393522_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_289_B_lib393524_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_320_B_lib393531_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_015_B_lib405710_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_016_B_lib405712_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_017_B_lib405714_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_018_B_lib405716_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_021_B_lib405718_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_024_B_lib405720_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_025_B_lib405722_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_104_B_lib405724_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_109_B_lib405726_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_026_B_lib444197_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_028_B_lib444198_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_029_B_lib444199_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_030_B_lib444200_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_033_B_lib453022_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_034_B_lib444202_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_036_B_lib444203_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_037_B_lib444204_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_038_B_lib444205_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_042_B_lib444206_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_043_B_lib444207_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_044_B_lib444208_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_045_B_lib453023_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_046_B_lib444210_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_047_B_lib453701_7209_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_048_B_lib444212_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_051_B_lib470099_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_101_B_lib470094_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_102_B_lib470095_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_103_B_lib470096_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_105_B_lib470097_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_106_B_lib470098_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_006_B_lib491770_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_022_B_lib491771_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_027_B_lib491772_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_032_B_lib491773_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_176_Normal_lib444219_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_213_Normal_lib444222_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_236_Normal_lib453703_7209_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_254_Normal_lib453702_7209_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_338_Normal_lib444218_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_253_Normal_lib557944_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_258_Normal_lib557946_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-21449_Bl_001_C_B_lib349017_6538_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-21449_Bl_002_C_B_lib349018_6538_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-21449_Bl_005_C_B_lib349019_6538_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-23498_BL_008C_lib370153_6652_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-23498_BL_009D_lib370154_6652_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24493_BL_010_lib385827_6751_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24493_BL_019_lib385831_6751_2.vcf.gz
+18:12:09.760 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/xlorda/bin/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+Apr 10, 2022 6:12:09 PM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+18:12:09.860 INFO  GenomicsDBImport - ------------------------------------------------------------
+18:12:09.861 INFO  GenomicsDBImport - The Genome Analysis Toolkit (GATK) v4.2.2.0
+18:12:09.861 INFO  GenomicsDBImport - For support and documentation go to https://software.broadinstitute.org/gatk/
+18:12:09.861 INFO  GenomicsDBImport - Executing as xlorda@byss.medair.lcl on Linux v4.18.0-240.22.1.el8_3.x86_64 amd64
+18:12:09.861 INFO  GenomicsDBImport - Java runtime: OpenJDK 64-Bit Server VM v1.8.0_292-b10
+18:12:09.861 INFO  GenomicsDBImport - Start Date/Time: April 10, 2022 6:12:09 PM CEST
+18:12:09.861 INFO  GenomicsDBImport - ------------------------------------------------------------
+18:12:09.861 INFO  GenomicsDBImport - ------------------------------------------------------------
+18:12:09.861 INFO  GenomicsDBImport - HTSJDK Version: 2.24.1
+18:12:09.861 INFO  GenomicsDBImport - Picard Version: 2.25.4
+18:12:09.861 INFO  GenomicsDBImport - Built for Spark Version: 2.4.5
+18:12:09.862 INFO  GenomicsDBImport - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+18:12:09.862 INFO  GenomicsDBImport - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+18:12:09.862 INFO  GenomicsDBImport - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+18:12:09.862 INFO  GenomicsDBImport - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+18:12:09.862 INFO  GenomicsDBImport - Deflater: IntelDeflater
+18:12:09.862 INFO  GenomicsDBImport - Inflater: IntelInflater
+18:12:09.862 INFO  GenomicsDBImport - GCS max retries/reopens: 20
+18:12:09.862 INFO  GenomicsDBImport - Requester pays: disabled
+18:12:09.862 INFO  GenomicsDBImport - Initializing engine
+18:12:11.225 WARN  IntelInflater - Zero Bytes Written : 0
+18:12:15.299 INFO  IntervalArgumentCollection - Processing 2923745463 bp from intervals
+18:12:15.326 WARN  GenomicsDBImport - A large number of intervals were specified. Using more than 100 intervals in a single import is not recommended and can cause performance to suffer. If GVCF data only exists within those intervals, performance can be improved by aggregating intervals with the merge-input-intervals argument.
+18:12:15.380 INFO  GenomicsDBImport - Done initializing engine
+18:12:15.840 INFO  GenomicsDBLibLoader - GenomicsDB native library version : 1.4.1-d59e886
+18:12:15.888 INFO  GenomicsDBImport - Vid Map JSON file will be written to /home/xlorda/anna_tmp/rerun2/PON_DB/vidmap.json
+18:12:15.889 INFO  GenomicsDBImport - Callset Map JSON file will be written to /home/xlorda/anna_tmp/rerun2/PON_DB/callset.json
+18:12:15.889 INFO  GenomicsDBImport - Complete VCF Header will be written to /home/xlorda/anna_tmp/rerun2/PON_DB/vcfheader.vcf
+18:12:15.889 INFO  GenomicsDBImport - Importing to workspace - /home/xlorda/anna_tmp/rerun2/PON_DB
+18:12:17.642 WARN  IntelInflater - Zero Bytes Written : 0
+18:12:19.534 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:12:24.341 WARN  IntelInflater - Zero Bytes Written : 0
+18:12:26.385 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:12:29.214 WARN  IntelInflater - Zero Bytes Written : 0
+18:12:30.877 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:12:33.345 WARN  IntelInflater - Zero Bytes Written : 0
+18:12:34.540 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:13:22.683 WARN  IntelInflater - Zero Bytes Written : 0
+18:13:23.832 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:15:15.592 WARN  IntelInflater - Zero Bytes Written : 0
+18:15:17.670 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:16:17.399 WARN  IntelInflater - Zero Bytes Written : 0
+18:16:18.600 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:18:18.141 WARN  IntelInflater - Zero Bytes Written : 0
+18:18:20.171 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:25:19.313 WARN  IntelInflater - Zero Bytes Written : 0
+18:25:21.277 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:25:25.759 WARN  IntelInflater - Zero Bytes Written : 0
+18:25:27.337 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:25:38.626 WARN  IntelInflater - Zero Bytes Written : 0
+18:25:40.349 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:25:47.343 WARN  IntelInflater - Zero Bytes Written : 0
+18:25:48.396 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:25:54.049 WARN  IntelInflater - Zero Bytes Written : 0
+18:25:55.134 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:32:26.974 WARN  IntelInflater - Zero Bytes Written : 0
+18:32:28.955 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:33:24.132 WARN  IntelInflater - Zero Bytes Written : 0
+18:33:26.551 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:35:35.776 WARN  IntelInflater - Zero Bytes Written : 0
+18:35:38.543 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:37:39.979 WARN  IntelInflater - Zero Bytes Written : 0
+18:37:42.093 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:39:28.724 WARN  IntelInflater - Zero Bytes Written : 0
+18:39:30.843 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:39:33.508 WARN  IntelInflater - Zero Bytes Written : 0
+18:39:35.109 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:43:13.713 WARN  IntelInflater - Zero Bytes Written : 0
+18:43:15.661 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:43:22.498 WARN  IntelInflater - Zero Bytes Written : 0
+18:43:24.192 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:43:34.710 WARN  IntelInflater - Zero Bytes Written : 0
+18:43:35.877 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:43:53.347 WARN  IntelInflater - Zero Bytes Written : 0
+18:43:54.519 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:43:58.952 WARN  IntelInflater - Zero Bytes Written : 0
+18:44:00.236 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:44:04.459 WARN  IntelInflater - Zero Bytes Written : 0
+18:44:05.571 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:44:26.684 WARN  IntelInflater - Zero Bytes Written : 0
+18:44:27.760 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:53:20.669 WARN  IntelInflater - Zero Bytes Written : 0
+18:53:23.071 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+18:54:23.974 WARN  IntelInflater - Zero Bytes Written : 0
+18:54:25.580 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:03:40.664 WARN  IntelInflater - Zero Bytes Written : 0
+19:03:43.408 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:03:49.253 WARN  IntelInflater - Zero Bytes Written : 0
+19:03:51.138 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:03:55.870 WARN  IntelInflater - Zero Bytes Written : 0
+19:03:57.093 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:03:59.665 WARN  IntelInflater - Zero Bytes Written : 0
+19:04:00.786 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:04:03.499 WARN  IntelInflater - Zero Bytes Written : 0
+19:04:04.637 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:04:11.777 WARN  IntelInflater - Zero Bytes Written : 0
+19:04:12.905 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:04:22.129 WARN  IntelInflater - Zero Bytes Written : 0
+19:04:23.264 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:12:51.654 WARN  IntelInflater - Zero Bytes Written : 0
+19:12:54.213 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:13:25.753 WARN  IntelInflater - Zero Bytes Written : 0
+19:13:28.390 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:13:32.326 WARN  IntelInflater - Zero Bytes Written : 0
+19:13:33.630 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:15:45.283 WARN  IntelInflater - Zero Bytes Written : 0
+19:15:47.783 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:15:54.941 WARN  IntelInflater - Zero Bytes Written : 0
+19:15:56.627 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:18:08.962 WARN  IntelInflater - Zero Bytes Written : 0
+19:18:11.753 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:18:23.721 WARN  IntelInflater - Zero Bytes Written : 0
+19:18:25.688 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:20:06.775 WARN  IntelInflater - Zero Bytes Written : 0
+19:20:08.848 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:20:17.078 WARN  IntelInflater - Zero Bytes Written : 0
+19:20:18.614 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:20:21.098 WARN  IntelInflater - Zero Bytes Written : 0
+19:20:22.383 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:21:19.616 WARN  IntelInflater - Zero Bytes Written : 0
+19:21:20.820 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:28:49.203 WARN  IntelInflater - Zero Bytes Written : 0
+19:28:52.228 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:28:57.162 WARN  IntelInflater - Zero Bytes Written : 0
+19:28:59.055 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:31:22.111 WARN  IntelInflater - Zero Bytes Written : 0
+19:31:24.541 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:33:45.527 WARN  IntelInflater - Zero Bytes Written : 0
+19:33:48.038 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:33:50.529 WARN  IntelInflater - Zero Bytes Written : 0
+19:33:52.500 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:33:54.870 WARN  IntelInflater - Zero Bytes Written : 0
+19:33:56.284 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:33:58.726 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:00.042 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:02.514 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:03.852 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:06.457 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:07.772 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:12.748 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:14.124 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:17.004 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:18.349 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:21.315 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:22.517 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:25.264 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:26.494 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:29.485 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:30.691 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:33.324 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:34.523 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:40.277 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:41.505 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:34:44.550 WARN  IntelInflater - Zero Bytes Written : 0
+19:34:45.704 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:40:14.897 WARN  IntelInflater - Zero Bytes Written : 0
+19:40:17.635 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:42:04.149 WARN  IntelInflater - Zero Bytes Written : 0
+19:42:06.995 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:45:01.138 WARN  IntelInflater - Zero Bytes Written : 0
+19:45:03.962 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:51:46.575 WARN  IntelInflater - Zero Bytes Written : 0
+19:51:49.103 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:51:55.365 WARN  IntelInflater - Zero Bytes Written : 0
+19:51:57.534 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:52:08.472 WARN  IntelInflater - Zero Bytes Written : 0
+19:52:10.107 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:52:12.850 WARN  IntelInflater - Zero Bytes Written : 0
+19:52:14.095 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+19:54:36.861 WARN  IntelInflater - Zero Bytes Written : 0
+19:54:39.228 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:00:41.723 WARN  IntelInflater - Zero Bytes Written : 0
+20:00:44.047 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:02:13.115 WARN  IntelInflater - Zero Bytes Written : 0
+20:02:16.127 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:02:28.345 WARN  IntelInflater - Zero Bytes Written : 0
+20:02:29.930 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:07:09.044 WARN  IntelInflater - Zero Bytes Written : 0
+20:07:11.257 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:07:13.724 WARN  IntelInflater - Zero Bytes Written : 0
+20:07:15.381 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:07:20.313 WARN  IntelInflater - Zero Bytes Written : 0
+20:07:21.963 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:07:24.523 WARN  IntelInflater - Zero Bytes Written : 0
+20:07:25.883 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:07:28.361 WARN  IntelInflater - Zero Bytes Written : 0
+20:07:29.714 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:07:32.061 WARN  IntelInflater - Zero Bytes Written : 0
+20:07:33.423 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:07:39.409 WARN  IntelInflater - Zero Bytes Written : 0
+20:07:40.722 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:12:55.330 WARN  IntelInflater - Zero Bytes Written : 0
+20:12:57.638 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:14:59.851 WARN  IntelInflater - Zero Bytes Written : 0
+20:15:02.415 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:16:27.083 WARN  IntelInflater - Zero Bytes Written : 0
+20:16:29.415 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:17:18.676 WARN  IntelInflater - Zero Bytes Written : 0
+20:17:20.457 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:20:01.649 WARN  IntelInflater - Zero Bytes Written : 0
+20:20:03.861 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:20:06.357 WARN  IntelInflater - Zero Bytes Written : 0
+20:20:08.073 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:22:26.177 WARN  IntelInflater - Zero Bytes Written : 0
+20:22:28.572 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:26:23.514 WARN  IntelInflater - Zero Bytes Written : 0
+20:26:26.115 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:15.661 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:18.265 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:22.416 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:24.321 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:42.317 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:43.727 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:46.314 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:47.734 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:50.181 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:51.521 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:52.017 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:53.362 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:53.860 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:55.229 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:29:57.799 WARN  IntelInflater - Zero Bytes Written : 0
+20:29:59.142 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:01.687 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:03.088 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:03.556 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:04.969 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:07.530 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:08.894 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:11.434 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:12.764 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:15.359 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:16.699 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:19.239 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:20.537 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:23.168 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:24.469 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:27.071 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:28.343 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:32.746 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:34.023 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:38.538 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:39.841 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:42.765 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:44.003 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:54.304 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:55.492 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:30:58.123 WARN  IntelInflater - Zero Bytes Written : 0
+20:30:59.462 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:02.031 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:03.407 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:17.664 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:18.967 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:21.747 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:22.939 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:23.424 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:24.723 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:31.314 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:32.548 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:35.296 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:36.520 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:39.285 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:40.509 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:45.938 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:47.170 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:31:52.691 WARN  IntelInflater - Zero Bytes Written : 0
+20:31:53.899 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:32:01.102 WARN  IntelInflater - Zero Bytes Written : 0
+20:32:02.311 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:37:39.383 WARN  IntelInflater - Zero Bytes Written : 0
+20:37:41.566 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:38:56.653 WARN  IntelInflater - Zero Bytes Written : 0
+20:38:59.007 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:42:32.787 WARN  IntelInflater - Zero Bytes Written : 0
+20:42:35.410 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:42:42.899 WARN  IntelInflater - Zero Bytes Written : 0
+20:42:44.976 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:42:47.363 WARN  IntelInflater - Zero Bytes Written : 0
+20:42:48.658 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:42:55.051 WARN  IntelInflater - Zero Bytes Written : 0
+20:42:56.400 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:42:58.929 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:00.284 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:04.387 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:05.643 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:06.123 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:07.439 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:09.863 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:11.068 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:11.546 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:12.877 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:13.387 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:14.638 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:15.101 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:16.392 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:21.591 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:22.812 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:43:29.831 WARN  IntelInflater - Zero Bytes Written : 0
+20:43:30.994 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:44:38.905 WARN  IntelInflater - Zero Bytes Written : 0
+20:44:40.097 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:50:11.223 WARN  IntelInflater - Zero Bytes Written : 0
+20:50:13.366 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:52:19.569 WARN  IntelInflater - Zero Bytes Written : 0
+20:52:22.081 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:52:24.580 WARN  IntelInflater - Zero Bytes Written : 0
+20:52:26.038 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:56:59.684 WARN  IntelInflater - Zero Bytes Written : 0
+20:57:01.978 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:57:06.232 WARN  IntelInflater - Zero Bytes Written : 0
+20:57:08.141 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+20:59:04.652 WARN  IntelInflater - Zero Bytes Written : 0
+20:59:06.972 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:00:49.540 WARN  IntelInflater - Zero Bytes Written : 0
+21:00:51.943 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:04:45.787 WARN  IntelInflater - Zero Bytes Written : 0
+21:04:48.175 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:06:20.829 WARN  IntelInflater - Zero Bytes Written : 0
+21:06:22.887 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:08:45.510 WARN  IntelInflater - Zero Bytes Written : 0
+21:08:47.929 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:08:50.310 WARN  IntelInflater - Zero Bytes Written : 0
+21:08:51.818 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:08:55.999 WARN  IntelInflater - Zero Bytes Written : 0
+21:08:57.750 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:09:00.192 WARN  IntelInflater - Zero Bytes Written : 0
+21:10:40.251 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:10:42.721 WARN  IntelInflater - Zero Bytes Written : 0
+21:12:23.131 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:12:32.792 WARN  IntelInflater - Zero Bytes Written : 0
+21:12:36.383 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:19:30.749 WARN  IntelInflater - Zero Bytes Written : 0
+21:19:33.130 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:19:57.573 WARN  IntelInflater - Zero Bytes Written : 0
+21:19:59.561 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:20:01.871 WARN  IntelInflater - Zero Bytes Written : 0
+21:20:03.297 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+21:20:15.864 WARN  IntelInflater - Zero Bytes Written : 0
+21:20:17.140 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:06:45.423 WARN  IntelInflater - Zero Bytes Written : 0
+22:06:48.675 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:08:25.092 WARN  IntelInflater - Zero Bytes Written : 0
+22:08:27.507 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:08:30.056 WARN  IntelInflater - Zero Bytes Written : 0
+22:08:31.891 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:08:56.029 WARN  IntelInflater - Zero Bytes Written : 0
+22:08:57.571 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:06.764 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:08.194 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:12.403 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:13.812 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:15.824 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:17.212 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:19.242 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:20.564 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:22.841 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:24.199 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:24.687 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:25.975 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:26.491 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:27.788 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:28.277 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:29.511 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:34.320 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:35.654 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:09:42.991 WARN  IntelInflater - Zero Bytes Written : 0
+22:09:44.274 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:14:31.152 WARN  IntelInflater - Zero Bytes Written : 0
+22:14:33.210 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:14:36.887 WARN  IntelInflater - Zero Bytes Written : 0
+22:14:38.729 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:14:54.923 WARN  IntelInflater - Zero Bytes Written : 0
+22:14:56.148 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:15:00.128 WARN  IntelInflater - Zero Bytes Written : 0
+22:15:01.571 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:15:07.493 WARN  IntelInflater - Zero Bytes Written : 0
+22:15:08.715 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:15:13.648 WARN  IntelInflater - Zero Bytes Written : 0
+22:15:14.851 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:15:21.097 WARN  IntelInflater - Zero Bytes Written : 0
+22:15:22.361 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:19:12.523 WARN  IntelInflater - Zero Bytes Written : 0
+22:19:14.480 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:20:47.993 WARN  IntelInflater - Zero Bytes Written : 0
+22:20:50.035 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:22:55.880 WARN  IntelInflater - Zero Bytes Written : 0
+22:22:58.061 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:16.039 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:17.877 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:19.918 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:21.485 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:27.981 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:29.450 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:31.465 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:32.821 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:36.300 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:37.586 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:41.497 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:42.806 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:52.719 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:53.974 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:54.611 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:55.874 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:24:57.956 WARN  IntelInflater - Zero Bytes Written : 0
+22:24:59.318 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:25:01.357 WARN  IntelInflater - Zero Bytes Written : 0
+22:25:02.595 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:28:32.714 WARN  IntelInflater - Zero Bytes Written : 0
+22:28:34.642 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:28:42.567 WARN  IntelInflater - Zero Bytes Written : 0
+22:28:44.367 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:28:46.490 WARN  IntelInflater - Zero Bytes Written : 0
+22:28:47.835 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:18.588 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:20.500 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:24.514 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:26.315 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:28.447 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:29.800 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:33.576 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:34.945 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:42.067 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:43.320 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:49.224 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:50.492 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:52.591 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:53.823 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:55.925 WARN  IntelInflater - Zero Bytes Written : 0
+22:31:57.157 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:31:59.584 WARN  IntelInflater - Zero Bytes Written : 0
+22:32:00.779 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:32:02.877 WARN  IntelInflater - Zero Bytes Written : 0
+22:32:04.135 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:32:06.617 WARN  IntelInflater - Zero Bytes Written : 0
+22:32:07.878 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:32:12.089 WARN  IntelInflater - Zero Bytes Written : 0
+22:32:13.342 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:32:15.456 WARN  IntelInflater - Zero Bytes Written : 0
+22:32:16.638 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:32:18.824 WARN  IntelInflater - Zero Bytes Written : 0
+22:32:20.114 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:36:24.980 WARN  IntelInflater - Zero Bytes Written : 0
+22:36:26.917 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:36:29.014 WARN  IntelInflater - Zero Bytes Written : 0
+22:36:30.755 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:36:32.783 WARN  IntelInflater - Zero Bytes Written : 0
+22:36:34.070 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:36:52.668 WARN  IntelInflater - Zero Bytes Written : 0
+22:36:54.091 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:38:27.566 WARN  IntelInflater - Zero Bytes Written : 0
+22:38:29.012 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:38:31.049 WARN  IntelInflater - Zero Bytes Written : 0
+22:38:32.425 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:38:34.543 WARN  IntelInflater - Zero Bytes Written : 0
+22:38:35.879 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:38:37.997 WARN  IntelInflater - Zero Bytes Written : 0
+22:38:39.294 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:38:41.356 WARN  IntelInflater - Zero Bytes Written : 0
+22:38:42.686 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:40:14.485 WARN  IntelInflater - Zero Bytes Written : 0
+22:40:15.997 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:41:07.700 WARN  IntelInflater - Zero Bytes Written : 0
+22:41:09.344 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:43:11.899 WARN  IntelInflater - Zero Bytes Written : 0
+22:43:13.923 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:46:30.109 WARN  IntelInflater - Zero Bytes Written : 0
+22:46:32.088 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:46:34.199 WARN  IntelInflater - Zero Bytes Written : 0
+22:46:35.696 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:46:37.803 WARN  IntelInflater - Zero Bytes Written : 0
+22:46:39.155 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:49:53.835 WARN  IntelInflater - Zero Bytes Written : 0
+22:49:56.282 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:49:58.501 WARN  IntelInflater - Zero Bytes Written : 0
+22:50:00.114 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:16.389 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:18.682 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:20.590 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:22.082 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:24.081 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:25.373 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:27.435 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:28.847 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:30.829 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:32.172 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:38.034 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:39.386 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:45.991 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:47.222 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:49.291 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:50.566 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:52:52.512 WARN  IntelInflater - Zero Bytes Written : 0
+22:52:53.730 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:53:04.790 WARN  IntelInflater - Zero Bytes Written : 0
+22:53:06.024 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:53:13.069 WARN  IntelInflater - Zero Bytes Written : 0
+22:53:14.320 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:53:26.264 WARN  IntelInflater - Zero Bytes Written : 0
+22:53:27.465 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:53:33.545 WARN  IntelInflater - Zero Bytes Written : 0
+22:53:34.869 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:53:36.875 WARN  IntelInflater - Zero Bytes Written : 0
+22:53:38.178 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:53:41.516 WARN  IntelInflater - Zero Bytes Written : 0
+22:53:42.677 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:53:59.586 WARN  IntelInflater - Zero Bytes Written : 0
+22:54:00.775 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:54:08.252 WARN  IntelInflater - Zero Bytes Written : 0
+22:54:09.547 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:54:18.743 WARN  IntelInflater - Zero Bytes Written : 0
+22:54:19.928 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:54:35.892 WARN  IntelInflater - Zero Bytes Written : 0
+22:54:37.059 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:54:41.766 WARN  IntelInflater - Zero Bytes Written : 0
+22:54:43.113 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:54:45.070 WARN  IntelInflater - Zero Bytes Written : 0
+22:54:46.325 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:55:18.531 WARN  IntelInflater - Zero Bytes Written : 0
+22:55:19.727 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:03.148 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:05.111 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:07.274 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:09.016 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:14.893 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:16.222 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:16.689 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:17.901 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:18.349 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:19.642 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:20.103 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:21.316 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:21.760 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:23.034 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:25.028 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:26.285 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:28.211 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:29.487 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:31.438 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:32.673 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:33.129 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:34.444 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:36.472 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:37.705 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:38.175 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:39.410 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:42.683 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:43.838 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:44.286 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:45.595 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:46.114 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:47.347 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:49.429 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:50.587 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:58:54.732 WARN  IntelInflater - Zero Bytes Written : 0
+22:58:55.851 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:00.245 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:01.481 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:03.508 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:04.715 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:06.785 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:07.970 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:12.294 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:13.453 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:23.428 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:24.530 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:26.893 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:28.035 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:40.054 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:41.215 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+22:59:43.319 WARN  IntelInflater - Zero Bytes Written : 0
+22:59:44.615 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:00:27.659 WARN  IntelInflater - Zero Bytes Written : 0
+23:00:28.789 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:02:46.274 WARN  IntelInflater - Zero Bytes Written : 0
+23:02:48.183 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:03:25.249 WARN  IntelInflater - Zero Bytes Written : 0
+23:03:26.972 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:03:39.879 WARN  IntelInflater - Zero Bytes Written : 0
+23:03:41.170 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:03:43.167 WARN  IntelInflater - Zero Bytes Written : 0
+23:03:44.455 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:03:48.267 WARN  IntelInflater - Zero Bytes Written : 0
+23:03:49.496 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:03:58.486 WARN  IntelInflater - Zero Bytes Written : 0
+23:03:59.713 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:01.670 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:02.880 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:10.335 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:11.523 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:13.470 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:14.734 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:23.386 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:24.578 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:26.594 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:27.922 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:31.854 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:33.096 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:37.034 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:38.235 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:43.140 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:44.403 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:49.839 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:51.071 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:56.496 WARN  IntelInflater - Zero Bytes Written : 0
+23:04:57.628 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:04:59.678 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:00.958 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:02.983 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:04.188 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:14.112 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:15.253 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:15.676 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:16.920 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:17.423 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:18.644 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:20.660 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:21.774 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:40.628 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:41.796 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:44.101 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:45.333 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:05:47.417 WARN  IntelInflater - Zero Bytes Written : 0
+23:05:48.571 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:09:18.172 WARN  IntelInflater - Zero Bytes Written : 0
+23:09:20.040 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:09:31.754 WARN  IntelInflater - Zero Bytes Written : 0
+23:09:33.124 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:09:33.534 WARN  IntelInflater - Zero Bytes Written : 0
+23:09:34.799 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:09:35.250 WARN  IntelInflater - Zero Bytes Written : 0
+23:09:36.440 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:09:38.389 WARN  IntelInflater - Zero Bytes Written : 0
+23:09:39.542 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:10:56.798 WARN  IntelInflater - Zero Bytes Written : 0
+23:10:57.904 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:11:32.146 WARN  IntelInflater - Zero Bytes Written : 0
+23:11:33.302 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:11:36.420 WARN  IntelInflater - Zero Bytes Written : 0
+23:11:37.646 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:11:55.957 WARN  IntelInflater - Zero Bytes Written : 0
+23:11:57.085 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:11:59.092 WARN  IntelInflater - Zero Bytes Written : 0
+23:12:00.239 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:13:32.650 WARN  IntelInflater - Zero Bytes Written : 0
+23:13:34.467 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:13:39.522 WARN  IntelInflater - Zero Bytes Written : 0
+23:13:40.790 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:13:44.459 WARN  IntelInflater - Zero Bytes Written : 0
+23:13:45.652 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:13:57.375 WARN  IntelInflater - Zero Bytes Written : 0
+23:13:58.577 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:14:49.192 WARN  IntelInflater - Zero Bytes Written : 0
+23:14:50.366 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:25.113 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:26.300 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:30.931 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:32.191 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:34.283 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:35.500 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:37.523 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:38.733 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:39.187 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:40.382 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:42.293 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:43.454 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:48.503 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:49.724 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:51.618 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:52.802 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:54.753 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:55.906 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:15:57.917 WARN  IntelInflater - Zero Bytes Written : 0
+23:15:59.171 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:01.142 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:02.312 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:04.266 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:05.444 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:07.399 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:08.537 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:10.610 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:11.702 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:13.790 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:15.015 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:17.101 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:18.309 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:20.586 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:21.770 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:23.826 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:24.984 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:27.026 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:28.138 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:30.230 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:31.296 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:33.366 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:34.470 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:36.582 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:37.797 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:39.846 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:41.054 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:43.087 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:44.256 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:46.457 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:47.598 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:49.712 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:50.837 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:52.956 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:54.074 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:56.131 WARN  IntelInflater - Zero Bytes Written : 0
+23:16:57.232 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:16:59.354 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:00.541 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:02.669 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:03.840 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:06.218 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:07.392 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:09.604 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:10.716 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:13.014 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:14.116 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:45.774 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:46.874 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:48.994 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:50.165 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:52.160 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:53.333 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:17:55.414 WARN  IntelInflater - Zero Bytes Written : 0
+23:17:56.537 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:01.385 WARN  IntelInflater - Zero Bytes Written : 0
+23:18:02.599 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:04.733 WARN  IntelInflater - Zero Bytes Written : 0
+23:18:05.920 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:06.372 WARN  IntelInflater - Zero Bytes Written : 0
+23:18:07.563 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:08.045 WARN  IntelInflater - Zero Bytes Written : 0
+23:18:09.206 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:11.234 WARN  IntelInflater - Zero Bytes Written : 0
+23:18:12.475 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:17.026 WARN  IntelInflater - Zero Bytes Written : 0
+23:18:18.193 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:21.685 WARN  IntelInflater - Zero Bytes Written : 0
+23:18:22.810 INFO  GenomicsDBImport - Importing batch 1 with 66 samples
+23:18:35.025 INFO  GenomicsDBImport - Done importing batch 1/1
+23:18:35.046 INFO  GenomicsDBImport - Import completed!
+23:18:35.046 INFO  GenomicsDBImport - Shutting down engine
+[April 10, 2022 11:18:35 PM CEST] org.broadinstitute.hellbender.tools.genomicsdb.GenomicsDBImport done. Elapsed time: 306.42 minutes.
+Runtime.totalMemory()=5259132928
+Using GATK jar /home/xlorda/bin/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -jar /home/xlorda/bin/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar GenomicsDBImport -R /home/xlorda/anna_tmp/reference_and_misc_files/GRCh38.primary_assembly.genome.fa -L /home/xlorda/anna_tmp/reference_and_misc_files/wgs_calling_regions.hg38.list --genomicsdb-workspace-path /home/xlorda/anna_tmp/rerun2/PON_DB -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL053B_lib557932_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL061B_lib557933_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL063B_lib557934_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL064B_lib557935_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL110B_lib557936_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL112B_lib557937_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL113B_lib557938_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL117B_lib557939_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL120B_lib557940_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL122B_lib557941_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL123B_lib557942_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_BL124B_lib557943_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_141_B_lib393518_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_265_B_lib393520_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_279_B_lib393522_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_289_B_lib393524_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24495_320_B_lib393531_6751_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_015_B_lib405710_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_016_B_lib405712_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_017_B_lib405714_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_018_B_lib405716_6905_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_021_B_lib405718_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_024_B_lib405720_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_025_B_lib405722_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_104_B_lib405724_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-25405_BL_109_B_lib405726_6905_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_026_B_lib444197_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_028_B_lib444198_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_029_B_lib444199_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_030_B_lib444200_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_033_B_lib453022_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_034_B_lib444202_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_036_B_lib444203_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_037_B_lib444204_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_038_B_lib444205_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_042_B_lib444206_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_043_B_lib444207_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_044_B_lib444208_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_045_B_lib453023_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_046_B_lib444210_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_047_B_lib453701_7209_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_BL_048_B_lib444212_7213_4.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_051_B_lib470099_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_101_B_lib470094_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_102_B_lib470095_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_103_B_lib470096_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_105_B_lib470097_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27109_BL_106_B_lib470098_7389_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_006_B_lib491770_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_022_B_lib491771_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_027_B_lib491772_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-27743_BL_032_B_lib491773_7525_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_176_Normal_lib444219_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_213_Normal_lib444222_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_236_Normal_lib453703_7209_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_254_Normal_lib453702_7209_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-26484_338_Normal_lib444218_7213_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_253_Normal_lib557944_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-29179_258_Normal_lib557946_7833_3.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-21449_Bl_001_C_B_lib349017_6538_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-21449_Bl_002_C_B_lib349018_6538_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-21449_Bl_005_C_B_lib349019_6538_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-23498_BL_008C_lib370153_6652_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-23498_BL_009D_lib370154_6652_1.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24493_BL_010_lib385827_6751_2.vcf.gz -V /home/xlorda/anna_tmp/rerun2/BQSR_RG_RMDUP_NG-24493_BL_019_lib385831_6751_2.vcf.gz

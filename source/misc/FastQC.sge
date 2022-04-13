@@ -1,0 +1,18 @@
+#!/bin/bash -l
+
+# Script runs quality control on fastq files. 
+
+
+# Queue in batch or test
+#$ -cwd
+#$ -S /bin/bash
+#$ -o logs/stdout_FastQC
+#$ -e logs/stderr_FastQC
+#$ -pe mpi 10
+#$ -q test.q
+
+
+fastqc -o /home/xlorda/results/fastqc-results -t 10 $1 $2
+
+
+

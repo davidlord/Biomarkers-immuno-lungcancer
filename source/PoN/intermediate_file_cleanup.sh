@@ -5,7 +5,7 @@
 # queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 1
+#$ -pe mpi 5
 #$ -q test.q
 #$ -o logs/stdout_PoN_intermediate_file_cleanup.txt
 #$ -e logs/stderr_PoN_intermediate_file_cleanup.txt

@@ -9,7 +9,7 @@
 #$ -S /bin/bash
 #$ -o logs/stdout_PoN3_CreateSomaticPanelOfNormals.txt
 #$ -e logs/stderr_PoN3_CreateSomaticPanelOfNormals.txt
-#$ -pe mpi 10
+#$ -pe mpi 40
 #$ -q test.q
 
 # Source config file
