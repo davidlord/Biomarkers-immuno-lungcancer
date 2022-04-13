@@ -9,7 +9,7 @@
 #$ -o logs/stdout_samtools_index.txt
 #$ -e logs/stderr_samtools_index.txt
 #$ -S /bin/bash
-#$ -pe mpi 1
+#$ -pe mpi 5
 #$ -q test.q
 
 # Source config file
