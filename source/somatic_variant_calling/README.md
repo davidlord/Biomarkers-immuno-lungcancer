@@ -26,14 +26,17 @@ Runs GetPileUpSummaries (GATK), summarizing read support for reference- vs. alte
 GetPileupSummaries.sge parameters: $1 = .bam file (processed), $2 = Germline resource, $3 = Germline resource, $4 = output.pileups.table
 
 #### CalculateContamination.sge
-
-
+Script runt CalculateContamination (GATK), calculating fraction of estimated cross-sample contamination.\
+CalculateContamination.sge parameters: $1 = tumor.bam, $2 = normal.bam, $3 = output.tumor.segments, $4 = output.contamination.table
 
 #### LearnReadOrientationModel.sge
-
-
+Script runs LearnReadOrientationModel (GATK) on f1r2 files (output from Mutect2), emitting orientation bias table files.\
+LearnReadOrientationModel.sge parameters: $1 = input.f1r2, $2 = output.orientation.model
 
 #### FilterMutectCalls.sge
+Script runs FilterMutectCalls (GATK) on unfiltered.vcf files, emitting filtered.vcf files.\
+FilterMutectCalls.sge parameters: $1 = input.unfiltered.vcf, $2 = reference genome, $3 = tumor.segments, $4 = contamination.table, $5 = orientation.model, $6 = output.filtered.vcf
+
 
 
 
