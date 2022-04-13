@@ -10,7 +10,7 @@
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 5
+#$ -pe mpi 15
 #$ -q test.q
 #$ -o logs/stdout_FilterMutectCalls.sge
 #$ -e logs/stderr_FilterMutectCalls.sge

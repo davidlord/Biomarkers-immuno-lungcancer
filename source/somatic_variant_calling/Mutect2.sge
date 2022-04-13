@@ -11,7 +11,7 @@
 #$ -S /bin/bash
 #$ -o logs/stdout_Mutect2.txt
 #$ -e logs/stderr_Mutect2.txt
-#$ -pe mpi 1
+#$ -pe mpi 15
 #$ -q test.q
 
 # First step in somatic variant calling pipeline: Script runs somatic variant caller Mutect2 (GATK) on paired processed .bam files input.

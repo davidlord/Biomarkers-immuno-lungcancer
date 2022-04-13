@@ -11,7 +11,7 @@
 #$ -S /bin/bash
 #$ -o logs/stdout_GetPileupSummaries.txt
 #$ -e logs/stderr_GetPileUpSummaries.txt
-#$ -pe mpi 1
+#$ -pe mpi 10
 #$ -q test.q
 
 # Source config file
