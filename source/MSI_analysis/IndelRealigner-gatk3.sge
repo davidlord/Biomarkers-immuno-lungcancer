@@ -9,8 +9,11 @@
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 4
+#$ -pe mpi 10
 #$ -q test.q
+#$ -e logs/stderr_IndelRealigner.txt
+#$ -o logs/stdout_IndelRealigner.txt
+
 
 # Source config file
 source ../config.txt
@@ -19,7 +22,7 @@ source ../config.txt
 
 # Run IndelRealigner (GATK3)
 
-java -jar gatk3 \
+java -jar $GATK3 \
 -T IndelRealigner \
 -R $HG38 \
 -known $KNOWN_INDELS \

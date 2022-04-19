@@ -1,0 +1,25 @@
+#!/bin/bash -l
+
+# Script runs MSIsensor-pro on paired normal-tumor processed BAM files.
+# Script defined for one pair of BAM files. Run on a list of paired BAM files through a loop.
+# Example: 'cat bam_files.txt | while read N T; do qsub script $N $T; done'
+# INPUT: 2x BAM files (normal- and tumor). 
+# OUTPUT: Report files, tabulated text files.  
+
+# queue in batch
+#$ -cwd
+#$ -o logs/stdout.txt
+#$ -e logs/stderr.txt
+#$ -S /bin/bash
+#$ -pe mpi 5
+#$ -q test.q
+
+# Source config file
+source ../config.txt
+
+
+# Run MSIsensor-pro for paired blood-tumor BAM files
+
+msisensor-pro msi -d $1 -n ${WORK_DIR}/${2} -t ${WORK_DIR}/${3} -o ${WORK_DIR}/${4}
+
+

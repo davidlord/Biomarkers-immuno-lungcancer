@@ -10,8 +10,10 @@
 # Queue in batch or test
 #$ -cwd
 #$ -S /bin/bash
-#$ -pe mpi 4
+#$ -pe mpi 10
 #$ -q test.q
+#$ -e logs/stderr_RealignerTargetCreator.txt
+#$ -o logs/stdout_RealignerTargetCreator.txt
 
 # Source config file
 source ../config.txt
@@ -19,7 +21,7 @@ source ../config.txt
 
 
 # Run RealignerTargetCreator (gatk3)
-java -jar gatk3 \
+java -jar $GATK3 \
 -T RealignerTargetCreator \
 -R $HG38 \
 -L $INTERVALS_LIST \

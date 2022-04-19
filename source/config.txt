@@ -1,4 +1,8 @@
-# Config file for: BAM-file processing, Panel of Normals (PoN) generation, and Somatic variant calling.
+# Configuration file for: BAM-file processing, Panel of Normals (PoN) generation, Somatic variant calling, and MSI analysis.
+
+#===============================================================================================================================
+# ESSENTIAL PATHS
+#===============================================================================================================================
 
 # Set working directory
 WORK_DIR=/home/xlorda/anna_tmp/rerun2
@@ -12,14 +16,22 @@ WORK_DIR=/home/xlorda/anna_tmp/rerun2
 	SVC_PATH=/home/xlorda/Biomarkers-immuno-lungcancer/source/somatic_variant_calling
 
 
+# Software paths
+
+	# GATK3 .jar file
+	GATK3=/home/xlorda/bin/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef/GenomeAnalysisTK.jar
+
 
 # Path to panel_of_normals.vcf (generated through running PoN pipeline on processed .bam files).
 PON=/home/xlorda/anna_tmp/rerun2/PoN.vcf.gz
 
 
 
-# Reference files: 
 
+#===============================================================================================================================
+# REFERENCE- & RESOURCE FILES
+#===============================================================================================================================
+#
 # Path to directory containing reference files:
 REF_DIR=/home/xlorda/anna_tmp/reference_and_misc_files
 
