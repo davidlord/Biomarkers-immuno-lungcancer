@@ -9,7 +9,6 @@ library(dplyr)
 library(doSNOW)
 
 
-
 # Set working directory (also place data to read in working directory).
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
