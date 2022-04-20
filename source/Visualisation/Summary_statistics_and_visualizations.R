@@ -11,7 +11,7 @@ library(naniar)
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 # Read clinical data tsv file:
-  clinical_df <- read.delim("cbioportal_clinical_data.tsv")
+  clinical_df <- read.delim("merged_cBioPortal_clinical_mutation_data.tsv")
 
 # Read tsv as data frame:
   clinical_df <- as.data.frame(clinical_df)
@@ -48,18 +48,46 @@ setwd(WORK_DIR)
         fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
         fraction_NDB = 1 - fraction_DCB
       )
+  
   # Progression free survival:
-      clinical_df %>% 
-      
-      
-# Calculate some summary statistics, for each study and for all: 
-  clinical_df %>% summarize(
-  # Calculate sex ratio:
-  
-  # Calculate mean and sd Progression free survival: 
-  
-  # Smoking history distribution: 
+      # Progression free survival for each cohort:
+      clinical_df %>% group_by(Study_ID) %>% filter(!is.na(PFS_months)) %>% summarize(
+        average_PFS = mean(PFS_months),
+        standard_deviation_PFS = sd(PFS_months)
+      )
+      # Progression free survial for entire dataset:
+      clinical_df %>% filter(!is.na(PFS_months)) %>% summarize(
+        average_PFS = mean(PFS_months),
+        standard_deviation_PFS = sd(PFS_months)
+      )
 
+  # Sex ratio:
+      # Sex ratio for each cohort:
+      clinical_df %>% group_by(Study_ID) %>% summarize(
+        fraction_male = sum(Sex == "Male") / length(Sex),
+        fraction_female = sum(Sex == "Female") / length(Sex)
+      )
+      # Sex ratio for entire dataset: 
+      clinical_df %>% summarize(
+        fraction_male = sum(Sex == "Male") / length(Sex),
+        fraction_female = sum(Sex == "Female") / length(Sex)
+      )
+      
+  
+#=======================================================================  
+# SIMPLE BARPLOTS
+#=======================================================================
+
+# Study ID fractions (how large fractions derive from different data sets) barplot/pie chart.
+
+# Sequencing types barplot/pie charts.  
+
+# Smoking history distribution barplot. 
+      
+
+# Specific mutations
+
+      
 
 #=================================================================================
 # Visualizations
@@ -69,6 +97,7 @@ setwd(WORK_DIR)
 # plots. If Rstudio is in a bad mood, you can generate the plots in a new script file
 # (running on the same instance).
 
+      
 
 # Heatmap of missing data:
 # DEV: May make this one prettier...
@@ -80,19 +109,18 @@ missing_data <- vis_miss(clinical_df)
 TMB_hist <- clinical_df %>% ggplot(aes(x = TMB)) +
   geom_histogram(binwidth = 1, fill = "mediumpurple2", col = "mediumpurple4") +
   labs(x = 'Tumor Mutation Burden', y = 'Count')
-
 TMB_hist
 # Remove max TMB outlier from dataset:
 clinical_df <- clinical_df %>% filter(TMB < 75)
 
 
 # Log2-transformed histogram (excluding maximum outlier)
-TMB_hist_trans <- TMB_hist +
+TMB_hist_trans <- clinical_df %>% ggplot(aes(x = TMB)) +
+  geom_histogram(binwidth = 1, fill = "mediumpurple2", col = "mediumpurple4") +
+  labs(x = 'Tumor Mutation Burden (Log2 scale)', y = 'Count (Log2 scale)') +
   scale_x_continuous(trans = "log2") +
-  scale_y_continuous(trans = "log2") +
-  labs((x = "Tumor Mutation Burden (Log2 scale)"), (y = "Count (Log2 scale)"))
+  scale_y_continuous(trans = "log2")
 TMB_hist_trans
-
 
 
 # TMB boxplot responders vs non-responders for each cohort
@@ -111,17 +139,14 @@ TMB_boxp_DCB_vs_NCB_log2
 
 
 # Boxplot comparison, TMB across sequencing methods
-## NEEDS FIX: Reorder boxplots so that they are grouped by Sequencing type. 
-# https://www.r-graph-gallery.com/267-reorder-a-variable-in-ggplot2.html
-clinical_df %>%
+## DEV: Reorder boxplots so that they are grouped by Sequencing type. 
+clinical_df %>% mutate(Study_ID = reorder(Study_ID, TMB, FUN = median)) %>%
   ggplot(aes(x = Study_ID, y = TMB, fill = Sequencing_type)) +
   geom_boxplot() +
   #scale_y_continuous(trans = "log2") +
-  scale_fill_brewer(palette = "Accent", direction = -1) +
+  scale_fill_brewer(palette = "Accent") +
   labs(fill = "Sequencing type", y = "Tumor Mutation Burden (Log2 scale)", x = "Cohort") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
 
 
 # Grid of histograms displaying TMB from clinical data set (from cBioPortal), later also include Biolung data. 

@@ -32,14 +32,14 @@ temp_df_list = []
 mutations_sampleIDs_list = []
 for mutations_table in mutation_tables_list:
     # Get mutation name.
-    # DEV: Better fix using regex rather than subsetting string.
-    mutation_name = mutations_table[:4]
+    mutation_name = mutations_table.replace('.mutation.tsv', '')
     # read as df: 
     mutations_df = pd.read_csv(mutations_table, sep = '\t')
     # Filter for somatic variants: 
-    mutations_df_somatic = mutations_df[mutations_df["MS"] == "SOMATIC"]
+    ### Excluded for now since two cohorts do not use this system
+    ###mutations_df_somatic = mutations_df[mutations_df["MS"] == "SOMATIC"]
     # Convert mutations sample ID column to list: 
-    mutations_sampleIDs_list = mutations_df_somatic["Sample ID"].tolist()
+    mutations_sampleIDs_list = mutations_df["Sample ID"].tolist()
     # Create an empty dict to store mutation boolean data for each sample ID in:
     mutations_sampleID_dict = {}
     # Store sample ID from clinical data sets in dict.
