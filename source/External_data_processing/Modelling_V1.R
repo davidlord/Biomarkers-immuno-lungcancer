@@ -29,53 +29,12 @@ data[gene_columns] <- lapply(data[gene_columns], factor)
 colz <- c('Durable_clinical_benefit', 'Histology', 'Smoking_history', 'Sex')
 data[colz] <- lapply(data[colz], factor)
 
+str(data)
+
+## TROUBLESHOOTING:
 # Log2 Transform TMB
 data$TMB <- log2(data$TMB)
 data <- data %>% rename(log2_TMB = TMB)
-# Remove Inf / -Inf entries (log2 of 0)
-data$log2_TMB <- ifelse(is.infinite(data$log2_TMB), 0, data$log2_TMB)
-
-
-#========================================================================
-# REMOVE UNRELEVANT FEATURES
-#========================================================================
-
-# REMOVE NEAR-0 VARIANCE FEATURES (if any)
-numeric_cols = sapply(data, is.numeric)
-variance = nearZeroVar(data[numeric_cols], saveMetrics = TRUE)
-variance
-# No observed near-0 variance numeric features. 
-
-# REMOVE CORRELATED NUMERIC VARIABLES
-data_correlated = cor(data[numeric_cols])
-findCorrelation(data_correlated)
-# No observed correlated numeric variables. 
-
-
-#========================================================================
-# CREATE DUMMY VARIABLES ("ONE-HOT ENCODING")
-#========================================================================
-
-# Store X and Y for later use...
-X = data %>% select(-Durable_clinical_benefit)
-Y = data$Durable_clinical_benefit
-
-
-# Create dummy variable "model" (excluding clinical outcome column)
-dummies_model <- dummyVars(Durable_clinical_benefit ~ ., data = data)
-# "Predict" dummy variables (excluding clinical outcome column)
-dummy_data <- predict(dummies_model, newdata = data)
-# Convert to dataframe
-data <- data.frame(dummy_data)
-str(data)
-
-# Normalize data, range between 0 and 1
-process_data_model <- preProcess(data, method='range')
-data <- predict(process_data_model, newdata = data)
-
-# Append response variable column
-data$Durable_clinical_benefit <- Y
-
 
 
 #========================================================================
@@ -84,24 +43,54 @@ data$Durable_clinical_benefit <- Y
 
 # Split randomly (retaining proportion) using createDataPartition function
 set.seed(100)
-indexes <- createDataPartition(data$Durable_clinical_benefit, p = 0.8, list = FALSE)
+indexes <- createDataPartition(data$Durable_clinical_benefit, p = 0.7, list = FALSE)
 
 data.train <- data[indexes,]
 data.test <- data[-indexes,]
 
+# Store X and Y for later use...
+X = data.train %>% select(-Durable_clinical_benefit)
+Y = data.train$Durable_clinical_benefit
+
+
+#========================================================================
+# CREATE DUMMY VARIABLES ("ONE-HOT ENCODING") FOR THE TRAINING SET
+#========================================================================
+
+# Create dummy variable "model" (excluding clinical outcome column)
+dummies_model <- dummyVars(Durable_clinical_benefit ~ ., data = data.train)
+# "Predict" dummy variables (excluding clinical outcome column)
+dummy.train <- predict(dummies_model, newdata = data.train)
+# Convert to dataframe
+data.train <- data.frame(dummy.train)
+str(data.train)
+
+
+#========================================================================
+# TRANSFORM DATA
+#========================================================================
+
+#TROUBLESHOOT:
+TMB_col <- data.train$log2_TMB
+data.train <- data.train %>% select(-log2_TMB)
+
+# Preprocess data using range: Normaliz values so range is between 0 and 1.
+preProcess_range_model <- preProcess(data.train, method = 'range')
+data.train <- predict(preProcess_range_model, newdata = data.train)
+
+#TROUBLESHOOT:
+#Append TMB
+data.train$log2_TMB <- TMB_col
+
+# Append y-variable to data. 
+data.train$Durable_clinical_benefit <- Y
 
 
 #========================================================================
 # MODEL TRAINING
 #========================================================================
 
-
-
-#-----------------------------------------------------------
-
-
-set.seed(100)
-# Define training control
+# Set training control
 ctrl <- trainControl(method = 'cv', 
                      number = 10, 
                      savePredictions = 'final', 
@@ -109,9 +98,7 @@ ctrl <- trainControl(method = 'cv',
                      summaryFunction = twoClassSummary)
 
 
-
-
-# Random Forest
+# Train Random Forest
 set.seed(100)
 rf_model = train(Durable_clinical_benefit ~ ., 
                  data = data.train, 
@@ -138,14 +125,12 @@ svm_model = train(Durable_clinical_benefit ~ .,
                   trControl = ctrl)
 svm_model
 
-# Adaboost
-set.seed(100)
-AdaB_model = train(Durable_clinical_benefit ~ ., 
-                   data = data.train, 
-                   method = 'adaboost', 
-                   tunelength = 2, 
-                   trControl = ctrl)
-AdaB_model
+# Compare models
+
+compare_models <- resamples(list(RANDOM_FOREST=rf_model, 
+                                 XGBTree=xgbTree_model, 
+                                 SVM=svm_model))
+summary(compare_models)
 
 
 
@@ -153,46 +138,16 @@ AdaB_model
 # MODEL VALIDATION
 #========================================================================
 
-# Compare models
-compare_models <- resamples(list(RANDOM_FOREST=rf_model, 
-                                 XGBTree=xgbTree_model, 
-                                 SVM=svm_model, 
-                                 AdaB=AdaB))
-summary(compare_models)
+# Transform the test data using the same models:
+  # 1. Separate DCB column from test data
+  Y.test = data.test$Durable_clinical_benefit
+  # 2. Create dummy variables
+  dummy.test <- predict(dummies_model, data.test)
+  data.test2 <- data.frame(dummy.test)
+  # 3. Transform data
+  data.test3 <- predict(preProcess_range_model, data.test2)
+  # 4. Append DCB column to test data
+  data.test3$Durable_clinical_benefit <- Y.test
 
 
-# Plot the output from resamples
-scales <- list(x = list(relation = "free"), y = list(relation = "free"))
-bwplot(compare_models, scales = scales)
 
-
-# Try on test data
-# Random Forest: 
-predictions_rf <- predict(rf_model, data.test)
-rf_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
-                data = predictions_rf, 
-                mode = 'everything', 
-                positive = 'YES')
-rf_cm
-
-predictions_xgbTree <- predict(xgbTree_model, data.test)
-xgbTree_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
-                              data = predictions_xgbTree, 
-                              mode = 'everything', 
-                              positive = 'YES')
-xgbTree_cm
-
-
-predictions_svm <- predict(svm_model, data.test)
-svm_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
-                          data = predictions_svm, 
-                          mode = 'everything', 
-                          positive = 'YES')
-svm_cm
-
-predictions_AdaB <- predict(AdaB_model, data.test)
-AdaB_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
-                          data = predictions_AdaB, 
-                          mode = 'everything', 
-                          positive = 'YES')
-svm_cm
