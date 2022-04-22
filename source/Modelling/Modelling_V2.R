@@ -1,3 +1,11 @@
+#HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+# The purpose of this script is to create ML models of the preprocessed and harmonized 
+# data in the Biomarkers-Immuno-Lung project.
+#
+#HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+#
+#
+#
 #============================================================================
 # LOAD LIBRARIES & READ FILES
 #============================================================================
@@ -40,20 +48,20 @@ data$log2_TMB <- ifelse(is.infinite(data$log2_TMB), 0, data$log2_TMB)
 # REMOVE UNRELEVANT FEATURES
 #========================================================================
 
-# REMOVE NEAR-0 VARIANCE FEATURES (if any)
+# Remove near-0 variance features (if any)
 numeric_cols = sapply(data, is.numeric)
 variance = nearZeroVar(data[numeric_cols], saveMetrics = TRUE)
 variance
 # No observed near-0 variance numeric features. 
 
-# REMOVE CORRELATED NUMERIC VARIABLES
+# Remove correlated numeric features (if any)
 data_correlated = cor(data[numeric_cols])
 findCorrelation(data_correlated)
 # No observed correlated numeric variables. 
 
 
 #========================================================================
-# CREATE DUMMY VARIABLES ("ONE-HOT ENCODING")
+# CREATE DUMMY VARIABLES (ONE-HOT ENCODING)
 #========================================================================
 
 # Store X and Y for later use...
@@ -61,7 +69,7 @@ X = data %>% select(-Durable_clinical_benefit)
 Y = data$Durable_clinical_benefit
 
 
-# Create dummy variable "model" (excluding clinical outcome column)
+# Create dummy variable "model" (excluding 'clinical outcome column'Durable_clinical_outcome' response variable)
 dummies_model <- dummyVars(Durable_clinical_benefit ~ ., data = data)
 # "Predict" dummy variables (excluding clinical outcome column)
 dummy_data <- predict(dummies_model, newdata = data)
@@ -76,7 +84,7 @@ data <- predict(process_data_model, newdata = data)
 # Append response variable column
 data$Durable_clinical_benefit <- Y
 
-
+str(data)
 
 #========================================================================
 # SPLIT DATA (INTO TRAINING DATA AND TEST DATA)
@@ -95,13 +103,8 @@ data.test <- data[-indexes,]
 # MODEL TRAINING
 #========================================================================
 
-
-
-#-----------------------------------------------------------
-
-
-set.seed(100)
 # Define training control
+set.seed(100)
 ctrl <- trainControl(method = 'cv', 
                      number = 10, 
                      savePredictions = 'final', 
@@ -109,9 +112,7 @@ ctrl <- trainControl(method = 'cv',
                      summaryFunction = twoClassSummary)
 
 
-
-
-# Random Forest
+# Train Random Forest model
 set.seed(100)
 rf_model = train(Durable_clinical_benefit ~ ., 
                  data = data.train, 
@@ -120,7 +121,7 @@ rf_model = train(Durable_clinical_benefit ~ .,
                  trControl = ctrl)
 rf_model
 
-# Extreme Gradient Boosting Tree
+# Train Extreme Gradient Boosting Tree model
 set.seed(100)
 xgbTree_model = train(Durable_clinical_benefit ~ ., 
                       data = data.train, 
@@ -129,7 +130,7 @@ xgbTree_model = train(Durable_clinical_benefit ~ .,
                       trControl = ctrl)
 xgbTree_model
 
-# Support vector machine
+# Train Support Vector Machine model
 set.seed(100)
 svm_model = train(Durable_clinical_benefit ~ ., 
                   data = data.train, 
@@ -166,7 +167,7 @@ scales <- list(x = list(relation = "free"), y = list(relation = "free"))
 bwplot(compare_models, scales = scales)
 
 
-# Try on test data
+# Try to make predictions using the models on the test data, create confusion matrix for each model
 # Random Forest: 
 predictions_rf <- predict(rf_model, data.test)
 rf_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
@@ -175,6 +176,7 @@ rf_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit,
                 positive = 'YES')
 rf_cm
 
+# xgbTree:
 predictions_xgbTree <- predict(xgbTree_model, data.test)
 xgbTree_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
                               data = predictions_xgbTree, 
@@ -182,7 +184,7 @@ xgbTree_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit,
                               positive = 'YES')
 xgbTree_cm
 
-
+# Support Vector Machine:
 predictions_svm <- predict(svm_model, data.test)
 svm_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
                           data = predictions_svm, 
@@ -190,9 +192,10 @@ svm_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit,
                           positive = 'YES')
 svm_cm
 
+# AdaBoost: 
 predictions_AdaB <- predict(AdaB_model, data.test)
 AdaB_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
                           data = predictions_AdaB, 
                           mode = 'everything', 
                           positive = 'YES')
-svm_cm
+AdaB_cm
