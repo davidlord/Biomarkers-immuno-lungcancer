@@ -1,4 +1,3 @@
-
 #============================================================================
 # LOAD LIBRARIES & READ FILES
 #============================================================================
@@ -8,15 +7,14 @@ library(caret)
 library(dplyr)
 library(doSNOW)
 
-
 # Set working directory (also place data to read in working directory).
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
-
 data <- read.delim("merged_cBioPortal_clinical_mutation_data.tsv")
 
+
 #===========================================================================
-# Preprocessing
+# PREPROCESSING
 #===========================================================================
 
 # Exclude features not to be included when making predictions
@@ -32,9 +30,13 @@ data[colz] <- lapply(data[colz], factor)
 
 str(data)
 
+# Log2 Transform TMB
+data$TMB <- log2(data$TMB)
+data <- data %>% rename(log2_TMB = TMB)
+
 
 #===================================================
-# REMOVE UNRELEVANT FEATURES
+# REMOVE UNRELEVANT NUMERIC FEATURES
 #===================================================
 
 # REMOVE NEAR-0 VARIANCE FEATURES (if any)
@@ -49,7 +51,6 @@ findCorrelation(data_correlated)
 # No observed correlated numeric variables. 
 
 
-
 #========================================================================
 # SPLIT DATA (INTO TRAINING DATA AND TEST DATA)
 #========================================================================
@@ -58,6 +59,7 @@ findCorrelation(data_correlated)
 set.seed(100)
 indexes <- createDataPartition(data$Durable_clinical_benefit, p = 0.7, list = FALSE)
 
+# Split into train- and test set.
 data.train <- data[indexes,]
 data.test <- data[-indexes,]
 
@@ -70,7 +72,7 @@ Y = data.train$Durable_clinical_benefit
 # IMPUTATION
 #========================================================================
 
-# Exclude PD-L1 expression for now, try imputing later...
+# Exclude PD-L1 expression for now, may add later...
 
 
 #========================================================================
@@ -90,10 +92,6 @@ str(data.train)
 # TRANSFORM DATA
 #========================================================================
 
-# Not sure which transformations to use here. 
-# Log2 transform TMB.
-# Account for batch effect for: TMB & PD-L1 expression.
-
 # Preprocess data using range: Normaliz values so range is between 0 and 1.
 preProcess_range_model <- preProcess(data.train, method = 'range')
 data.train <- predict(preProcess_range_model, newdata = data.train)
@@ -101,6 +99,7 @@ data.train <- predict(preProcess_range_model, newdata = data.train)
 # Append y-variable to data. 
 data.train$Durable_clinical_benefit <- Y
 
+str(data.train)
 
 #========================================================================
 # VISUALIZE IMPORTANCE OF VARIABLES
@@ -108,6 +107,7 @@ data.train$Durable_clinical_benefit <- Y
 
 data.train_excluding_y <- data.train %>% select(-Durable_clinical_benefit)
 
+# Visualize through density plots
 featurePlot(x = data.train_excluding_y, 
             y = data.train$Durable_clinical_benefit, 
             plot = "density", 
@@ -117,14 +117,12 @@ featurePlot(x = data.train_excluding_y,
 
 
 
-
 #========================================================================
 # FEATURE SELECTION RFE
 #========================================================================
 
 # Perform recursive feature elimination (RFE) on the data using the random forest function.
 set.seed(100)
-
 ctrl <- rfeControl(functions = rfFuncs, 
                    method = "repeatedcv", 
                    repeats = 5, 
@@ -138,14 +136,14 @@ rfe_train_data <- data.train %>% select(-Durable_clinical_benefit)
 
 # Run RFE through repeated cross-validation using random forest algorithm. 
 # Note: Can change the number of features to select by altering "sizes".
-result_rfe = rfe(x = rfe_train_data, 
+result_rfe <- rfe(x = rfe_train_data, 
                  y = data.train$Durable_clinical_benefit, 
                  sizes = c(1:colnum), 
-                 rfeControl = ctrl,
-                 number = 10)
+                 rfeControl = ctrl)
 result_rfe
 View(result_rfe)
 # STK11 and TMB seems to be most important features. 
+
 
 
 #========================================================================
@@ -153,8 +151,7 @@ View(result_rfe)
 #========================================================================
 
 # From data science dojo:
-
-data.train <- data.train %>% select(Durable_clinical_benefit, TMB, STK11_mut.0, STK11_mut.1)
+#-------------------------
 
 train.control <- trainControl(method = "repeatedcv", 
                               number = 10, 
@@ -170,20 +167,23 @@ tune.grid <- expand.grid(eta = c(0.05, 0.075, 0.1),
                          subsample = 1)
 View(tune.grid)
 
+# Make cluster to run process in parallell
 cl <- makeCluster(4, type = "SOCK")
-
 registerDoSNOW(cl)
 
+# Train xgbTree model
 xgbTree_model <- train(Durable_clinical_benefit ~ ., 
       data = data.train, 
       method = "xgbTree", 
       tuneGrid = tune.grid, 
       trControl = train.control)
 
+# Stop cluster
 stopCluster(cl)
 
+# View model
 xgbTree_model
-
+# See confusion matrix
 confusionMatrix(xgbTree_model)
 
 
@@ -200,3 +200,22 @@ fitted <- predict(model_mars)
 
 model_mars
 plot(model_mars, main="test")
+
+
+
+set.seed(100)
+# Define training control
+ctrl <- trainControl(method = 'cv', 
+                     number = 10, 
+                     savePredictions = 'final', 
+                     classProbs = TRUE, 
+                     summaryFunction = twoClassSummary)
+
+# Random Forest
+set.seed(100)
+rf_model = train(Durable_clinical_benefit ~ ., 
+                 data = data.train, 
+                 method = "rf", 
+                 tunelength = 10, 
+                 trControl = ctrl)
+rf_model
