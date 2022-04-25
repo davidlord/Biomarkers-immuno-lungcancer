@@ -109,13 +109,11 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 
 # Durable clinical benefit, two categories
   table(clinical_df$Durable.Clinical.Benefit)
-  # NA <- 'await', 'Not reached 6 months follow-up', 'NE'
   # YES <- 'Durable Clinical Benefit', 'Durable clinical benefit beyond 6 months', 'DCB'
   # NO <- 'No durable benefit', 'No Durable Benefit', 'NDB', 
-  clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "await" | clinical_df$Durable.Clinical.Benefit == "Not reached 6 months follow-up" | clinical_df$Durable.Clinical.Benefit == "NE"] <- NA
   clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "Durable Clinical Benefit" | clinical_df$Durable.Clinical.Benefit == "Durable clinical benefit beyond 6 months" | clinical_df$Durable.Clinical.Benefit == "DCB"] <- "YES"
   clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "No durable benefit" | clinical_df$Durable.Clinical.Benefit == "No Durable Benefit" | clinical_df$Durable.Clinical.Benefit == "NDB" | clinical_df$Durable.Clinical.Benefit == "N"] <- "NO"
-  table(clinical_df$Durable.Clinical.Benefit)
+
   
 # PD-L1 expression
   #### Replace strings with numerical values
@@ -124,15 +122,20 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   # Negative <- <1%
   # Weak <- 1 - 49%
   # Strong <- >= 50%
-  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression] == "Negative"
   
+  # NA <- 'Unassessable', 'Unknown'
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Unassessable'] <- NA
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Unknown'] <- NA
+  # 0 <- 'Negative', 'Negative(<1% membraneous staining)'
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Negative'] <- 0
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Negative(<1% membraneous staining)'] <- 0
+  # 2 <- 'Weak', 'Weak(1-49% membraneous staining'
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Weak'] <- 2
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Weak(1-49% membraneous staining'] <- 2
+  # 51 <- 'Strong', 'Strong(>or =50% membraneous staining)'
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Strong'] <- 52
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Strong(>or =50% membraneous staining)'] <- 52
   
-  
-  # May want to include but skip for now... Only roughly 200 samples include PDL1 expr. 
-  sum(is.na(clinical_df$PDL1.Expression))
-  
-# Change names in Study ID column
-
 
 #================================================================================
 # DATA CLEANING
@@ -149,6 +152,8 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   # Filter unmatched
   table(clinical_df$Somatic.Status)
   clinical_df <- clinical_df %>% filter(Somatic.Status == "Matched")
+  # Remove 'Somatic.Status' column
+  clinical_df <- clinical_df %>% select(-Somatic.Status)
   
 # Remove duplicate patient IDs:
   clinical_df <- clinical_df %>% distinct(Patient.ID, .keep_all = TRUE)
@@ -161,8 +166,8 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 
 # Rename column names in data set
   colnames(clinical_df)[which(names(clinical_df) == "Study.ID")] <- "Study_ID"
-  colnames(clinical_df)[which(names(clinical_df) == "Diagnosis.Age")] <- "Diagnosis_age"
-  colnames(clinical_df)[which(names(clinical_df) == "Smoking.History")] <- "Smoking_history"
+  colnames(clinical_df)[which(names(clinical_df) == "Diagnosis.Age")] <- "Diagnosis_Age"
+  colnames(clinical_df)[which(names(clinical_df) == "Smoking.History")] <- "Smoking_History"
   colnames(clinical_df)[which(names(clinical_df) == "Patient.ID")] <- "Patient_ID"
   colnames(clinical_df)[which(names(clinical_df) == "Sample.ID")] <- "Sample_ID"
   colnames(clinical_df)[which(names(clinical_df) == "Cancer.Type.Detailed")] <- "Histology"
@@ -171,10 +176,10 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   colnames(clinical_df)[which(names(clinical_df) == "Progress.Free.Survival..Months.")] <- "PFS_months"
   colnames(clinical_df)[which(names(clinical_df) == "Stage.At.Diagnosis")] <- "Stage_at_diagnosis"
   colnames(clinical_df)[which(names(clinical_df) == "Sequencing.Type")] <- "Sequencing_type"
-  colnames(clinical_df)[which(names(clinical_df) == "PDL1.Expression")] <- "PD-L1_expression"
+  colnames(clinical_df)[which(names(clinical_df) == "PDL1.Expression")] <- "PD-L1_Expression"
 
 # Reorder columns
-  col_order <- c("Study_ID", "Patient_ID", "Sample_ID", "Sequencing_type", "Durable_clinical_benefit", "PFS_months", "Histology", "Smoking_history", "Diagnosis_age", "Sex", "Stage_at_diagnosis", "PD-L1_expression", "TMB")
+  col_order <- c("Study_ID", "Patient_ID", "Sample_ID", "Sequencing_type", "Durable_clinical_benefit", "PFS_months", "Histology", "Smoking_History", "Diagnosis_Age", "Sex", "Stage_at_diagnosis", "PD-L1_Expression", "TMB", "Immunotherapy")
   clinical_df <- clinical_df[, col_order]
 
 
@@ -184,11 +189,15 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   # Separate the control cohort
   control_df <- clinical_df %>% filter(Immunotherapy == 'NO')
   clinical_df <- clinical_df %>% filter(Immunotherapy == 'YES' | is.na(Immunotherapy))
+  # Remove 'Immunotherapy' column from both datasets
+  control_df <- control_df %>% select(-Immunotherapy)
+  clinical_df <- clinical_df %>% select(-Immunotherapy)
 
 
 # Export clinical data frame in excel format:
 write_xlsx(clinical_df, paste(WORK_DIR, "cbioportal_clinical_data.xlsx", sep = "/"))
 
-# Export dataframe as tsv: 
+# Export dataframes as tsv: 
 write.table(clinical_df, file = "cbioportal_clinical_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
+write.table(control_df, file = "modelling_control_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
 
