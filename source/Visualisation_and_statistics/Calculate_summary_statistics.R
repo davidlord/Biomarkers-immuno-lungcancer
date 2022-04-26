@@ -4,71 +4,74 @@
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
-library(naniar)
-
 
 # Set working directory (also place data to read in working directory).
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
-# Read clinical data tsv file:
-  clinical_df <- read.delim("merged_cBioPortal_clinical_mutation_data.tsv")
 
-# Read tsv as data frame:
-  clinical_df <- as.data.frame(clinical_df)
+# Read data file
+total_df <- read.delim("total_df.tsv", stringsAsFactors = TRUE)
+
 
 #=================================================================================
 # CALCULATE SUMMARY STATISTICS
 #=================================================================================
 
+# Overview structure of dataset
+str(total_df)
+
+# Samples in each cohort
+table(total_df$Study_ID)
+
 # Calculate summary statistics
   # TMB:
     # TMB for each cohort:
-    clinical_df %>% group_by(Study_ID) %>% summarize(
+    total_df %>% group_by(Study_ID) %>% summarize(
       average_TMB = mean(TMB), standard_deviation_TMB = sd(TMB)
     )
     # TMB for entire dataset: 
-      clinical_df %>% summarize(average_TMB = mean(TMB), standard_deviation_TMB = sd(TMB))
+      total_df %>% summarize(average_TMB = mean(TMB), standard_deviation_TMB = sd(TMB))
 
   # Age:
       # Age for each cohort:
-      clinical_df %>% group_by(Study_ID) %>% summarize(
-        average_age = mean(Diagnosis_age), standard_deviation_age = sd(Diagnosis_age)
+      total_df %>% filter(!is.na(Diagnosis_Age)) %>% group_by(Study_ID) %>% summarize(
+        average_age = mean(Diagnosis_Age), standard_deviation_age = sd(Diagnosis_Age)
       )
       # Age for entire set:
-      clinical_df %>% summarize(average_age = mean(Diagnosis_age), standard_deviation_age = sd(Diagnosis_age))
+      total_df %>% filter(!is.na(Diagnosis_Age)) %>% summarize(average_age = mean(Diagnosis_Age), standard_deviation_age = sd(Diagnosis_Age))
   
   # Durable clinical benefit: 
       # Fraction durable clinical benefit for each cohort:
-      clinical_df %>% group_by(Study_ID) %>% summarize(
+      total_df %>% group_by(Study_ID) %>% summarize(
         fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
         fraction_NDB = 1 - fraction_DCB
       )
       # Fraction durable clinical benefit for entire dataset: 
-      clinical_df %>% summarize(
+      total_df %>% summarize(
         fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
         fraction_NDB = 1 - fraction_DCB
       )
   
   # Progression free survival:
       # Progression free survival for each cohort:
-      clinical_df %>% group_by(Study_ID) %>% filter(!is.na(PFS_months)) %>% summarize(
+      total_df %>% group_by(Study_ID) %>% filter(!is.na(PFS_months)) %>% summarize(
         average_PFS = mean(PFS_months),
         standard_deviation_PFS = sd(PFS_months)
       )
       # Progression free survial for entire dataset:
-      clinical_df %>% filter(!is.na(PFS_months)) %>% summarize(
+      total_df %>% filter(!is.na(PFS_months)) %>% summarize(
         average_PFS = mean(PFS_months),
         standard_deviation_PFS = sd(PFS_months)
       )
 
   # Sex ratio:
       # Sex ratio for each cohort:
-      clinical_df %>% group_by(Study_ID) %>% summarize(
+      total_df %>% group_by(Study_ID) %>% filter(!is.na(Sex)) %>% summarize(
         fraction_male = sum(Sex == "Male") / length(Sex),
         fraction_female = sum(Sex == "Female") / length(Sex)
       )
       # Sex ratio for entire dataset: 
-      clinical_df %>% summarize(
+      total_df %>% filter(!is.na(Sex)) %>% summarize(
         fraction_male = sum(Sex == "Male") / length(Sex),
         fraction_female = sum(Sex == "Female") / length(Sex)
       )
@@ -101,12 +104,12 @@ setwd(WORK_DIR)
 
 # Heatmap of missing data:
 # DEV: May make this one prettier...
-missing_data <- vis_miss(clinical_df)
+missing_data <- vis_miss(total_df)
 
 
 
 # Non-transformed histogram:
-TMB_hist <- clinical_df %>% ggplot(aes(x = TMB)) +
+TMB_hist <- total_df %>% ggplot(aes(x = TMB)) +
   geom_histogram(binwidth = 1, fill = "mediumpurple2", col = "mediumpurple4") +
   labs(x = 'Tumor Mutation Burden', y = 'Count')
 TMB_hist
