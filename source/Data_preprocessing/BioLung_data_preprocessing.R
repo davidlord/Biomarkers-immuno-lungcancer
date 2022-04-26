@@ -13,7 +13,7 @@ library(readxl)
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
-# Read data
+# Read clinical data
 biolung_2022 <- read_excel("BioLung_clinical_data.xlsx")
 
 #================================================================================
@@ -26,6 +26,7 @@ biolung_2022 <- biolung_2022 %>% filter(Somatic_Status == TRUE)
 # Filter NAs in response variable entries
 biolung_2022 <- biolung_2022 %>% filter(Durable_clinical_benefit == 'Responder' | Durable_clinical_benefit == 'Non responder')
 
+
 #================================================================================
 # HARMONIZE COLUMN ENTRIES TO cBioPortal DATA
 #================================================================================
@@ -34,7 +35,7 @@ biolung_2022 <- biolung_2022 %>% filter(Durable_clinical_benefit == 'Responder' 
   # 'YES' <- 'Responder'
   # 'NO' <- 'Non-responder'
   biolung_2022$Durable_clinical_benefit[biolung_2022$Durable_clinical_benefit == "Responder"] <- "YES"
-  biolung_2022$Durable_clinical_benefit[biolung_2022$Durable_clinical_benefit == "Non-responder"] <- "NO"
+  biolung_2022$Durable_clinical_benefit[biolung_2022$Durable_clinical_benefit == "Non responder"] <- "NO"
 
 # Histology
   # 'Lung adenocarcinoma' <- 'LUAD'
@@ -54,8 +55,20 @@ biolung_2022 <- biolung_2022 %>% filter(Durable_clinical_benefit == 'Responder' 
   table(biolung_2022$`PD-L1_Expression`)
   # '<1' <- 0
   biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` == '<1'] <- 0
- 
- 
+  # Convert to numeric factor
+  biolung_2022$`PD-L1_Expression` <- as.numeric(biolung_2022$`PD-L1_Expression`)
+  # Bin to factors
+  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` > 50 | biolung_2022$`PD-L1_Expression` == 50] <- "Strong"
+  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` >= 1 & biolung_2022$`PD-L1_Expression` < 50] <- "Weak"
+  # '7' got stuck for some reason...
+  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` == 7] <- "Weak"
+  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` < 1] <- "Negative"
+  table(biolung_2022$`PD-L1_Expression`)
+  
+  # Study ID: BioLung <- BioLung_2022
+  biolung_2022$Study_ID[biolung_2022$Study_ID == "BioLung"] <- "BioLung_2022"
+
+  
 #================================================================================
 # SELECT & RENAME COLUMNS
 #================================================================================
@@ -94,6 +107,7 @@ biolung_2022 <- biolung_2022 %>% select(Study_ID, Patient_ID, Sequencing_type, D
 # Rename 'Patient.ID' column
 colnames(biolung_variants_df)[which(names(biolung_variants_df) == "Patient.ID")] <- "Patient_ID"
 
+
 #================================================================================
 # MERGE DFs & EXPORT
 #================================================================================
@@ -103,6 +117,4 @@ merged_BioLung_df <- merge(biolung_2022, biolung_variants_df, by = "Patient_ID")
 
 # Export to tsv
 write.table(merged_BioLung_df, file = "merged_BioLung_clinical_mutation_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
-
-
 

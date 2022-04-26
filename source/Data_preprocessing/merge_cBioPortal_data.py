@@ -35,9 +35,6 @@ for mutations_table in mutation_tables_list:
     mutation_name = mutations_table.replace('.mutation.tsv', '')
     # read as df: 
     mutations_df = pd.read_csv(mutations_table, sep = '\t')
-    # Filter for somatic variants: 
-    ### Excluded for now since two cohorts do not use this system
-    ###mutations_df_somatic = mutations_df[mutations_df["MS"] == "SOMATIC"]
     # Convert mutations sample ID column to list: 
     mutations_sampleIDs_list = mutations_df["Sample ID"].tolist()
     # Create an empty dict to store mutation boolean data for each sample ID in:
@@ -50,7 +47,8 @@ for mutations_table in mutation_tables_list:
         else:
             mutations_sampleID_dict[sampleID] = 0
     # Convert dict to df:
-    df = pd.DataFrame(list(mutations_sampleID_dict.items()), columns = ["Sample_ID", mutation_name + "_mut"])
+    ###df = pd.DataFrame(list(mutations_sampleID_dict.items()), columns = ["Sample_ID", mutation_name + "_mut"])
+    df = pd.DataFrame(list(mutations_sampleID_dict.items()), columns = ["Sample_ID", mutation_name])
     temp_df_list.append(df)
 
 # Merge all dataframes (generated in previous loop) stored in temp_df_list to single dataframe:

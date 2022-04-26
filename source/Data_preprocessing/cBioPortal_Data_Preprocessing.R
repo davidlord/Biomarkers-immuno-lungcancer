@@ -22,7 +22,6 @@ setwd(WORK_DIR)
     Rivzi_2018 <- read.delim("Rivzi_2018_clinical_data.tsv")
 
 
-
 #================================================================================
 # SELECT COLUMNS
 #================================================================================
@@ -93,7 +92,6 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 # Add sequencing type to Hellmann_2018, LUAD_Rivzi_2015, and Rivzi_2018 (All WES)
   clinical_df <- clinical_df %>% mutate(Sequencing.Type = ifelse(Study.ID %in% c("luad_mskcc_2015", "nsclc_mskcc_2018", "nsclc_mskcc_2015"), "WES", Sequencing.Type))
 
-
 # REPLACE ENTRIES
 #-----------------
 # Smoking history, this may later be converted to ordinal data. 
@@ -116,8 +114,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 
   
 # PD-L1 expression
-  #### Replace strings with numerical values
-  ### Then replace values to strings... 
+  # Replace strings with numerical values, then bin to factors.
   table(clinical_df$PDL1.Expression)
   # Negative <- <1%
   # Weak <- 1 - 49%
@@ -135,6 +132,23 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   # 51 <- 'Strong', 'Strong(>or =50% membraneous staining)'
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Strong'] <- 52
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Strong(>or =50% membraneous staining)'] <- 52
+  
+  # Convert to numeric vector
+  clinical_df$PDL1.Expression <- as.numeric(clinical_df$PDL1.Expression)
+  
+  # Bin to factors
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression > 50 | clinical_df$PDL1.Expression == 50] <- "Strong"
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression >= 1 & clinical_df$PDL1.Expression < 50] <- "Weak"
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression < 1] <- "Negative"
+  table(clinical_df$PDL1.Expression)
+  
+# Study ID
+  clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_mskcc_2015'] <- '_NSCLC_Rivzi_2015'
+  clinical_df$Study.ID[clinical_df$Study.ID == 'luad_mskcc_2015'] <- 'Rivzi_2015'
+  clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_pd1_msk_2018'] <- 'Rivzi_2018'
+  clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_mskcc_2018'] <- 'Hellmann_2018'
+  clinical_df$Study.ID[clinical_df$Study.ID == 'lung_msk_2017'] <- 'Jordan_2017'
+  table(clinical_df$Study.ID)
   
 
 #================================================================================
@@ -193,6 +207,9 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   control_df <- control_df %>% select(-Immunotherapy)
   clinical_df <- clinical_df %>% select(-Immunotherapy)
 
+#================================================================================
+# EXPORT FILES
+#================================================================================
 
 # Export clinical data frame in excel format:
 write_xlsx(clinical_df, paste(WORK_DIR, "cbioportal_clinical_data.xlsx", sep = "/"))
