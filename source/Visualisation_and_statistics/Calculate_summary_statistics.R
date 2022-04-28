@@ -81,10 +81,24 @@ table(total_df$Study_ID)
 # MUTATION FREQUENCIES
 #=======================================================================
 str(total_df)
+# Gene-mutation columns:
 mutation_columns <- c('POLE', 'KEAP1', 'KRAS', 'POLD1', 'STK11', 'TP53', 'MSH2', 'EGFR', 'PTEN')
 # Subset df
 mutations_df <- total_df %>% select(Study_ID, mutation_columns)
+total_muts_df <- mutations_df %>% mutate(Study_ID = "Total")
 
+# Append total mutations df to mutations_df
+mutations_df <- rbind(mutations_df, total_muts_df)
+
+# Split to dfs based on factors in StudyID
+mut_dfs_list <- split(mutations_df, f = mutations_df$Study_ID)
+
+# Perform calculation for each gene, on each df 
+func <- function(df) {
+  sum(df$POLE) / nrow(df)
+}
+lapply(mut_dfs_list, func)
+# DEV: Integrate in a loop that iterates over each column name in mutation_columns
 
 
 

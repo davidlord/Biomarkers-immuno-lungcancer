@@ -7,6 +7,7 @@ library(dplyr)
 library(tidyverse)
 library(naniar)
 library(visdat)
+library(readxl)
 
 # Set working directory (also place data to read in working directory).
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
@@ -118,22 +119,25 @@ gg_miss_var(total_df) +
 #=======================================================================
 # MUTATION FREQUENCIES
 #=======================================================================
-str(total_df)
-mutation_columns <- c('POLE', 'KEAP1', 'KRAS', 'POLD1', 'STK11', 'TP53', 'MSH2', 'EGFR', 'PTEN')
-# Subset df
-mutations_df <- total_df %>% select(Study_ID, mutation_columns)
 
-# Rename 0 1 to mutated not mutated
-ind <- mutations_df == 0
-mutations_df[ind] <- "Not mutated"
-ind <- mutations_df == 1
-mutations_df[ind] <- "Mutated"
+# Read gene frequencies file (excel file)
+gene_freq_df <- read_excel("Gene_frequencies_2.xlsx")
+gene_freq_df$Gene_freq <- as.numeric(gene_freq_df$Gene_freq)
 
-# Facet by gene. 
-# x = study, facet by gene. 
-mutations_df %>% ggplot(aes(x = Study_ID, y = ))
+# Barplots facet by column
+barplot <- gene_freq_df %>% ggplot(aes(x = Study_ID, y = Gene_freq, fill = Study_ID, color = Study_ID)) +
+  geom_bar(stat = "identity", color = "black") + 
+  facet_wrap(~ Gene_mut) +
+  scale_fill_brewer(palette = "Blues") +
+  scale_y_continuous(limits = c(0, 0.7)) +
+  theme(axis.text.x = element_blank()) +
+  labs(x = "", y = "Gene mutation frequency")
+barplot
 
+test <- gene_freq_df %>% ggplot(aes(x =))
+class(gene_freq_df$Gene_freq)
 
+ylim = c(0, 0.5)
 #=======================================================================
 # MSI
 #=======================================================================

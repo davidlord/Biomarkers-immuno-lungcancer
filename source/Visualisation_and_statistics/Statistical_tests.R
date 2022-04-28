@@ -25,6 +25,13 @@ summary(two_way_anova)
 # Study_ID p-value = 0.0056
 # Will need to normalize TMB by study ID, not by sequencing type. 
 
+# Two-way ANOVA on log2-transformed TMB values as function of cohort and sequencing type
+# Create df with TMB log2 transformed
+log2_total_df <- total_df %>% mutate(TMB = log2(TMB)) %>% filter(!is.infinite(TMB))
+# Perform ANOVA
+log2_two_way_anova <- aov(TMB ~ Study_ID + Sequencing_type, data = log2_total_df)
+summary(log2_two_way_anova)
+
 #=======================================================================
 # ATTEMPT TO NORMALIZE
 #=======================================================================
