@@ -28,6 +28,8 @@ gatk FilterMutectCalls \
 --tumor-segmentation ${WORK_DIR}/$2 \
 --contamination-table ${WORK_DIR}/$3 \
 --ob-priors ${WORK_DIR}/$4 \
+--min-allele-fraction 0.1 \
+-min-reads-per-strand 10 \
 -O ${WORK_DIR}/$5
 
 
