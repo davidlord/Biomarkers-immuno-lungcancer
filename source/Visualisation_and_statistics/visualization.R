@@ -151,6 +151,32 @@ MSI_boxplot <- biolung_df %>% ggplot(aes(
   theme(legend.position = "none")
 MSI_boxplot
 
+# Logical regression, ROC? 
+
+# Subset msi table
+msi_df <- biolung_df %>% select(Durable_clinical_benefit, MSI_MSISensorPro)
+# 
+
+# Add column fractionDCB to msi_df (through function)
+
+
+# Create function calculating fraction of DCB / NDB per value...
+
+func <- function(MSI_vec) {
+  for(i in MSI_vec) {
+    print(i)
+  }
+  #i = 0
+  #i <- i + 1
+}
+
+
+test <- msi_df %>% ggplot(aes(x = MSI_MSISensorPro, y = sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit))) +
+  geom_point()
+test
+
+
+
 
 
 # Grid of histograms displaying TMB from clinical data set (from cBioPortal), later also include Biolung data. 
