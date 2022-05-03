@@ -34,6 +34,7 @@ biolung_df <- biolung_df %>% add_column(Stage_at_diagnosis = NA)
 # Add 'MSI_MSISensorPro' to cbioportal df
 cbioportal_df <- cbioportal_df %>% add_column(MSI_MSISensorPro = NA)
 
+
 # Merge cBioPortal & BioLung data
 total_df <- rbind(cbioportal_df, biolung_df)
 

@@ -3,14 +3,15 @@
 # data in the Biomarkers-Immuno-Lung project.
 #
 #============================================================================
-#
-#
-#
+
+
+
 #============================================================================
 # LOAD LIBRARIES & READ FILES
 #============================================================================
 library(ggplot2)
 library(lattice)
+library(tidyverse)
 library(caret)
 library(dplyr)
 library(doSNOW)
@@ -23,8 +24,114 @@ setwd(WORK_DIR)
 data <- read.delim("total_df.tsv")
 
 #===========================================================================
+# SUBSET DATA
+#===========================================================================
+
+msi_df <- data %>% filter(Study_ID == 'BioLung_2022') %>% select(Durable_clinical_benefit, MSI_MSISensorPro)
+
+
+#===========================================================================
+# PLOT RAWDATA
+#===========================================================================
+
+# MSI hisogram:
+msi_hist <- msi_df %>% ggplot(aes(x = MSI_MSISensorPro)) +
+  geom_histogram(binwidth = 1)
+msi_hist
+
+# MSI histogram log2-transformed
+msi_hist + scale_x_continuous(trans = "log2")
+
+msi_point <- msi_df %>% ggplot(aes(x = MSI_MSISensorPro, y = Durable_clinical_benefit)) + 
+  geom_point()
+msi_point
+
+
+
+
+#===========================================================================
 # PREPROCESSING
 #===========================================================================
+
+# Convert Durable clinical benefit column from chr to binary values
+msi_df <- msi_df %>% mutate(Durable_clinical_benefit = ifelse(Durable_clinical_benefit == "YES", 1, 0))
+
+msi_df$MSI_MSISensorPro <- log2(msi_df$MSI_MSISensorPro)
+
+#===========================================================================
+# SPLIT DATA
+#===========================================================================
+set.seed(123)
+train_samples <- msi_df$Durable_clinical_benefit %>%
+  createDataPartition(p = 0.8, list = FALSE)
+
+train_data <- msi_df[train_samples, ]
+test_data <- msi_df[-train_samples, ]
+
+
+#===========================================================================
+# MODEL GENERATION & VALIDATION
+#===========================================================================
+
+# Fit the model:
+# glm: Generalized linear model. 
+model <- glm( Durable_clinical_benefit ~., data = train_data, family = binomial)
+# Summarize model
+summary(model)
+
+# Make predictions
+probabilities <- model %>% predict(test_data, type = "response")
+predicted_classes <- ifelse(probabilities > 0.5, 1, 0)
+
+# Model accuracy
+mean(predicted_classes == test_data$Durable_clinical_benefit)
+
+
+train_data %>% ggplot(aes(x = MSI_MSISensorPro, y = Durable_clinical_benefit)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"))
+
+
+
+
+msi_df <- msi_df %>% mutate(log2_mis = log2(MSI_MSISensorPro))
+
+
+
+
+
+
+#===========================================================================
+# TRIAL 2
+#===========================================================================
+library(pROC)
+
+# SUBSET DATA
+
+plot(x =)
+
+msi_df <- data %>% filter(Study_ID == 'BioLung_2022') %>% select(Durable_clinical_benefit, MSI_MSISensorPro)
+
+
+# Convert Durable clinical benefit column from chr to binary values
+msi_df <- msi_df %>% mutate(Durable_clinical_benefit = ifelse(Durable_clinical_benefit == "YES", 1, 0))
+
+
+
+
+
+
+
+#===========================================================================
+# MODELLING SCRIPT
+#===========================================================================
+
+
+
+
+
+
+
 
 # Exclude features not to be included when making predictions
 data <- data %>% select(-Sequencing_type, -Study_ID, -Patient_ID, -PFS_months, -Stage_at_diagnosis)
