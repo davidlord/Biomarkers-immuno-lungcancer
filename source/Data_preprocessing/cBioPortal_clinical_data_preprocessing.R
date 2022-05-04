@@ -200,6 +200,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 
 #================================================================================
 # SEPARATE CONTROL COHORT
+# DEV: Move to after mutation data merge
 #================================================================================
   # Separate the control cohort
   control_df <- clinical_df %>% filter(Immunotherapy == 'NO')
