@@ -14,7 +14,7 @@ total_df <- read.delim("total_df.tsv", stringsAsFactors = TRUE)
 
 
 #=================================================================================
-# CALCULATE SUMMARY STATISTICS
+# CALCULATE SUMMARY STATISTICS ACROSS COHORTS
 #=================================================================================
 
 # Overview structure of dataset
@@ -52,6 +52,24 @@ table(total_df$Study_ID)
         fraction_NDB = 1 - fraction_DCB
       )
   
+  # PD-L1 expression
+      # For each cohort: 
+      # Fraction negative
+      total_df %>% group_by(Study_ID) %>% filter(!is.na(PD.L1_Expression)) %>% summarize(
+        fraction_negative = (sum(PD.L1_Expression == 'Negative') / length(PD.L1_Expression)),
+      )
+      # Fraction weak
+      total_df %>% group_by(Study_ID) %>% filter(!is.na(PD.L1_Expression)) %>% summarize(
+        fraction_weak = (sum(PD.L1_Expression == 'Weak') / length(PD.L1_Expression)),
+      )
+      # Fraction strong
+      total_df %>% group_by(Study_ID) %>% filter(!is.na(PD.L1_Expression)) %>% summarize(
+        fraction_strong = (sum(PD.L1_Expression == 'Strong') / length(PD.L1_Expression)),
+      )
+      # For entire dataset: 
+      table(total_df$PD.L1_Expression)
+  
+  
   # Progression free survival:
       # Progression free survival for each cohort:
       total_df %>% group_by(Study_ID) %>% filter(!is.na(PFS_months)) %>% summarize(
@@ -77,91 +95,96 @@ table(total_df$Study_ID)
       )
       
   
-#=======================================================================  
-# SIMPLE BARPLOTS
 #=======================================================================
+# MUTATION FREQUENCIES
+#=======================================================================
+str(total_df)
+# Gene-mutation columns:
 
-# Study ID fractions (how large fractions derive from different data sets) barplot/pie chart.
-
-# Sequencing types barplot/pie charts.  
-
-# Smoking history distribution barplot. 
-      
-
-# Specific mutations
-
-      
-
-#=================================================================================
-# Visualizations
-#=================================================================================
-
-# NOTE: Rstudio can be a bit moody sometimes and not allow us to create the 
-# plots. If Rstudio is in a bad mood, you can generate the plots in a new script file
-# (running on the same instance).
-
-      
-
-# Heatmap of missing data:
-# DEV: May make this one prettier...
-missing_data <- vis_miss(total_df)
+# Get column names
+  cols <- colnames(total_df)
+  print(cols)
+# Select mutation columns
+  mutation_cols <- cols[13:71]
+  print(mutation_cols)
 
 
+# Subset df to include only mutation columns & study ID
+  mutations_df <- total_df %>% select(Study_ID, mutation_cols)
+# Create StudyID "Total" consisting of all entries
+  total_muts_df <- mutations_df %>% mutate(Study_ID = "Total")
+# Combine 
+  mutations_df <- rbind(mutations_df, total_muts_df)
+  
+  
+# Split to dfs based on factors in StudyID
+  mut_dfs_list <- split(mutations_df, f = mutations_df$Study_ID)
 
-# Non-transformed histogram:
-TMB_hist <- total_df %>% ggplot(aes(x = TMB)) +
-  geom_histogram(binwidth = 1, fill = "mediumpurple2", col = "mediumpurple4") +
-  labs(x = 'Tumor Mutation Burden', y = 'Count')
-TMB_hist
-# Remove max TMB outlier from dataset:
-clinical_df <- clinical_df %>% filter(TMB < 75)
-
-
-# Log2-transformed histogram (excluding maximum outlier)
-TMB_hist_trans <- clinical_df %>% ggplot(aes(x = TMB)) +
-  geom_histogram(binwidth = 1, fill = "mediumpurple2", col = "mediumpurple4") +
-  labs(x = 'Tumor Mutation Burden (Log2 scale)', y = 'Count (Log2 scale)') +
-  scale_x_continuous(trans = "log2") +
-  scale_y_continuous(trans = "log2")
-TMB_hist_trans
+  
+  
 
 
-# TMB boxplot responders vs non-responders for each cohort
-TMB_boxp_DCB_vs_NCB <- clinical_df %>% ggplot(aes(x = Study_ID, y = TMB, fill = Durable_clinical_benefit)) +
-  geom_boxplot() +
-  scale_fill_brewer(palette = "Accent", direction = -1) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(fill = "Durable Clinical Benefit", y = "Tumor Mutation Burden", x = "Cohort")
-TMB_boxp_DCB_vs_NCB
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+# Perform calculation for each gene, on each df 
+func <- function(df) {
+  sum(df$POLE) / nrow(df)
+}
+lapply(mut_dfs_list, func)
 
-# TMB boxplot responders vs non-responders for each cohort log2 transformed
-TMB_boxp_DCB_vs_NCB_log2 <- TMB_boxp_DCB_vs_NCB +
-  scale_y_continuous(trans = "log2") +
-  labs(y = "Tumor Mutation Burden (Log2 scale)")
-TMB_boxp_DCB_vs_NCB_log2
-
-
-# Boxplot comparison, TMB across sequencing methods
-## DEV: Reorder boxplots so that they are grouped by Sequencing type. 
-clinical_df %>% mutate(Study_ID = reorder(Study_ID, TMB, FUN = median)) %>%
-  ggplot(aes(x = Study_ID, y = TMB, fill = Sequencing_type)) +
-  geom_boxplot() +
-  #scale_y_continuous(trans = "log2") +
-  scale_fill_brewer(palette = "Accent") +
-  labs(fill = "Sequencing type", y = "Tumor Mutation Burden (Log2 scale)", x = "Cohort") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-# Grid of histograms displaying TMB from clinical data set (from cBioPortal), later also include Biolung data. 
-# Also include sequencing platform and N (sample size) as subtitle. 
-# Select cool colour. 
-df_cbioportal_clinical %>% ggplot(aes(TMB..nonsynonymous.)) + geom_histogram(binwidth = 1) + facet_wrap(~Study.ID)
-
-# Generate boxplots of TMB across different studies. Add gene panel and sample size as sub-title. Facet grid. 
-
-# Generate boxplots of TMB comparison between responders and non-responders in each study, facet grid. 
+# DEV: Integrate in a loop that iterates over each column name in mutation_columns
+func <- function(df) {
+  for (i in mutation_cols) {
+    print(i)
+    print(sum(df %>% select(i)) / nrow(df))
+  }
+}
 
 
-# Generate barplots of comparison between sexes. 
 
-# Boxplot: Group by age. Facet by study. 
+
+# DEV: Store info in dictionary
+test <- list()
+test <- deparse(substitute(mutations_df))
+
+paste("helo", test, sep='_')
+
+func <- function(df) {
+  # get df name
+  df_name <- deparse(substitute(df))
+  # Create a list named as df
+  dict_name <- paste(df_name, "dict", sep = '_')
+  # Initiate a list named after df
+  dict_name <- list()
+  # For mutation in mutation_cols, calculate mutation frequency, store in dict
+  for (i in mutation_cols) {
+    freq <- sum(df %>% select(i)) / nrow(df)
+    dict_name <- append(dict_name, (i = freq))
+  }
+}
+func(mutations_df)
+
+func <- function(df) {
+  df_name <- deparse(substitute(df))
+   print(df_name)
+   dict_name <- paste(df_name, "dict", sep = '_')
+   print(dict_name)
+   dict_name <- list("helo")
+}
+
+
+
+
+

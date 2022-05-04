@@ -15,11 +15,11 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
   # Read cBioPortal clinical data table files
-    Rivzi_2015 <- read.delim("Rivzi_2015_clinical_data.tsv")
-    LUAD_Rivzi_2015 <- read.delim("LUAD_Rivzi_2015_clinical_data.tsv")
-    Jordan_2017 <- read.delim("Jordan_2017_clinical_data.tsv")
-    Hellmann_2018 <- read.delim("Hellmann_2018_clinical_data.tsv")
-    Rivzi_2018 <- read.delim("Rivzi_2018_clinical_data.tsv")
+    Rivzi_2015 <- read.delim("cBioPortal_clinical_data/Rivzi_2015_clinical_data.tsv")
+    LUAD_Rivzi_2015 <- read.delim("cBioPortal_clinical_data/LUAD_Rivzi_2015_clinical_data.tsv")
+    Jordan_2017 <- read.delim("cBioPortal_clinical_data/Jordan_2017_clinical_data.tsv")
+    Hellmann_2018 <- read.delim("cBioPortal_clinical_data/Hellmann_2018_clinical_data.tsv")
+    Rivzi_2018 <- read.delim("cBioPortal_clinical_data/Rivzi_2018_clinical_data.tsv")
 
 
 #================================================================================
@@ -82,7 +82,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 
 # Merge data sets by columns, missing columns will be NA
   clinical_df <- rbind.fill(Hellmann_2018_trimmed, Jordan_2017_trimmed, LUAD_Rivzi_2015_trimmed, Rivzi_2015_trimmed, Rivzi_2018_trimmed)
-  clinical_df <- as.data.frame(clinical_df, StringAsFactors = F)
+  clinical_df <- as.data.frame(clinical_df, StringAsFactors = FALSE)
 
 
 #================================================================================
@@ -143,7 +143,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   table(clinical_df$PDL1.Expression)
   
 # Study ID
-  clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_mskcc_2015'] <- '_NSCLC_Rivzi_2015'
+  clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_mskcc_2015'] <- 'NSCLC_Rivzi_2015'
   clinical_df$Study.ID[clinical_df$Study.ID == 'luad_mskcc_2015'] <- 'Rivzi_2015'
   clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_pd1_msk_2018'] <- 'Rivzi_2018'
   clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_mskcc_2018'] <- 'Hellmann_2018'
@@ -195,6 +195,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 # Reorder columns
   col_order <- c("Study_ID", "Patient_ID", "Sample_ID", "Sequencing_type", "Durable_clinical_benefit", "PFS_months", "Histology", "Smoking_History", "Diagnosis_Age", "Sex", "Stage_at_diagnosis", "PD-L1_Expression", "TMB", "Immunotherapy")
   clinical_df <- clinical_df[, col_order]
+
 
 
 #================================================================================

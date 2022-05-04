@@ -14,7 +14,7 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read clinical data
-biolung_2022 <- read_excel("BioLung_clinical_data.xlsx")
+biolung_2022 <- read_excel("BioLung_data/BioLung_clinical_data.xlsx")
 
 #================================================================================
 # DATA CLEANING
@@ -89,7 +89,7 @@ biolung_2022 <- biolung_2022 %>% select(Study_ID, Patient_ID, Sequencing_type, D
 #================================================================================
 
 # Read BioLung variant file
-  biolung_variants_df <- read.delim("BioLung_variants_table.tsv")
+  biolung_variants_df <- read.delim("BioLung_data/BioLung_Pan_variants_table.tsv")
 
 # Reformat Patient ID so it matches the clinical df
   # Extract patient number

@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import glob
 from functools import reduce
+import re
 
 # Set work dir (where mutation tsv files are located).
 # DEV: Move this to config file.
@@ -19,7 +20,7 @@ clin_sampleIDs_list = clinical_df["Sample_ID"].tolist()
 
 
 # Read all mutation file names in dir to list
-mutation_tables_list = glob.glob("*.mutation.tsv")
+mutation_tables_list = glob.glob("cBioPortal_mutations_data/*/*.mutation.tsv")
 
 
 ### For each mutations tsv file; look at sampleIDs, if sampleID present in clinical df; 
@@ -31,8 +32,9 @@ temp_df_list = []
 # Initialize a list to store sample IDs from mutations tsv files in:
 mutations_sampleIDs_list = []
 for mutations_table in mutation_tables_list:
-    # Get mutation name.
-    mutation_name = mutations_table.replace('.mutation.tsv', '')
+    # Get mutation name.    
+    tmpvar = mutations_table.split('/')
+    mutation_name = (tmpvar[len(tmpvar) - 1]).replace('.mutation.tsv', '')    
     # read as df: 
     mutations_df = pd.read_csv(mutations_table, sep = '\t')
     # Convert mutations sample ID column to list: 
@@ -60,4 +62,7 @@ merged_df = pd.merge(clinical_df, all_muts_df, on = 'Sample_ID')
 # Save as tsv file:
 merged_df.to_csv("merged_cBioPortal_clinical_mutation_data.tsv", sep = '\t', index = False)
 
-###
+####
+
+
+
