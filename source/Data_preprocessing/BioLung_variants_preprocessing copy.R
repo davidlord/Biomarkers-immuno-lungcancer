@@ -10,11 +10,35 @@ library(writexl)
 library(readxl)
 
 # Set working directory (also place data to read in working directory).
-WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
+WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running/BioLung_data"
 setwd(WORK_DIR)
 
-# Read clinical data
-biolung_2022 <- read_excel("x")
+#================================================================================
+# READ FILE & SELECT COLUMNS
+#================================================================================
+variants_df <- read_excel("BioLung_variants_manually_classified.xlsx", 
+                           sheet = "merged_6filter_211229", 
+                           col_names = TRUE, 
+                           skip = 4)
+
+
+# Filter artifacts and select relevant columns
+variants_df <- variants_df %>% filter(Utvärdering != 'artefakt') %>%
+  select(`Sample+A:FI`, `Gene (gene)`)
+
+# Rename columns
+variants_df <- variants_df %>% rename(Sample_ID = `Sample+A:FI`, Gene = `Gene (gene)`)
+
+table(variants_df$Sample_ID)
+
+# Experimental df
+variants_df2 <- variants_df
+
+# String manipulation of patient IDs, use regex. 
+
+
+lapply(variants$Sample_ID, nchar())
+nchar(variants_df$Sample_ID)
 
 # Read BioLung clinical data table
 #
