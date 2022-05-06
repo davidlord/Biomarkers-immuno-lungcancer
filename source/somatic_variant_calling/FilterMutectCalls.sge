@@ -30,7 +30,8 @@ gatk FilterMutectCalls \
 --ob-priors ${WORK_DIR}/$4 \
 --min-allele-fraction 0.1 \
 -min-reads-per-strand 10 \
--O ${WORK_DIR}/$5
+--unique-alt-read-count 4 \
+--O ${WORK_DIR}/$5
 
 
 
