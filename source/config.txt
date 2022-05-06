@@ -5,7 +5,7 @@
 #===============================================================================================================================
 
 # Set working directory
-WORK_DIR=/home/xlorda/anna_tmp/rerun2
+WORK_DIR=/home/xlorda/anna_tmp/rerun2/bam-files
 
 # Scrip paths
 

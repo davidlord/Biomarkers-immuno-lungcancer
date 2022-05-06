@@ -24,7 +24,7 @@ JOBLIST1=""
 while read N T; do
 	JOBNAME=Mutect2_${N}
 	JOBLIST1+=`echo ${JOBNAME},`
-	qsub -N $JOBNAME -cwd ./Mutect2.sge $N $T ${T%.bam}_f1r2.tar.gz ${T%.bam}.unfiltered.vcf.gz ${T%.bam}_normal-tumor.bam
+	###qsub -N $JOBNAME -cwd ./Mutect2.sge $N $T ${T%.bam}_f1r2.tar.gz ${T%.bam}.unfiltered.vcf.gz ${T%.bam}_normal-tumor.bam
 done < $INPUT
 # Remove comma from last item in JOBLIST1
 JOBLIST1=${JOBLIST1%,}
@@ -37,7 +37,7 @@ JOBLIST2=""
 while read N T; do
 	JOBNAME=GetPileupSummaries-normal-${N}
 	JOBLIST2+=`echo ${JOBNAME},`
-	qsub -hold_jid $JOBLIST1 -N $JOBNAME -cwd ./GetPileupSummaries.sge ${N} ${N%.bam}.pileups.normal.table
+	###qsub -hold_jid $JOBLIST1 -N $JOBNAME -cwd ./GetPileupSummaries.sge ${N} ${N%.bam}.pileups.normal.table
 done < $INPUT
 # Remove last comma from JOBLIST2
 JOBLIST2=${JOBLIST2%,}
@@ -50,7 +50,7 @@ JOBLIST3=""
 while read N T; do
 	JOBNAME=GetPileupSummaries-tumor-${T}
 	JOBLIST3+=`echo ${JOBNAME},`
-	qsub -hold_jid $JOBLIST2 -N $JOBNAME -cwd ./GetPileupSummaries.sge ${T} ${T%.bam}.pileups.tumor.table
+	###qsub -hold_jid $JOBLIST2 -N $JOBNAME -cwd ./GetPileupSummaries.sge ${T} ${T%.bam}.pileups.tumor.table
 done < $INPUT
 # Remove last comma from JOBLIST3
 JOBLIST3=${JOBLIST3%,}
@@ -63,7 +63,7 @@ JOBLIST4=""
 while read N T; do
 	JOBNAME=CalculateContamination_${T}
 	JOBLIST4+=`echo ${JOBNAME},`
-	qsub -hold_jid $JOBLIST3 -N $JOBNAME -cwd ./CalculateContamination.sge ${T%.bam}.pileups.tumor.table ${N%.bam}.pileups.normal.table ${T%.bam}.segments.table ${T%.bam}.contamination.table
+	###qsub -hold_jid $JOBLIST3 -N $JOBNAME -cwd ./CalculateContamination.sge ${T%.bam}.pileups.tumor.table ${N%.bam}.pileups.normal.table ${T%.bam}.segments.table ${T%.bam}.contamination.table
 done < $INPUT
 # Remove last comma from JOBLIST4
 JOBLIST4=${JOBLIST4%,}
@@ -76,7 +76,7 @@ JOBLIST5=""
 while read N T; do
 	JOBNAME=LearnReadOrientationModel_${T}
 	JOBLIST5+=`echo ${JOBNAME},`
-	qsub -hold_jid $JOBLIST4 -N $JOBNAME -cwd ./LearnReadOrientationModel.sge ${T%.bam}_f1r2.tar.gz ${T%.bam}.read-orientation-model.tar.gz
+	###qsub -hold_jid $JOBLIST4 -N $JOBNAME -cwd ./LearnReadOrientationModel.sge ${T%.bam}_f1r2.tar.gz ${T%.bam}.read-orientation-model.tar.gz
 done < $INPUT
 # Remove last comma from JOBLIST5
 JOBLIST5=${JOBLIST5%,}

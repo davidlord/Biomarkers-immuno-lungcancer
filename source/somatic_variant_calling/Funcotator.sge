@@ -11,7 +11,7 @@
 #$ -S /bin/bash
 #$ -o logs/stdout_Funcotator
 #$ -e logs/stderr_Funcotator
-#$ -pe mpi 1
+#$ -pe mpi 5
 #$ -q test.q
 
 # Source config file
@@ -28,6 +28,6 @@ gatk Funcotator \
 --reference $HG38 \
 --ref-version hg38 \
 --data-sources-path $FUNCOTATOR_DATA_SOURCES \
---output ${WORK_DIR}/${V%.vcf.gz}.annotated.vcf.gz \
+--output ${WORK_DIR}/${1%.vcf.gz}.annotated.vcf.gz \
 --output-file-format VCF
 
