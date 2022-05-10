@@ -119,7 +119,6 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   # Negative <- <1%
   # Weak <- 1 - 49%
   # Strong <- >= 50%
-  
   # NA <- 'Unassessable', 'Unknown'
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Unassessable'] <- NA
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Unknown'] <- NA
@@ -128,7 +127,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Negative(<1% membraneous staining)'] <- 0
   # 2 <- 'Weak', 'Weak(1-49% membraneous staining'
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Weak'] <- 2
-  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Weak(1-49% membraneous staining'] <- 2
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Weak(1-49% membraneous staining)'] <- 2
   # 51 <- 'Strong', 'Strong(>or =50% membraneous staining)'
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Strong'] <- 52
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 'Strong(>or =50% membraneous staining)'] <- 52
@@ -141,6 +140,8 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression >= 1 & clinical_df$PDL1.Expression < 50] <- "Weak"
   clinical_df$PDL1.Expression[clinical_df$PDL1.Expression < 1] <- "Negative"
   table(clinical_df$PDL1.Expression)
+  # Correct error entry:
+  clinical_df$PDL1.Expression[clinical_df$PDL1.Expression == 7] <- "Weak"
   
 # Study ID
   clinical_df$Study.ID[clinical_df$Study.ID == 'nsclc_mskcc_2015'] <- 'NSCLC_Rivzi_2015'
@@ -197,18 +198,6 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   clinical_df <- clinical_df[, col_order]
 
 
-
-#================================================================================
-# SEPARATE CONTROL COHORT
-# DEV: Move to after mutation data merge
-#================================================================================
-  # Separate the control cohort
-  control_df <- clinical_df %>% filter(Immunotherapy == 'NO')
-  clinical_df <- clinical_df %>% filter(Immunotherapy == 'YES' | is.na(Immunotherapy))
-  # Remove 'Immunotherapy' column from both datasets
-  control_df <- control_df %>% select(-Immunotherapy)
-  clinical_df <- clinical_df %>% select(-Immunotherapy)
-
 #================================================================================
 # EXPORT FILES
 #================================================================================
@@ -218,5 +207,5 @@ write_xlsx(clinical_df, paste(WORK_DIR, "cbioportal_clinical_data.xlsx", sep = "
 
 # Export dataframes as tsv: 
 write.table(clinical_df, file = "cbioportal_clinical_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
-write.table(control_df, file = "modelling_control_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
+
 
