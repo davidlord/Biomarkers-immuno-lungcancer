@@ -31,6 +31,22 @@ cbioportal_df <- cbioportal_df %>% select(-Sample_ID)
   # Add 'MSI_MSISensorPro' to cbioportal df
   cbioportal_df <- cbioportal_df %>% add_column(MSI_MSISensorPro = NA)
 
+#=================================================================================
+# EDIT NAME & ENTRIES FOR RESPONSE VARIABLE
+#=================================================================================
+
+# Change "Durable clinical benefit" to "Treatment outcome"
+cbioportal_df <- cbioportal_df %>% rename(Treatment_Outcome = Durable_clinical_benefit)
+biolung_df <- biolung_df %>% rename(Treatment_Outcome = Durable_clinical_benefit)
+
+# Change entries
+  # YES <- Responder
+  # NO <- Non-Responder
+cbioportal_df$Treatment_Outcome[cbioportal_df$Treatment_Outcome == "YES"] <- "Responder"
+cbioportal_df$Treatment_Outcome[cbioportal_df$Treatment_Outcome == "NO"] <- "Non-Responder"
+biolung_df$Treatment_Outcome[biolung_df$Treatment_Outcome == "YES"] <- "Responder"
+biolung_df$Treatment_Outcome[biolung_df$Treatment_Outcome == "NO"] <- "Non-Responder"
+
 
 #================================================================================
 # SEPARATE CONTROL COHORT

@@ -2,6 +2,7 @@
 # LOAD LIBRARIES & READ FILES
 #=================================================================================
 library(ggplot2)
+library(plyr)
 library(dplyr)
 library(tidyverse)
 
@@ -10,7 +11,7 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read data file
-total_df <- read.delim("total_df.tsv", stringsAsFactors = TRUE)
+total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
 
 
 #=================================================================================
@@ -95,12 +96,13 @@ table(total_df$Study_ID)
       )
       
   
-#=======================================================================
-# MUTATION FREQUENCIES
-#=======================================================================
+#============================================================================
+# AVERAGE MUTATIONAL INSTANCES (FOR ALL INCLUDED MUTATIONS) PER PATIENT
+#============================================================================
 str(total_df)
 # Gene-mutation columns:
 
+colnames(total_df)
 # Get column names
   cols <- colnames(total_df)
   print(cols)
@@ -108,82 +110,48 @@ str(total_df)
   mutation_cols <- cols[13:71]
   print(mutation_cols)
 
-
 # Subset df to include only mutation columns & study ID
   mutations_df <- total_df %>% select(Study_ID, mutation_cols)
 # Create StudyID "Total" consisting of all entries
   total_muts_df <- mutations_df %>% mutate(Study_ID = "Total")
-# Combine 
+# Combine mutations df with total mutations df
   mutations_df <- rbind(mutations_df, total_muts_df)
   
-  
-# Split to dfs based on factors in StudyID
+# Split to dfs based on factors in StudyID, read to list
   mut_dfs_list <- split(mutations_df, f = mutations_df$Study_ID)
 
-  
-  
+str(mut_dfs_list)
 
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-# Perform calculation for each gene, on each df 
-func <- function(df) {
-  sum(df$POLE) / nrow(df)
+# Define a function that takes df as input and returns mean number of mutations / patient
+calc_mut_freq <- function(df){
+  sum(df[mutation_cols]/nrow(df))
 }
-lapply(mut_dfs_list, func)
+calc_mut_freq(mutations_df)
+ 
+# Calculate average mutational instance per patient (for included muations) for each cohort
+lapply(mut_dfs_list, calc_mut_freq)
 
-# DEV: Integrate in a loop that iterates over each column name in mutation_columns
-func <- function(df) {
-  for (i in mutation_cols) {
-    print(i)
-    print(sum(df %>% select(i)) / nrow(df))
+
+#============================================================================
+# FRACTION PATIENTS WITH SPECIFIC GENE-MUTATION
+#============================================================================
+
+str(mut_dfs_list)
+
+# Define genes of interest
+genes_of_interest <- c("EGFR", "KRAS", "TP53", "POLE", "POLD1", "KEAP1", "STK11", "MSH2", "PTEN")
+
+# Create 
+calc_gene_mut_freq <- function(df){
+  # Convert to dataframe
+  df <- as.data.frame(df)
+  for (gene in genes_of_interest) {
+    print(gene)
+    print(sum(df[gene]) / nrow(df))
+    #sum(genecol) / nrow(df)
   }
 }
-
-
-
-
-# DEV: Store info in dictionary
-test <- list()
-test <- deparse(substitute(mutations_df))
-
-paste("helo", test, sep='_')
-
-func <- function(df) {
-  # get df name
-  df_name <- deparse(substitute(df))
-  # Create a list named as df
-  dict_name <- paste(df_name, "dict", sep = '_')
-  # Initiate a list named after df
-  dict_name <- list()
-  # For mutation in mutation_cols, calculate mutation frequency, store in dict
-  for (i in mutation_cols) {
-    freq <- sum(df %>% select(i)) / nrow(df)
-    dict_name <- append(dict_name, (i = freq))
-  }
-}
-func(mutations_df)
-
-func <- function(df) {
-  df_name <- deparse(substitute(df))
-   print(df_name)
-   dict_name <- paste(df_name, "dict", sep = '_')
-   print(dict_name)
-   dict_name <- list("helo")
-}
-
+calc_gene_mut_freq(mutations_df)
 
 
 

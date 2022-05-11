@@ -14,12 +14,15 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read data file
-total_df <- read.delim("total_df.tsv", stringsAsFactors = TRUE)
+total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
 
 
 #=======================================================================  
-# PLOT RAWDATA
+# PLOT RAWDATA, PCA
 #=======================================================================
+
+
+
 
 
 #=======================================================================
@@ -27,33 +30,42 @@ total_df <- read.delim("total_df.tsv", stringsAsFactors = TRUE)
 #=======================================================================
 # Histogram of raw TMB values
 TMB_hist <- total_df %>% ggplot(aes(x = TMB)) +
-  geom_histogram(binwidth = 1, fill = "skyblue1", col = "skyblue4") +
+  geom_histogram(binwidth = 1, fill = "dodgerblue3", col = "dodgerblue4") +
   labs(x = 'Tumor Mutation Burden', y = 'Count')
 TMB_hist
 
 # Remove max TMB outlier from dataset and plot histogram again:
 total_df <- total_df %>% filter(TMB < 90)
 TMB_hist <- total_df %>% ggplot(aes(x = TMB)) +
-  geom_histogram(binwidth = 1, fill = "skyblue1", col = "skyblue4") +
+  geom_histogram(binwidth = 1, fill = "dodgerblue3", col = "dodgerblue4") +
   labs(x = 'Tumor Mutation Burden', y = 'Count')
 TMB_hist
 
-# Log2-transformed histogram (excluding maximum outlier)
-TMB_hist_trans <- total_df %>% ggplot(aes(x = TMB)) +
-  geom_histogram(binwidth = 1, fill = "skyblue1", col = "skyblue4") +
-  labs(x = 'Tumor Mutation Burden (Log2 scale)', y = 'Count (Log2 scale)') +
-  scale_x_continuous(trans = "log2") +
-  scale_y_continuous(trans = "log2")
-TMB_hist_trans
-
 # TMB color by durable clinical benefit
-TMB_hist_clinical_outcome <- total_df %>% ggplot(aes(x = TMB, color = Durable_clinical_benefit, fill = Durable_clinical_benefit)) +
+TMB_hist_clinical_outcome <- total_df %>% ggplot(aes(x = TMB, fill = Treatment_Outcome, color = Treatment_Outcome)) +
   geom_histogram(binwidth = 1, position = "identity", alpha = 0.9) + 
   scale_color_brewer(palette = "Paired", direction = -1) +
   scale_fill_brewer(palette = "Paired", direction = -1) +
-  labs(x = "Tumor Mutation Burden", size = 10)
+  labs(x = "Tumor Mutation Burden", size = 10, fill = "Treatment Outcome")
 TMB_hist_clinical_outcome
 # No observed differnece in distribution of TMB between responders/non-responders comparing across cohorts. 
+
+# Log2-transformed histogram (excluding maximum outlier)
+TMB_hist_trans <- total_df %>% ggplot(aes(x = TMB)) +
+  geom_histogram(binwidth = 0.5, fill = "dodgerblue3", col = "dodgerblue4") +
+  labs(x = 'Tumor Mutation Burden (Log2 scale)', y = 'Count') +
+  scale_x_continuous(trans = "log2")
+TMB_hist_trans
+
+
+# TMB log2 transformed color by durable clinical benefit
+TMB_hist_clinical_outcome <- total_df %>% ggplot(aes(x = TMB, color = Treatment_Outcome, fill = Treatment_Outcome)) +
+  geom_histogram(binwidth = 0.5, position = "identity", alpha = 0.65) + 
+  scale_color_brewer(palette = "Paired", direction = -1) +
+  scale_fill_brewer(palette = "Paired", direction = -1) +
+  scale_x_continuous(trans = "log2") +
+  labs(x = "Tumor Mutation Burden", size = 10)
+TMB_hist_clinical_outcome
 
 
 #=======================================================================
@@ -62,10 +74,10 @@ TMB_hist_clinical_outcome
 
 # Responders vs. non-responders, group by cohort
 TMB_by_cohort_boxplot <- total_df %>% mutate(Study_ID = reorder(Study_ID, TMB, FUN = median)) %>% ggplot(
-  aes(x = Study_ID, y = TMB, fill = Durable_clinical_benefit)) +
+  aes(x = Study_ID, y = TMB, fill = Treatment_Outcome)) +
   geom_boxplot() +
   scale_fill_brewer(palette = "Paired", direction = -1) +
-  labs(fill = "Durable Clinical Benefit", y = "Tumor Mutation Burden", x = "Cohort") +
+  labs(fill = "Treatment Outcome", y = "Tumor Mutation Burden", x = "Cohort") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
 TMB_by_cohort_boxplot
 
@@ -97,6 +109,43 @@ TMB_by_sequencing_type <- total_df %>% mutate(Sequencing_type = reorder(Sequenci
   theme(legend.position="none") +
   theme(axis.text.x = element_text(angle = 30, hjust = 1, size = 10))
 TMB_by_sequencing_type
+
+
+#=======================================================================
+# VISUALIZE NORMALIZED TMB
+#=======================================================================
+
+# Normalize TMB: Divide by mean
+
+total_df <- total_df %>% group_by(Study_ID) %>% mutate(TMB_norm = TMB / mean(TMB))
+
+# Histogram:
+TMB_norm_hist <- total_df %>% ggplot(aes(x = TMB_norm)) +
+  geom_histogram(binwidth = 0.1, fill = "dodgerblue3", col = "dodgerblue4") +
+  labs(x = 'Tumor Mutation Burden', y = 'Count')
+TMB_norm_hist
+
+# Normalize TMB: Log2 transform normalized TMB? 
+
+total_df$TMB_norm_log2 <- log2(total_df$TMB_norm)
+
+# Histogram:
+TMB_norm_log2_hist <- total_df %>% ggplot(aes(x = TMB_norm_log2)) +
+  geom_histogram(binwidth = 0.5, fill = "dodgerblue3", col = "dodgerblue4") +
+  labs(x = 'Tumor Mutation Burden', y = 'Count')
+TMB_norm_log2_hist
+
+
+# Responders vs nonresponders
+TMB_hist_norm_clinical_outcome <- total_df %>% ggplot(aes(x = TMB_norm_log2, color = Durable_clinical_benefit, fill = Durable_clinical_benefit)) +
+  geom_histogram(binwidth = 0.5, position = "identity", alpha = 0.9) + 
+  scale_color_brewer(palette = "Paired", direction = -1) +
+  scale_fill_brewer(palette = "Paired", direction = -1) +
+  labs(x = "Tumor Mutation Burden", size = 10)
+TMB_hist_norm_clinical_outcome
+
+
+
 
 
 #=======================================================================
