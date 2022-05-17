@@ -18,11 +18,26 @@ total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
 
 
 #=======================================================================  
+# VISUALIZE MISSING DATA (CLINICAL FEATURES)
+#=======================================================================
+
+# Select relevant columns for visualization of missing data:
+colnames(total_df)
+# Rename PD-L1 Expression col
+total_df <- total_df %>% rename("PD-L1_Expression" = "PD.L1_Expression")
+# Subset into separate df
+md_df <- total_df %>% select(Histology, 'PD-L1_Expression', Smoking_History, TMB, Diagnosis_Age, Stage_at_diagnosis, Sex, MSI)
+# Replace empty string entries with NAs
+md_df[md_df == ''] <- NA
+# Create heatmap of missing data
+vis_miss(md_df)
+vis_dat(md_df)
+
+#=======================================================================  
 # PLOT RAWDATA, PCA
 #=======================================================================
 
-
-
+# Scale data first? 
 
 
 #=======================================================================
@@ -46,9 +61,9 @@ TMB_hist_clinical_outcome <- total_df %>% ggplot(aes(x = TMB, fill = Treatment_O
   geom_histogram(binwidth = 1, position = "identity", alpha = 0.9) + 
   scale_color_brewer(palette = "Paired", direction = -1) +
   scale_fill_brewer(palette = "Paired", direction = -1) +
-  labs(x = "Tumor Mutation Burden", size = 10, fill = "Treatment Outcome")
+  labs(x = "Tumor Mutation Burden", size = 10, fill = "Treatment Outcome", color = "Treatment Outcome")
 TMB_hist_clinical_outcome
-# No observed differnece in distribution of TMB between responders/non-responders comparing across cohorts. 
+q# No observed differnece in distribution of TMB between responders/non-responders comparing across cohorts. 
 
 # Log2-transformed histogram (excluding maximum outlier)
 TMB_hist_trans <- total_df %>% ggplot(aes(x = TMB)) +
@@ -57,14 +72,13 @@ TMB_hist_trans <- total_df %>% ggplot(aes(x = TMB)) +
   scale_x_continuous(trans = "log2")
 TMB_hist_trans
 
-
-# TMB log2 transformed color by durable clinical benefit
+# TMB log2 transformed color by treatment outcome
 TMB_hist_clinical_outcome <- total_df %>% ggplot(aes(x = TMB, color = Treatment_Outcome, fill = Treatment_Outcome)) +
   geom_histogram(binwidth = 0.5, position = "identity", alpha = 0.65) + 
   scale_color_brewer(palette = "Paired", direction = -1) +
   scale_fill_brewer(palette = "Paired", direction = -1) +
   scale_x_continuous(trans = "log2") +
-  labs(x = "Tumor Mutation Burden", size = 10)
+  labs(x = "Tumor Mutation Burden", size = 10, fill = "Treatment Outcome", color = "Treatment Outcome")
 TMB_hist_clinical_outcome
 
 
@@ -99,7 +113,7 @@ TMB_by_cohort <- total_df %>% mutate(Study_ID = reorder(Study_ID, TMB, FUN = med
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
 TMB_by_cohort
 
-# TMB group by study and sequencing type
+# TMB group by sequencing type
 TMB_by_sequencing_type <- total_df %>% mutate(Sequencing_type = reorder(Sequencing_type, TMB, FUN = median)) %>%
   ggplot(aes(x = Sequencing_type, y = TMB, fill = Sequencing_type)) + 
   geom_boxplot() + 
@@ -115,34 +129,62 @@ TMB_by_sequencing_type
 # VISUALIZE NORMALIZED TMB
 #=======================================================================
 
-# Normalize TMB: Divide by mean
-
+# NORMALIZE VARIABLE
+#---------------------
+# Normalize TMB: Divide by mean for each study of origin
 total_df <- total_df %>% group_by(Study_ID) %>% mutate(TMB_norm = TMB / mean(TMB))
 
-# Histogram:
+# HISTOGRAMS
+#-------------
+
+# Histogram, log2 x-axis:
 TMB_norm_hist <- total_df %>% ggplot(aes(x = TMB_norm)) +
-  geom_histogram(binwidth = 0.1, fill = "dodgerblue3", col = "dodgerblue4") +
+  geom_histogram(binwidth = 0.5, fill = "dodgerblue3", col = "dodgerblue4") +
   labs(x = 'Tumor Mutation Burden', y = 'Count')
 TMB_norm_hist
 
-# Normalize TMB: Log2 transform normalized TMB? 
-
-total_df$TMB_norm_log2 <- log2(total_df$TMB_norm)
-
-# Histogram:
-TMB_norm_log2_hist <- total_df %>% ggplot(aes(x = TMB_norm_log2)) +
+# Histogram, log2 x-axis:
+TMB_norm_hist <- total_df %>% ggplot(aes(x = TMB_norm)) +
   geom_histogram(binwidth = 0.5, fill = "dodgerblue3", col = "dodgerblue4") +
+  scale_x_continuous(trans = "log2") +
   labs(x = 'Tumor Mutation Burden', y = 'Count')
-TMB_norm_log2_hist
+TMB_norm_hist
 
-
-# Responders vs nonresponders
-TMB_hist_norm_clinical_outcome <- total_df %>% ggplot(aes(x = TMB_norm_log2, color = Durable_clinical_benefit, fill = Durable_clinical_benefit)) +
-  geom_histogram(binwidth = 0.5, position = "identity", alpha = 0.9) + 
+# TMB histogram by treatment outcome
+TMB_norm_hist_clinical_outcome <- total_df %>% ggplot(aes(x = TMB_norm, color = Treatment_Outcome, fill = Treatment_Outcome)) +
+  geom_histogram(binwidth = 0.5, position = "identity", alpha = 0.65) + 
   scale_color_brewer(palette = "Paired", direction = -1) +
   scale_fill_brewer(palette = "Paired", direction = -1) +
-  labs(x = "Tumor Mutation Burden", size = 10)
-TMB_hist_norm_clinical_outcome
+  scale_x_continuous(trans = "log2") +
+  labs(x = "Tumor Mutation Burden", size = 10, fill = "Treatment Outcome", color = "Treatment Outcome")
+TMB_norm_hist_clinical_outcome
+# More resembles a normal ditribution on log2-scale. 
+
+# Therefore, log2-transforms normalized TMB value... 
+total_df$TMB_norm_log2 <- log2(total_df$TMB_norm)
+
+
+# BOXPLOTS
+#------------
+
+# Responders vs. non-responders, group by cohort
+TMB_by_cohort_boxplot <- total_df %>% mutate(Study_ID = reorder(Study_ID, TMB, FUN = median)) %>% ggplot(
+  aes(x = Study_ID, y = TMB_norm_log2, fill = Treatment_Outcome)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Paired", direction = -1) +
+  labs(fill = "Treatment Outcome", y = "Tumor Mutation Burden", x = "Cohort") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10))
+TMB_by_cohort_boxplot
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -187,6 +229,8 @@ test <- gene_freq_df %>% ggplot(aes(x =))
 class(gene_freq_df$Gene_freq)
 
 ylim = c(0, 0.5)
+
+
 #=======================================================================
 # MSI
 #=======================================================================
@@ -200,29 +244,15 @@ MSI_boxplot <- biolung_df %>% ggplot(aes(
   theme(legend.position = "none")
 MSI_boxplot
 
-# Logical regression, ROC? 
-
-# Subset msi table
-msi_df <- biolung_df %>% select(Durable_clinical_benefit, MSI_MSISensorPro)
-# 
-
-# Add column fractionDCB to msi_df (through function)
 
 
-# Create function calculating fraction of DCB / NDB per value...
+#============================================================================
+# ENGINEERED FEATURES:
+# NDB RELATED GENES (STK11, EGFR)
+# DCB RELATED GENES ()
+# PAN ET AL (2020) COMPOUND MUTATIONS
+#============================================================================
 
-func <- function(MSI_vec) {
-  for(i in MSI_vec) {
-    print(i)
-  }
-  #i = 0
-  #i <- i + 1
-}
-
-
-test <- msi_df %>% ggplot(aes(x = MSI_MSISensorPro, y = sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit))) +
-  geom_point()
-test
 
 
 

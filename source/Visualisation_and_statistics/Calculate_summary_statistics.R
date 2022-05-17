@@ -13,6 +13,13 @@ setwd(WORK_DIR)
 # Read data file
 total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
 
+# Read control dataset
+control_df <- read.delim("control_data.tsv", stringsAsFactors = TRUE)
+
+# Add control dataset as cohort in total dataset
+control_df$Study_ID <- "Model_Control"
+total_df <- rbind(total_df, control_df)
+
 
 #=================================================================================
 # CALCULATE SUMMARY STATISTICS ACROSS COHORTS
@@ -44,12 +51,12 @@ table(total_df$Study_ID)
   # Durable clinical benefit: 
       # Fraction durable clinical benefit for each cohort:
       total_df %>% group_by(Study_ID) %>% summarize(
-        fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
+        fraction_DCB = (sum(Treatment_Outcome == 'Responder') / length(Treatment_Outcome)),
         fraction_NDB = 1 - fraction_DCB
       )
       # Fraction durable clinical benefit for entire dataset: 
       total_df %>% summarize(
-        fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
+        fraction_DCB = (sum(Treatment_Outcome == 'Responder') / length(Treatment_Outcome)),
         fraction_NDB = 1 - fraction_DCB
       )
   
@@ -132,6 +139,29 @@ calc_mut_freq(mutations_df)
 lapply(mut_dfs_list, calc_mut_freq)
 
 
+#=================================================================================
+# PAN 2020 GENE-MUTATIONS
+#=================================================================================
+
+# Read features engineered data file
+FE_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = TRUE)
+
+# Calculate metrics for each cohort
+class(FE_df$Pan_2020_muts)
+FE_df %>% group_by(Study_ID) %>% summarize(
+  # Average number of Pan 2020 gene-mutations
+  average_Pan_2020_gene_muts = mean(Pan_2020_muts), 
+  # Standard deviation of number of Pan 2020 gene-mutations
+  sd_Pan_2020_gene_muts = sd(Pan_2020_muts), 
+  # Fraction with Pan 2020 compound muts
+  fraction_Pan_2020_compound_muts = sum(Pan_2020_compound_muts) / length(Pan_2020_compound_muts)
+)
+
+# Calculate for total
+
+
+
+
 #============================================================================
 # FRACTION PATIENTS WITH SPECIFIC GENE-MUTATION
 #============================================================================
@@ -154,5 +184,20 @@ calc_gene_mut_freq <- function(df){
 calc_gene_mut_freq(mutations_df)
 
 
+#============================================================================
+# ENGINEERED FEATURES:
+# NDB RELATED GENES (STK11, EGFR)
+# DCB RELATED GENES ()
+# PAN ET AL (2020) COMPOUND MUTATIONS
+#============================================================================
+
+# READ FILES
+#---------------
+# Read features engineered data file: 
+FE_df <- read.delim("Features_engineered_including_control_cohort.tsv", stringsAsFactors = TRUE)
+
+#FE_df %>% group_by(Study_ID) %>% 
+
+sum(FE_df$Pan_2020_muts) / nrow(FE_df)
 
 

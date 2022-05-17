@@ -60,9 +60,9 @@ all_muts_df = reduce(lambda l, r: pd.merge(l, r, on = 'Sample_ID', how = 'inner'
 merged_df = pd.merge(clinical_df, all_muts_df, on = 'Sample_ID')
 
 # Save as tsv file:
-merged_df.to_csv("merged_cBioPortal_clinical_mutation_data.tsv", sep = '\t', index = False)
+merged_df.to_csv("merged_cBioPortal_data.tsv", sep = '\t', index = False)
 
-####
+#####
 
 
 
