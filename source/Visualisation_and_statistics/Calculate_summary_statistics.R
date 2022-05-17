@@ -2,6 +2,7 @@
 # LOAD LIBRARIES & READ FILES
 #=================================================================================
 library(ggplot2)
+library(plyr)
 library(dplyr)
 library(tidyverse)
 
@@ -10,7 +11,14 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read data file
-total_df <- read.delim("total_df.tsv", stringsAsFactors = TRUE)
+total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
+
+# Read control dataset
+control_df <- read.delim("control_data.tsv", stringsAsFactors = TRUE)
+
+# Add control dataset as cohort in total dataset
+control_df$Study_ID <- "Model_Control"
+total_df <- rbind(total_df, control_df)
 
 
 #=================================================================================
@@ -43,12 +51,12 @@ table(total_df$Study_ID)
   # Durable clinical benefit: 
       # Fraction durable clinical benefit for each cohort:
       total_df %>% group_by(Study_ID) %>% summarize(
-        fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
+        fraction_DCB = (sum(Treatment_Outcome == 'Responder') / length(Treatment_Outcome)),
         fraction_NDB = 1 - fraction_DCB
       )
       # Fraction durable clinical benefit for entire dataset: 
       total_df %>% summarize(
-        fraction_DCB = (sum(Durable_clinical_benefit == 'YES') / length(Durable_clinical_benefit)),
+        fraction_DCB = (sum(Treatment_Outcome == 'Responder') / length(Treatment_Outcome)),
         fraction_NDB = 1 - fraction_DCB
       )
   
@@ -95,12 +103,13 @@ table(total_df$Study_ID)
       )
       
   
-#=======================================================================
-# MUTATION FREQUENCIES
-#=======================================================================
+#============================================================================
+# AVERAGE MUTATIONAL INSTANCES (FOR ALL INCLUDED MUTATIONS) PER PATIENT
+#============================================================================
 str(total_df)
 # Gene-mutation columns:
 
+colnames(total_df)
 # Get column names
   cols <- colnames(total_df)
   print(cols)
@@ -108,83 +117,87 @@ str(total_df)
   mutation_cols <- cols[13:71]
   print(mutation_cols)
 
-
 # Subset df to include only mutation columns & study ID
   mutations_df <- total_df %>% select(Study_ID, mutation_cols)
 # Create StudyID "Total" consisting of all entries
   total_muts_df <- mutations_df %>% mutate(Study_ID = "Total")
-# Combine 
+# Combine mutations df with total mutations df
   mutations_df <- rbind(mutations_df, total_muts_df)
   
-  
-# Split to dfs based on factors in StudyID
+# Split to dfs based on factors in StudyID, read to list
   mut_dfs_list <- split(mutations_df, f = mutations_df$Study_ID)
 
-  
-  
+str(mut_dfs_list)
 
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-# Perform calculation for each gene, on each df 
-func <- function(df) {
-  sum(df$POLE) / nrow(df)
+# Define a function that takes df as input and returns mean number of mutations / patient
+calc_mut_freq <- function(df){
+  sum(df[mutation_cols]/nrow(df))
 }
-lapply(mut_dfs_list, func)
+calc_mut_freq(mutations_df)
+ 
+# Calculate average mutational instance per patient (for included muations) for each cohort
+lapply(mut_dfs_list, calc_mut_freq)
 
-# DEV: Integrate in a loop that iterates over each column name in mutation_columns
-func <- function(df) {
-  for (i in mutation_cols) {
-    print(i)
-    print(sum(df %>% select(i)) / nrow(df))
+
+#=================================================================================
+# PAN 2020 GENE-MUTATIONS
+#=================================================================================
+
+# Read features engineered data file
+FE_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = TRUE)
+
+# Calculate metrics for each cohort
+class(FE_df$Pan_2020_muts)
+FE_df %>% group_by(Study_ID) %>% summarize(
+  # Average number of Pan 2020 gene-mutations
+  average_Pan_2020_gene_muts = mean(Pan_2020_muts), 
+  # Standard deviation of number of Pan 2020 gene-mutations
+  sd_Pan_2020_gene_muts = sd(Pan_2020_muts), 
+  # Fraction with Pan 2020 compound muts
+  fraction_Pan_2020_compound_muts = sum(Pan_2020_compound_muts) / length(Pan_2020_compound_muts)
+)
+
+# Calculate for total
+
+
+
+
+#============================================================================
+# FRACTION PATIENTS WITH SPECIFIC GENE-MUTATION
+#============================================================================
+
+str(mut_dfs_list)
+
+# Define genes of interest
+genes_of_interest <- c("EGFR", "KRAS", "TP53", "POLE", "POLD1", "KEAP1", "STK11", "MSH2", "PTEN")
+
+# Create 
+calc_gene_mut_freq <- function(df){
+  # Convert to dataframe
+  df <- as.data.frame(df)
+  for (gene in genes_of_interest) {
+    print(gene)
+    print(sum(df[gene]) / nrow(df))
+    #sum(genecol) / nrow(df)
   }
 }
+calc_gene_mut_freq(mutations_df)
 
 
+#============================================================================
+# ENGINEERED FEATURES:
+# NDB RELATED GENES (STK11, EGFR)
+# DCB RELATED GENES ()
+# PAN ET AL (2020) COMPOUND MUTATIONS
+#============================================================================
 
+# READ FILES
+#---------------
+# Read features engineered data file: 
+FE_df <- read.delim("Features_engineered_including_control_cohort.tsv", stringsAsFactors = TRUE)
 
-# DEV: Store info in dictionary
-test <- list()
-test <- deparse(substitute(mutations_df))
+#FE_df %>% group_by(Study_ID) %>% 
 
-paste("helo", test, sep='_')
-
-func <- function(df) {
-  # get df name
-  df_name <- deparse(substitute(df))
-  # Create a list named as df
-  dict_name <- paste(df_name, "dict", sep = '_')
-  # Initiate a list named after df
-  dict_name <- list()
-  # For mutation in mutation_cols, calculate mutation frequency, store in dict
-  for (i in mutation_cols) {
-    freq <- sum(df %>% select(i)) / nrow(df)
-    dict_name <- append(dict_name, (i = freq))
-  }
-}
-func(mutations_df)
-
-func <- function(df) {
-  df_name <- deparse(substitute(df))
-   print(df_name)
-   dict_name <- paste(df_name, "dict", sep = '_')
-   print(dict_name)
-   dict_name <- list("helo")
-}
-
-
-
+sum(FE_df$Pan_2020_muts) / nrow(FE_df)
 
 

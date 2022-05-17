@@ -51,20 +51,6 @@ biolung_2022 <- biolung_2022 %>% filter(Durable_clinical_benefit == 'Responder' 
   biolung_2022$Smoking_History[biolung_2022$Smoking_History == "Previous"] <- "Former"
   biolung_2022$Smoking_History[biolung_2022$Smoking_History == "Non-smoker"] <- "Never"
   
-# PD-L1 Expression
-  table(biolung_2022$`PD-L1_Expression`)
-  # '<1' <- 0
-  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` == '<1'] <- 0
-  # Convert to numeric factor
-  biolung_2022$`PD-L1_Expression` <- as.numeric(biolung_2022$`PD-L1_Expression`)
-  # Bin to factors
-  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` > 50 | biolung_2022$`PD-L1_Expression` == 50] <- "Strong"
-  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` >= 1 & biolung_2022$`PD-L1_Expression` < 50] <- "Weak"
-  # '7' got stuck for some reason...
-  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` == 7] <- "Weak"
-  biolung_2022$`PD-L1_Expression`[biolung_2022$`PD-L1_Expression` < 1] <- "Negative"
-  table(biolung_2022$`PD-L1_Expression`)
-  
   # Study ID: BioLung <- BioLung_2022
   biolung_2022$Study_ID[biolung_2022$Study_ID == "BioLung"] <- "BioLung_2022"
 
@@ -85,35 +71,6 @@ biolung_2022 <- biolung_2022 %>% select(Study_ID, Patient_ID, Sequencing_type, D
 
 
 #================================================================================
-# PROCESS BIOLUNG VARIANTS FILE
-  # OUTDATED!!!
-#================================================================================
-
-# Read BioLung variant file
-  biolung_variants_df <- read.delim("BioLung_data/BioLung_Pan_variants_table.tsv")
-
-# Reformat Patient ID so it matches the clinical df
-  # Extract patient number
-  PID1 <- gsub("[a-zA-Z]", "", biolung_variants_df$Patient.ID)
-  # Remove special characters
-  PID2 <- gsub("[[:punct:]]", "", PID1)
-  # Add 'BL_' prefix
-  PID3 <- paste('BL', PID2, sep = '_')
-  # Replace entries in variants df patient ID column
-  biolung_variants_df$Patient.ID <- PID3
-
-# Filter entries not present in clinical df from variant df
-  biolung_variants_df <- biolung_variants_df %>% filter(biolung_variants_df$Patient.ID %in% biolung_2022$Patient_ID)
-  
-# Rename 'Patient.ID' column
-colnames(biolung_variants_df)[which(names(biolung_variants_df) == "Patient.ID")] <- "Patient_ID"
-
-
-#================================================================================
-# PROCESS BIOLUNG VARIANTS FILE
-#================================================================================
-
-#================================================================================
 # READ VARIANTS FILE & SELECT COLUMNS
 #================================================================================
 variants_df <- read_excel("BioLung_data/BioLung_variants_manually_classified.xlsx", 
@@ -130,7 +87,7 @@ variants_df <- variants_df %>% rename(Patient_ID = `Sample+A:FI`, Gene = `Gene (
 
 
 #================================================================================
-# HARMONIZE PATIENT ID ENTRIES TO CLINICAL BIOLUNG DF
+# HARMONIZE PATIENT ID ENTRIES IN VARIANTS DF TO CLINICAL BIOLUNG DF
 #================================================================================
 
 # Harmonize patient IDs to BioLung clinical dataset

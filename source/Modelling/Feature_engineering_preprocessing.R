@@ -30,11 +30,69 @@ control_df <- read.delim("control_data.tsv")
 control_df$Study_ID <- "Control_cohort"
 total_df <- rbind(combined_df, control_df)
 
+#===========================================================================
+# FEATURE ENGINEERING
+#===========================================================================
 
+# SUM PAN 2020 MUTATIONS IN NEW COLUMN
+#---------------------------------------
+  # Create a vector of all mutations column names
+  colnames(total_df)
+  mutations_cols <- colnames(total_df)[13:71]
+  # Define genes of interest
+  genes_of_interest <- c("EGFR", "PTEN", "MSH2", "TP53", "STK11", "POLD1", "KRAS", "KEAP1", "POLE")
+  # Define Pan et al 2020 genes
+  pan_2020_genes <- mutations_cols[! mutations_cols %in% c("EGFR", "PTEN", "TP53", "STK11", "POLD1", "KRAS", "KEAP1")]
+  # Sum Pan 2020 gene-mutations
+  temp <- total_df %>% select(pan_2020_genes) %>% mutate(Pan_2020_muts = rowSums(.))
+  total_df$Pan_2020_muts <- temp$Pan_2020_muts
+  
+  ####
+  #### DEV: Add additional column containing binary data whether or not Pan_2020_muts >= 2
+  ####
+  
+
+# COMBINE SPECIFIC GENE-MUTATIONS TO SINGLE SCORES
+#---------------------------------------------------
+### Enriched in non-responders: EGFR, STK11
+### Enriched in responders: PTEN, KRAS, POLE, POLD1, MSH2
+
+# Define vectors for durable clinical benefit (DCB) & no durable benefit (NDB) associated genes
+  NDB_genes <- c("EGFR", "STK11")
+  DCB_genes <- c("PTEN", "KRAS", "POLE", "POLD1", "MSH2")
+
+# Combine sums to columns
+  temp <- total_df %>% select(DCB_genes) %>% mutate(DCB_genes = rowSums(.))
+  total_df$DCB_genes <- temp$DCB_genes
+  temp <- total_df %>% select(NDB_genes) %>% mutate(NDB_genes = rowSums(.))
+  total_df$NDB_genes <- temp$NDB_genes
+
+
+#===========================================================================
+# PREPROCESSING
+#===========================================================================
 
 # Convert columns to factors
 colz <- c('Durable_clinical_benefit', 'Histology', 'Smoking_history', 'Sex')
 data[colz] <- lapply(data[colz], factor)
+
+
+# Normalize TMB across cohorts 
+
+
+# Log2 transform TMB
+
+# Filter infinite values from TMB_norm_log2
+
+# Log2 Transform TMB
+data$TMB <- log2(data$TMB)
+data <- data %>% rename(log2_TMB = TMB)
+# Remove Inf / -Inf entries (log2 of 0)
+data$log2_TMB <- ifelse(is.infinite(data$log2_TMB), 0, data$log2_TMB)
+
+
+
+
 # Exclude features
 # Exclude features not to be included when making predictions
 str(total_df)
@@ -42,6 +100,16 @@ total_df <- total_df %>% select(-Sequencing_type, -Study_ID, -Patient_ID, -PFS_m
 # Exclude mutations columns
 gene_cols <- colnames(total_df[8:66])
 temp <- total_df %>% select(-gene_cols)
+
+
+
+### Convert columns to factors
+# Convert mutation data to type factor
+gene_columns <- c('KEAP1_mut', 'KRAS_mut', 'ARID1A_mut', 'STK11_mut', 'TP53_mut', 'ARID1B_mut', 'EGFR_mut', 'PTEN_mut')
+data[gene_columns] <- lapply(data[gene_columns], factor)
+
+
+
 
 #========================================================================
 # POTENTIALLY REMOVE UNRELEVANT (NO VARIANCE) NUMERIC FEATURES
@@ -57,15 +125,6 @@ variance
 data_correlated = cor(data[numeric_cols])
 findCorrelation(data_correlated)
 # No observed correlated numeric variables. 
-
-#========================================================================
-# RECURSIVE FEATURE ELIMINATION
-#========================================================================
-
-#========================================================================
-# IMPUTE MISSING VALUES
-#========================================================================
-
 
 
 #========================================================================
