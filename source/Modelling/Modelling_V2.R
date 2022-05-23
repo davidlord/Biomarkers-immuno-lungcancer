@@ -21,89 +21,196 @@ library(doSNOW)
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
-# Read combined dataset
-combined_df <- read.delim("combined_data.tsv")
-# Read control df
-control_df <- read.delim("control_data.tsv")
-
-# Merge to single cohort
-control_df$Study_ID <- "Control_cohort"
-total_df <- rbind(combined_df, control_df)
+# Read data
+total_df <- read.delim("Features_engineered_control_included.tsv")
 
 
+#========================================================================
+# REMOVE IRRELEVANT FEATURES
+#========================================================================
 
-# Convert columns to factors
-colz <- c('Durable_clinical_benefit', 'Histology', 'Smoking_history', 'Sex')
-data[colz] <- lapply(data[colz], factor)
-# Exclude features
-# Exclude features not to be included when making predictions
+# Select relevant columns
+  colnames(total_df)
+  # Remove Pan 2020 gene-mutations
+  pan_2020_genes_cols <- colnames(total_df)[14:63]
+  total_df <- total_df %>% select(-pan_2020_genes_cols)
+  
+# Remove additional excess columns
+  colnames(total_df)
+  rm_cols <- c("Patient_ID", "Sequencing_type", "PFS_months", "Stage_at_diagnosis", "PD.L1_Expression", 
+               "Immunotherapy", "MSI")
+  # Keep Study ID for now as this is used to normalize numeric values downstream
+  ### DEV: Determine which TMB to keep...
+  total_df <- total_df %>% select(-rm_cols)
+  colnames(total_df)
+
+# To avoid downstream bug in the modelling step, remove special characters from response variable
+  total_df$Treatment_Outcome[total_df$Treatment_Outcome == "Non-Responder"] <- "NonResponder"
+
+  
+#========================================================================
+# IMPUTE MISSING VALUES & CONVERT DATA TYPES
+#========================================================================
+
+# Since all missing values are located in the BioLung cohort, 
+# subset the BioLung cohort when assessing appropriate imputations
+temp_df <- total_df %>% filter(Study_ID == "BioLung_2022")
+
+# Identify columns with NAs
+colSums(is.na(total_df))
+  
+# Impute histology with mode
+table(temp_df$Histology)
+total_df$Histology <- ifelse(is.na(total_df$Histology), "Lung Adenocarcinoma", total_df$Histology)
+
+# Impute patient diagnosis age with mean
+mean_age <- as.integer(mean(temp_df$Diagnosis_Age, na.rm = TRUE))
+total_df$Diagnosis_Age <- ifelse(is.na(total_df$Diagnosis_Age), mean_age, total_df$Diagnosis_Age)
+
+# Impute patient smoking history with mode
+table(temp_df$Smoking_History)
+total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Former", total_df$Smoking_History)
+
+# Impute patient sex with mode
+### DEV: Use random sampling imputation
+table(temp_df$Sex)
+total_df$Sex <- ifelse(is.na(total_df$Sex), "Female", total_df$Sex)
+sum(is.na(total_df))  
+
+
+# CONVERT DATA TYPES
+#--------------------
 str(total_df)
-total_df <- total_df %>% select(-Sequencing_type, -Study_ID, -Patient_ID, -PFS_months, -Stage_at_diagnosis, -MSI_MSISensorPro)
-# Exclude mutations columns
-gene_cols <- colnames(total_df[8:66])
-temp <- total_df %>% select(-gene_cols)
+
+# Convert binary mutations columns to factors
+muts_cols <- c("POLE", "KEAP1", "KRAS", "POLD1", "STK11", "TP53", "MSH2", "EGFR", "PTEN", 
+               "Pan_2020_compound_muts")
+total_df[muts_cols] <- lapply(total_df[muts_cols], factor)
+
+# Convert relevant columns to factors
+str(total_df)
+fac_cols <- c("Study_ID", "Sex", "Histology", "Smoking_History", "Treatment_Outcome")
+total_df[fac_cols] <- lapply(total_df[fac_cols], factor)
+
 
 #========================================================================
-# POTENTIALLY REMOVE UNRELEVANT (NO VARIANCE) NUMERIC FEATURES
+# POTENTIALLY REMOVE CORRELATED- AND/OR FEATURES DISPLAYING NO VARIANCE
 #========================================================================
 
-# Remove near-0 variance features (if any)
-numeric_cols = sapply(data, is.numeric)
-variance = nearZeroVar(data[numeric_cols], saveMetrics = TRUE)
+# Potentially remove near-0 variance features
+numeric_cols = sapply(total_df, is.numeric)
+variance = nearZeroVar(total_df[numeric_cols], saveMetrics = TRUE)
 variance
 # No observed near-0 variance numeric features. 
 
-# Remove correlated numeric features (if any)
-data_correlated = cor(data[numeric_cols])
+# Potentially remove correlated numeric features (if any)
+data_correlated = cor(total_df[numeric_cols])
 findCorrelation(data_correlated)
 # No observed correlated numeric variables. 
 
-#========================================================================
-# RECURSIVE FEATURE ELIMINATION
-#========================================================================
 
 #========================================================================
-# IMPUTE MISSING VALUES
+# EXCLUDE EXCESS FEATURES - BASED ON RESULTS FROM DOWNSTREAM RFE
 #========================================================================
 
+unselect_cols <- c("Histology", "Sex", "TMB", "POLE", "KEAP1", "MSH2", "PTEN", "Pan_2020_compound_muts", "TMB_norm")
+total_df <- total_df %>% select(-unselect_cols)
+
+
+#========================================================================
+# SPLIT CONTROL- & VALIDATION COHORTS
+#========================================================================
+
+unique(total_df$Study_ID)
+
+# Control df
+control_df <- total_df %>% filter(Study_ID == "Model_Control") %>% select(-Study_ID)
+
+# Validation df
+validation_df <- total_df %>% filter(Study_ID == "Jordan_2017") %>% select(-Study_ID)
+
+# Combined df
+total_df <- total_df %>% filter(Study_ID != "Model_Control") %>% filter(Study_ID != "Jordan_2017") %>%
+  select(-Study_ID)
 
 
 #========================================================================
 # CREATE DUMMY VARIABLES (ONE-HOT ENCODING)
 #========================================================================
 
+###### EXPERIMENTAL ######
+
+colnames(total_df)
+unselect_cols <- c("Histology", "Sex", "TMB", "POLE", "KEAP1", "MSH2", "PTEN", "Pan_2020_compound_muts", "TMB_norm")
+total_df <- total_df %>% select(-unselect_cols)
+
+###### EXPERIMENTAL ######
+
+
 # Store X and Y for later use...
-X = data %>% select(-Durable_clinical_benefit)
-Y = data$Durable_clinical_benefit
+X = total_df %>% select(-Treatment_Outcome)
+Y = total_df$Treatment_Outcome
 
 
-# Create dummy variable "model" (excluding 'clinical outcome column'Durable_clinical_outcome' response variable)
-dummies_model <- dummyVars(Durable_clinical_benefit ~ ., data = data)
-# "Predict" dummy variables (excluding clinical outcome column)
-dummy_data <- predict(dummies_model, newdata = data)
+# Create dummy variable "model" (excluding response variable)
+dummies_model <- dummyVars(Treatment_Outcome ~ ., data = total_df)
+# "Predict" dummy variables (response variable)
+dummies_data <- predict(dummies_model, newdata = total_df)
 # Convert to dataframe
-data <- data.frame(dummy_data)
-str(data)
+total_df <- data.frame(dummies_data)
+str(total_df)
 
-# Normalize data, range between 0 and 1
-process_data_model <- preProcess(data, method='range')
-data <- predict(process_data_model, newdata = data)
-
-# Append response variable column
-data$Durable_clinical_benefit <- Y
-
-str(data)
 
 #========================================================================
-# SPLIT DATA (INTO TRAINING DATA AND TEST DATA)
+# DATA TRANSFORMATION
+#========================================================================
+
+### DEV: Add TMB normalization and log2 transformation here... 
+
+# Normalize data, range between 0 and 1
+process_range_model <- preProcess(total_df, method='range')
+total_df <- predict(process_range_model, newdata = total_df)
+
+# Append response variable column
+total_df$Treatment_Outcome <- Y
+
+str(total_df)
+
+
+#========================================================================
+# RECURSIVE FEATURE ELIMINATION (RFE)
+#========================================================================
+
+###### EXPERIMENTAL ######
+
+test_df <- total_df
+colnames(test_df)
+test_df <- test_df %>% select(-c(TMB_norm, TMB, Histology.Large.Cell.Neuroendocrine.Carcinoma, 
+                                 Histology.Lung.Adenocarcinoma, Histology.Lung.Squamous.Cell.Carcinoma, 
+                                 Histology.Non.Small.Cell.Lung.Cancer))
+
+###### EXPERIMENTAL ######
+
+
+set.seed(100)
+# Run RFE using the Random Forest algorithm for a range of input features (1 - max)
+ctrl <- rfeControl(functions = rfFuncs, method = "repeatedcv", repeats = 10)
+rfeprofile <- rfe(x = test_df[, 1:(length(test_df) - 1)], y = test_df$Treatment_Outcome, 
+                  sizes = c(1:20), rfeControl = ctrl)
+rfeprofile
+predictors(rfeprofile)
+
+
+#========================================================================
+# SPLIT TRAIN- & TEST SET
 #========================================================================
 
 # Split randomly (retaining proportion) using createDataPartition function
 set.seed(100)
-indexes <- createDataPartition(data$Durable_clinical_benefit, p = 0.8, list = FALSE)
+indexes <- createDataPartition(total_df$Treatment_Outcome, p = 0.8, list = FALSE)
 
-data.train <- data[indexes,]
-data.test <- data[-indexes,]
+train_set <- total_df[indexes,]
+test_set <- total_df[-indexes,]
 
 
 #========================================================================
@@ -121,21 +228,24 @@ ctrl <- trainControl(method = 'cv',
 
 # Train Random Forest model
 set.seed(100)
-rf_model = train(Durable_clinical_benefit ~ ., 
-                 data = data.train, 
+rf_model = train(Treatment_Outcome ~ ., 
+                 data = train_set, 
                  method = "rf", 
                  tunelength = 10, 
                  trControl = ctrl)
 rf_model
 
+
 # Train Extreme Gradient Boosting Tree model
 set.seed(100)
-xgbTree_model = train(Durable_clinical_benefit ~ ., 
-                      data = data.train, 
+xgbTree_model = train(Treatment_Outcome ~ ., 
+                      data = train_set, 
                       method = 'xgbTree', 
                       tunelength = 10, 
                       trControl = ctrl)
 xgbTree_model
+
+
 
 # Train Support Vector Machine model
 set.seed(100)
@@ -161,6 +271,9 @@ AdaB_model
 # MODEL VALIDATION
 #========================================================================
 
+# RUN MODEL CONTROL & VALIDATION THRU DUMMIES MODEL & RANGE MODEL...
+
+
 # Compare models
 compare_models <- resamples(list(RANDOM_FOREST=rf_model, 
                                  XGBTree=xgbTree_model, 
@@ -174,21 +287,23 @@ scales <- list(x = list(relation = "free"), y = list(relation = "free"))
 bwplot(compare_models, scales = scales)
 
 
+
+
 # Try to make predictions using the models on the test data, create confusion matrix for each model
 # Random Forest: 
-predictions_rf <- predict(rf_model, data.test)
-rf_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
+predictions_rf <- predict(rf_model, test_set)
+rf_cm <- confusionMatrix(reference = test_set$Treatment_Outcome, 
                 data = predictions_rf, 
                 mode = 'everything', 
-                positive = 'YES')
+                positive = 'Responder')
 rf_cm
 
 # xgbTree:
-predictions_xgbTree <- predict(xgbTree_model, data.test)
-xgbTree_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
+predictions_xgbTree <- predict(xgbTree_model, test_set)
+xgbTree_cm <- confusionMatrix(reference = test_set$Treatment_Outcome, 
                               data = predictions_xgbTree, 
                               mode = 'everything', 
-                              positive = 'YES')
+                              positive = 'Responder')
 xgbTree_cm
 
 # Support Vector Machine:
@@ -206,3 +321,37 @@ AdaB_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit,
                           mode = 'everything', 
                           positive = 'YES')
 AdaB_cm
+
+
+#========================================================================
+# TRY W TUNE GRID
+#========================================================================
+
+tune.grid <- expand.grid(eta = c(0.05, 0.075, 0.1),
+                         nrounds = c(50, 75, 100),
+                         max_depth = 6:8,
+                         min_child_weight = c(2.0, 2.25, 2.5),
+                         colsample_bytree = c(0.3, 0.4, 0.5),
+                         gamma = 0,
+                         subsample = 1)
+View(tune.grid)
+
+
+# Train Extreme Gradient Boosting Tree model
+set.seed(100)
+xgbTree_model = train(Treatment_Outcome ~ ., 
+                      data = train_set, 
+                      method = 'xgbTree', 
+                      tuneGrid = tune.grid, 
+                      trControl = ctrl)
+xgbTree_model
+
+# Predict on test set
+predictions_xgbTree <- predict(xgbTree_model, test_set)
+xgbTree_cm <- confusionMatrix(reference = test_set$Treatment_Outcome, 
+                              data = predictions_xgbTree, 
+                              mode = 'everything', 
+                              positive = 'Responder')
+xgbTree_cm
+
+
