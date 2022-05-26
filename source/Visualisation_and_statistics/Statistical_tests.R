@@ -4,6 +4,7 @@
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
+library(ggpubr)
 
 # Set working directory (also place data to read in working directory).
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
@@ -14,15 +15,52 @@ total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
 
 
 #=======================================================================
-# MSI RESPONDERS VS NON-RESPONDERS BIOLUNG COHORT
+# MSI STATISTICAL ANALYSES
 #=======================================================================
+
+# COMPARE MSI: RESPONDERS VS NON-RESPONDERS
+#---------------------------------------------
 
 # Subset BioLung DF
 biolung_df <- total_df %>% filter(Study_ID == "BioLung_2022")
 # Check for NAs in MSI data
-sum(is.na(biolung_df$MSI_MSISensorPro))
+sum(is.na(biolung_df$MSI))
 # Compare MSI responders vs non-responders using Mann-Whitney-Wilcoxon test
-wilcox.test(MSI_MSISensorPro ~ Treatment_Outcome, data = biolung_df)
+wilcox.test(MSI ~ Treatment_Outcome, data = biolung_df)
+
+# Get median for each group
+biolung_df %>% group_by(Treatment_Outcome) %>% summarize(
+  median(MSI)
+)
+temp <- biolung_df %>% select(Treatment_Outcome, MSI)
+
+
+# CORRELATION BETWEEN MSI AND OTHER BIOMARKERS?
+#------------------------------------------------
+# Note: Use Spearman correlation as we can not assume a normal distribution in MSI.
+temp <- biolung_df %>% select(Treatment_Outcome, MSI, TMB, PD.L1_Expression)
+
+# MSI vs TMB
+#-------------
+cor.test(biolung_df$MSI, biolung_df$TMB, method = "spearman")
+
+
+# MSI vs PD-L1 expression
+#--------------------------
+# View vector
+biolung_df$PD.L1_Expression
+# Convert "<1" to 0
+biolung_df$PD.L1_Expression <- ifelse(biolung_df$PD.L1_Expression == "<1", 0, biolung_df$PD.L1_Expression)
+# convert to numeric
+biolung_df$PD.L1_Expression <- as.numeric(biolung_df$PD.L1_Expression)
+# Calculate, exclude incomplete entries (NAs)
+cor.test(biolung_df$MSI, biolung_df$PD.L1_Expression, method = "spearman", use = "complete.obs")
+
+
+
+
+
+
 
 
 #=======================================================================
