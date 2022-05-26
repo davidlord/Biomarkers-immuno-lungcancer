@@ -57,8 +57,21 @@ biolung_df$PD.L1_Expression <- as.numeric(biolung_df$PD.L1_Expression)
 cor.test(biolung_df$MSI, biolung_df$PD.L1_Expression, method = "spearman", use = "complete.obs")
 
 
+#=======================================================================
+# PATIENT DEMOGRAPHY & TREATMENT OUTCOME
+#=======================================================================
+
+colnames(total_df)
+# PATIENT AGE
+res <- t.test(Diagnosis_Age ~ Treatment_Outcome, data = total_df)
+res
+
+# PATIENT SEX
 
 
+
+res <- t.test(Diagnosis_Age ~ Treatment_Outcome, data = total_df)
+res
 
 
 
