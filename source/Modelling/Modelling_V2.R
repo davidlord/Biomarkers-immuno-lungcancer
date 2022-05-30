@@ -15,6 +15,7 @@ library(lattice)
 library(caret)
 library(dplyr)
 library(doSNOW)
+library(pROC)
 
 
 # Set working directory (also place data to read in working directory).
@@ -23,6 +24,8 @@ setwd(WORK_DIR)
 
 # Read data
 total_df <- read.delim("Features_engineered_control_included.tsv")
+
+### DEV: REMOVE TMB MAX OUTLIER
 
 
 #========================================================================
@@ -47,6 +50,17 @@ total_df <- read.delim("Features_engineered_control_included.tsv")
 # To avoid downstream bug in the modelling step, remove special characters from response variable
   total_df$Treatment_Outcome[total_df$Treatment_Outcome == "Non-Responder"] <- "NonResponder"
 
+
+##### EXPERIMENTAL #####
+##### EXPERIMENTAL #####
+
+  # Combine Current and former to Current/Former
+  total_df$Smoking_History[total_df$Smoking_History == "Current"] <- "Current/Former"
+  total_df$Smoking_History[total_df$Smoking_History == "Former"] <- "Current/Former"
+  table(total_df$Smoking_History)
+
+##### EXPERIMENTAL #####
+##### EXPERIMENTAL #####
   
 #========================================================================
 # IMPUTE MISSING VALUES & CONVERT DATA TYPES
@@ -71,6 +85,10 @@ total_df$Diagnosis_Age <- ifelse(is.na(total_df$Diagnosis_Age), mean_age, total_
 table(temp_df$Smoking_History)
 total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Former", total_df$Smoking_History)
 
+#####  EXPERIMENTAL #####
+total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Current/Former", total_df$Smoking_History)
+##### EXPERIMENTAL #####
+
 # Impute patient sex with mode
 ### DEV: Use random sampling imputation
 table(temp_df$Sex)
@@ -94,6 +112,13 @@ total_df[fac_cols] <- lapply(total_df[fac_cols], factor)
 
 
 #========================================================================
+# EXPORT MODEL-READY DATASET
+#========================================================================
+
+write.table(total_df, file = "model-ready_combinded_data.tsv", sep = "\t")
+
+
+#========================================================================
 # POTENTIALLY REMOVE CORRELATED- AND/OR FEATURES DISPLAYING NO VARIANCE
 #========================================================================
 
@@ -113,8 +138,22 @@ findCorrelation(data_correlated)
 # EXCLUDE EXCESS FEATURES - BASED ON RESULTS FROM DOWNSTREAM RFE
 #========================================================================
 
-unselect_cols <- c("Histology", "Sex", "TMB", "POLE", "KEAP1", "MSH2", "PTEN", "Pan_2020_compound_muts", "TMB_norm")
+# Exclude excess features
+colnames(total_df)
+unselect_cols <- c("Histology", "Sex", "Pan_2020_compound_muts", "TMB_norm", "TMB")
 total_df <- total_df %>% select(-unselect_cols)
+
+# Exclude excess mutations columns
+colnames(total_df)
+unselect_cols <- c("POLE", "KEAP1", "TP53", "MSH2", "EGFR", "PTEN", "DCB_genes")
+total_df <- total_df %>% select(-unselect_cols)
+
+### EXPERIMENTAL ###
+colnames(total_df)
+unselect_cols <- c("Smoking_History", "Diagnosis_Age", "NDB_genes", "POLD1", "NDB_genes")
+total_df <- total_df %>% select(-unselect_cols)
+### EXPERIMENTAL ###
+
 
 
 #========================================================================
@@ -130,27 +169,17 @@ control_df <- total_df %>% filter(Study_ID == "Model_Control") %>% select(-Study
 validation_df <- total_df %>% filter(Study_ID == "Jordan_2017") %>% select(-Study_ID)
 
 # Combined df
-total_df <- total_df %>% filter(Study_ID != "Model_Control") %>% filter(Study_ID != "Jordan_2017") %>%
-  select(-Study_ID)
+total_df <- total_df %>% filter(Study_ID != "Model_Control") %>% 
+  filter(Study_ID != "Jordan_2017") %>% select(-Study_ID)
 
 
 #========================================================================
 # CREATE DUMMY VARIABLES (ONE-HOT ENCODING)
 #========================================================================
 
-###### EXPERIMENTAL ######
-
-colnames(total_df)
-unselect_cols <- c("Histology", "Sex", "TMB", "POLE", "KEAP1", "MSH2", "PTEN", "Pan_2020_compound_muts", "TMB_norm")
-total_df <- total_df %>% select(-unselect_cols)
-
-###### EXPERIMENTAL ######
-
-
 # Store X and Y for later use...
 X = total_df %>% select(-Treatment_Outcome)
 Y = total_df$Treatment_Outcome
-
 
 # Create dummy variable "model" (excluding response variable)
 dummies_model <- dummyVars(Treatment_Outcome ~ ., data = total_df)
@@ -181,22 +210,11 @@ str(total_df)
 # RECURSIVE FEATURE ELIMINATION (RFE)
 #========================================================================
 
-###### EXPERIMENTAL ######
-
-test_df <- total_df
-colnames(test_df)
-test_df <- test_df %>% select(-c(TMB_norm, TMB, Histology.Large.Cell.Neuroendocrine.Carcinoma, 
-                                 Histology.Lung.Adenocarcinoma, Histology.Lung.Squamous.Cell.Carcinoma, 
-                                 Histology.Non.Small.Cell.Lung.Cancer))
-
-###### EXPERIMENTAL ######
-
-
 set.seed(100)
 # Run RFE using the Random Forest algorithm for a range of input features (1 - max)
 ctrl <- rfeControl(functions = rfFuncs, method = "repeatedcv", repeats = 10)
-rfeprofile <- rfe(x = test_df[, 1:(length(test_df) - 1)], y = test_df$Treatment_Outcome, 
-                  sizes = c(1:20), rfeControl = ctrl)
+rfeprofile <- rfe(x = total_df[, 1:(length(total_df) - 1)], y = total_df$Treatment_Outcome, 
+                  sizes = c(1:length(total_df)), rfeControl = ctrl)
 rfeprofile
 predictors(rfeprofile)
 
@@ -226,7 +244,31 @@ ctrl <- trainControl(method = 'cv',
                      summaryFunction = twoClassSummary)
 
 
-# Train Random Forest model
+
+# TEST CONTROL
+set.seed(100)
+ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5, search = "random")
+
+
+
+# (BOOSTED) LOGISTIC REGRESSION
+#---------------------------------
+
+# Train model
+set.seed(100)
+bag_logreg_model = train(Treatment_Outcome ~ ., 
+                 data = train_set, 
+                 method = "LogitBoost", 
+                 tunelength = 20, 
+                 trControl = ctrl)
+bag_logreg_model
+
+
+# RANDOM FOREST
+#----------------------
+# Note: Decision trees
+
+# Train model
 set.seed(100)
 rf_model = train(Treatment_Outcome ~ ., 
                  data = train_set, 
@@ -236,122 +278,80 @@ rf_model = train(Treatment_Outcome ~ .,
 rf_model
 
 
-# Train Extreme Gradient Boosting Tree model
+# EXTREME GRADIENT BOOSTING BAG DECISION TREE
+#-----------------------------------------------
+
+# Train model
 set.seed(100)
-xgbTree_model = train(Treatment_Outcome ~ ., 
-                      data = train_set, 
-                      method = 'xgbTree', 
-                      tunelength = 10, 
-                      trControl = ctrl)
-xgbTree_model
+xgbtree_model = train(Treatment_Outcome ~ ., 
+                       data = train_set, 
+                       method = "xgbTree", 
+                       tunelength = 10, 
+                       trControl = ctrl)
+xgbtree_model
 
 
+#========================================================================
+# COMMPARE MODELS
+#========================================================================
 
-# Train Support Vector Machine model
-set.seed(100)
-svm_model = train(Durable_clinical_benefit ~ ., 
-                  data = data.train, 
-                  method = 'svmRadial', 
-                  tunelength = 15, 
-                  trControl = ctrl)
-svm_model
+compare_models <- resamples(list("Logistic Regression" = bag_logreg_model, 
+                                 "Random Forest" = rf_model, 
+                                 "Extreme Gradient Boosting" = xgbtree_model))
+summary(compare_models)
 
-# Adaboost
-set.seed(100)
-AdaB_model = train(Durable_clinical_benefit ~ ., 
-                   data = data.train, 
-                   method = 'adaboost', 
-                   tunelength = 2, 
-                   trControl = ctrl)
-AdaB_model
+# Plot comparisons
+scales <- list(x = list(relation = "free"), y = list(relation = "free"))
+bwplot(compare_models, scales = scales)
 
+help(bwplot)
 
 
 #========================================================================
 # MODEL VALIDATION
 #========================================================================
 
-# RUN MODEL CONTROL & VALIDATION THRU DUMMIES MODEL & RANGE MODEL...
+# Use models to make predictions on test data
 
+# Logistic regression: 
+pred_logreg <- predict(bag_logreg_model, test_set)
+cm_logreg <- confusionMatrix(reference = test_set$Treatment_Outcome, 
+                         data = pred_logreg, 
+                         mode = 'everything', 
+                         positive = 'Responder')
+cm_logreg
 
-# Compare models
-compare_models <- resamples(list(RANDOM_FOREST=rf_model, 
-                                 XGBTree=xgbTree_model, 
-                                 SVM=svm_model, 
-                                 AdaB=AdaB))
-summary(compare_models)
-
-
-# Plot the output from resamples
-scales <- list(x = list(relation = "free"), y = list(relation = "free"))
-bwplot(compare_models, scales = scales)
-
-
-
-
-# Try to make predictions using the models on the test data, create confusion matrix for each model
 # Random Forest: 
-predictions_rf <- predict(rf_model, test_set)
-rf_cm <- confusionMatrix(reference = test_set$Treatment_Outcome, 
-                data = predictions_rf, 
-                mode = 'everything', 
-                positive = 'Responder')
-rf_cm
+pred_rf <- predict(rf_model, test_set)
+cm_rf <- confusionMatrix(reference = test_set$Treatment_Outcome, 
+                         data = pred_rf, 
+                         mode = 'everything', 
+                         positive = 'Responder')
+cm_rf
 
-# xgbTree:
-predictions_xgbTree <- predict(xgbTree_model, test_set)
-xgbTree_cm <- confusionMatrix(reference = test_set$Treatment_Outcome, 
-                              data = predictions_xgbTree, 
-                              mode = 'everything', 
-                              positive = 'Responder')
-xgbTree_cm
+# Extreme Gradient Boosting
+pred_xgbtree <- predict(xgbtree_model, test_set)
+cm_xgbtree <- confusionMatrix(reference = test_set$Treatment_Outcome, 
+                         data = pred_xgbtree, 
+                         mode = 'everything', 
+                         positive = 'Responder')
+cm_xgbtree
 
-# Support Vector Machine:
-predictions_svm <- predict(svm_model, data.test)
-svm_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
-                          data = predictions_svm, 
-                          mode = 'everything', 
-                          positive = 'YES')
-svm_cm
 
-# AdaBoost: 
-predictions_AdaB <- predict(AdaB_model, data.test)
-AdaB_cm <- confusionMatrix(reference = data.test$Durable_clinical_benefit, 
-                          data = predictions_AdaB, 
-                          mode = 'everything', 
-                          positive = 'YES')
-AdaB_cm
 
 
 #========================================================================
-# TRY W TUNE GRID
+# PLOT ROC CURVES
 #========================================================================
 
-tune.grid <- expand.grid(eta = c(0.05, 0.075, 0.1),
-                         nrounds = c(50, 75, 100),
-                         max_depth = 6:8,
-                         min_child_weight = c(2.0, 2.25, 2.5),
-                         colsample_bytree = c(0.3, 0.4, 0.5),
-                         gamma = 0,
-                         subsample = 1)
-View(tune.grid)
+# Convert response variable entries to numeric
+
+pred_xgbtree <- ifelse(pred_xgbtree == "Responder", 1, 0)
+pred_rf <- ifelse(pred_rf == "Responder", 1, 0)
+
+roc(test_set$Treatment_Outcome, pred_xgbtree, plot = TRUE)
+plot.roc(test_set$Treatment_Outcome, pred_rf)
 
 
-# Train Extreme Gradient Boosting Tree model
-set.seed(100)
-xgbTree_model = train(Treatment_Outcome ~ ., 
-                      data = train_set, 
-                      method = 'xgbTree', 
-                      tuneGrid = tune.grid, 
-                      trControl = ctrl)
-xgbTree_model
-
-# Predict on test set
-predictions_xgbTree <- predict(xgbTree_model, test_set)
-xgbTree_cm <- confusionMatrix(reference = test_set$Treatment_Outcome, 
-                              data = predictions_xgbTree, 
-                              mode = 'everything', 
-                              positive = 'Responder')
-xgbTree_cm
 
 
