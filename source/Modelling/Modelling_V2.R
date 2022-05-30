@@ -50,6 +50,17 @@ total_df <- read.delim("Features_engineered_control_included.tsv")
 # To avoid downstream bug in the modelling step, remove special characters from response variable
   total_df$Treatment_Outcome[total_df$Treatment_Outcome == "Non-Responder"] <- "NonResponder"
 
+
+##### EXPERIMENTAL #####
+##### EXPERIMENTAL #####
+
+  # Combine Current and former to Current/Former
+  total_df$Smoking_History[total_df$Smoking_History == "Current"] <- "Current/Former"
+  total_df$Smoking_History[total_df$Smoking_History == "Former"] <- "Current/Former"
+  table(total_df$Smoking_History)
+
+##### EXPERIMENTAL #####
+##### EXPERIMENTAL #####
   
 #========================================================================
 # IMPUTE MISSING VALUES & CONVERT DATA TYPES
@@ -73,6 +84,10 @@ total_df$Diagnosis_Age <- ifelse(is.na(total_df$Diagnosis_Age), mean_age, total_
 # Impute patient smoking history with mode
 table(temp_df$Smoking_History)
 total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Former", total_df$Smoking_History)
+
+#####  EXPERIMENTAL #####
+total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Current/Former", total_df$Smoking_History)
+##### EXPERIMENTAL #####
 
 # Impute patient sex with mode
 ### DEV: Use random sampling imputation
@@ -133,6 +148,14 @@ colnames(total_df)
 unselect_cols <- c("POLE", "KEAP1", "TP53", "MSH2", "EGFR", "PTEN", "DCB_genes")
 total_df <- total_df %>% select(-unselect_cols)
 
+### EXPERIMENTAL ###
+colnames(total_df)
+unselect_cols <- c("Smoking_History", "Diagnosis_Age", "NDB_genes", "POLD1", "NDB_genes")
+total_df <- total_df %>% select(-unselect_cols)
+### EXPERIMENTAL ###
+
+
+
 #========================================================================
 # SPLIT CONTROL- & VALIDATION COHORTS
 #========================================================================
@@ -191,7 +214,7 @@ set.seed(100)
 # Run RFE using the Random Forest algorithm for a range of input features (1 - max)
 ctrl <- rfeControl(functions = rfFuncs, method = "repeatedcv", repeats = 10)
 rfeprofile <- rfe(x = total_df[, 1:(length(total_df) - 1)], y = total_df$Treatment_Outcome, 
-                  sizes = c(1:20), rfeControl = ctrl)
+                  sizes = c(1:length(total_df)), rfeControl = ctrl)
 rfeprofile
 predictors(rfeprofile)
 
@@ -224,7 +247,7 @@ ctrl <- trainControl(method = 'cv',
 
 # TEST CONTROL
 set.seed(100)
-ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 3, search = "random")
+ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5, search = "random")
 
 
 
@@ -253,20 +276,6 @@ rf_model = train(Treatment_Outcome ~ .,
                  tunelength = 10, 
                  trControl = ctrl)
 rf_model
-
-
-# BAGGED MARS 
-#----------------
-# Note: Multivariate adaptive regression splines, non-linear regression. 
-
-# Train model
-set.seed(100)
-bag_mars_model = train(Treatment_Outcome ~ ., 
-                 data = train_set, 
-                 method = "bagEarth", 
-                 tunelength = 10, 
-                 trControl = ctrl)
-bag_mars_model
 
 
 # EXTREME GRADIENT BOOSTING BAG DECISION TREE
