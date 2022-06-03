@@ -11,7 +11,7 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read data file
-total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
+total_df <- read.delim("combined_data.tsv", stringsAsFactors = FALSE)
 
 
 
@@ -98,6 +98,142 @@ chisq
 
 
 #=======================================================================
+# PD-L1 EXPRESSION
+#=======================================================================
+
+# PREPROCESS
+temp_df <- total_df
+# Investigate vector
+class(temp_df$PD.L1_Expression)
+# Change to character class
+temp_df$PD.L1_Expression <- as.character(temp_df$PD.L1_Expression)
+# Investigate vector
+table(temp_df$PD.L1_Expression)
+# Change to numeric
+temp_df$PD.L1_Expression <- as.numeric(temp_df$PD.L1_Expression)
+
+# Difference in PD-L1 Expression between responders & non-responders? 
+wilcox.test(PD.L1_Expression ~ Treatment_Outcome, data = temp_df, exact = FALSE)
+
+# Difference in PD-L1 Expression across cohorts of origin? 
+# Kruskal-Wallis test by rank is a non-parametric alternative to one-way ANOVA test, 
+# which extends the two-samples Wilcoxon test in the situation where there are more 4than 
+# two groups.
+kruskal.test(PD.L1_Expression ~ Study_ID, data = temp_df)
+
+# Correlation between PD-L1 Expression and TMB? 
+# Use Spearman test since can not assume a normal distribution for PD-L1
+res2 <-cor.test(my_data$wt, my_data$mpg,  method = "spearman")
+
+
+
+
+#=======================================================================
+# GENES OF INTEREST
+#=======================================================================
+
+# Calculate again after excluding Jordan 2017
+temp_df <- total_df %>% select(Treatment_Outcome, Study_ID, genes_of_interest) %>%
+  filter(Study_ID != "Jordan_2017")
+
+# Count responders & non-responders
+table(temp_df$Treatment_Outcome)
+
+# Define genes of interest
+genes_of_interest <- c("PTEN", "POLD1", "STK11", "TP53", "POLE", "KEAP1", "MSH2", "EGFR", "KRAS")
+
+temp_df <- total_df %>% select(Treatment_Outcome, genes_of_interest)
+
+table(temp_df$Treatment_Outcome, temp_df$KRAS)
+
+
+EGFR <- table(temp_df$Treatment_Outcome, temp_df$EGFR)
+chisq.test(EGFR)$expected
+chisq.test(EGFR)
+
+STK11 <- table(temp_df$Treatment_Outcome, temp_df$STK11)
+chisq.test(STK11)$expected
+chisq.test(STK11)
+
+KRAS <- table(temp_df$Treatment_Outcome, temp_df$KRAS)
+chisq.test(KRAS)$expected
+chisq.test(KRAS)
+
+POLD1 <- table(temp_df$Treatment_Outcome, temp_df$POLD1)
+chisq.test(POLD1)$expected
+chisq.test(POLD1)
+
+TP53 <- table(temp_df$Treatment_Outcome, temp_df$TP53)
+chisq.test(TP53)$expected
+chisq.test(TP53)
+
+POLE <- table(temp_df$Treatment_Outcome, temp_df$POLE)
+chisq.test(POLE)$expected
+chisq.test(POLE)
+
+KEAP1 <- table(temp_df$Treatment_Outcome, temp_df$KEAP1)
+chisq.test(KEAP1)$expected
+chisq.test(KEAP1)
+
+MSH2 <- table(temp_df$Treatment_Outcome, temp_df$MSH2)
+chisq.test(MSH2)$expected
+chisq.test(MSH2)
+
+PTEN <- table(temp_df$Treatment_Outcome, temp_df$PTEN)
+chisq.test(PTEN)$expected
+chisq.test(PTEN)
+
+
+
+
+#=======================================================================
+# ENGINEERED FEATURES
+#=======================================================================
+
+# PREPROCESS
+#-------------------------------
+# Features engineered dataset
+temp_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = FALSE)
+unique(temp_df$Study_ID)
+# Remove control cohort before analysis
+temp_df <- temp_df %>% filter(Study_ID != "Model_Control")
+colnames(model_df)
+
+
+# PAN 2020 SIGNATURE MUTATIONS
+#-------------------------------
+
+# Pan 2020 mutations (counts), Responders vs Non-responders
+wilcox.test(Pan_2020_muts ~ Treatment_Outcome, data = temp_df)
+
+# Pan 2020 compound mutations (binary), Responders vs Non-responders
+comp <- table(temp_df$Pan_2020_compound_muts, temp_df$Treatment_Outcome)
+chisq.test(comp)
+
+
+
+# NDB GENES & DCB GENES
+#-------------------------
+
+table(temp_df$DCB_genes, temp_df$Treatment_Outcome)
+
+
+table(model_df$NDB_genes, model_df$Treatment_Outcome)
+
+
+res <- wilcox.test(NDB_genes ~ Treatment_Outcome, data = temp_df,
+                   exact = FALSE)
+res
+
+res <- wilcox.test(DCB_genes ~ Treatment_Outcome, data = temp_df,
+                   exact = FALSE)
+res
+
+
+
+
+
+#=======================================================================
 # TMB
 #=======================================================================
 
@@ -162,74 +298,6 @@ log2_norm_two_way_anova <- aov(TMB_log2_norm ~ Study_ID + Sequencing_type, data 
 summary(log2_norm_two_way_anova)
 
 
-
-
-#=======================================================================
-# PAN ET AL 2020 MUTATIONS
-#=======================================================================
-
-# Read model-ready dataset
-model_df <- read.delim("model-ready_combinded_data.tsv", stringsAsFactors = TRUE)
-unique(model_df$Study_ID)
-model_df <- model_df %>% filter(Study_ID != "Model_Control")
-colnames(model_df)
-
-# Pan 2020 mutations (counts), Responders vs Non-responders
-wilcox.test(Pan_2020_muts ~ Treatment_Outcome, data = model_df)
-
-# Pan 2020 compound mutations, Responders vs Non-responders
-model_df %>% group_by(Treatment_Outcome) %>% 
-  summarise("PAN" = sum(Pan_2020_compound_muts))
-
-
-
-
-#=======================================================================
-# GENES OF INTEREST
-#=======================================================================
-
-# Define genes of interest
-genes_of_interest <- c("PTEN", "POLD1", "STK11", "TP53", "POLE", "KEAP1", "MSH2", "EGFR", "KRAS")
-
-for (gene in genes_of_interest) {
-  print(gene)
-  print("Responders: ")
-  print(sum(biolung_df[gene]))
-  print("Nonresponders: ")
-  print(nrow(biolung_df) - sum(biolung_df[gene]))
-  # value in list as gene name.
-}
-# https://statsandr.com/blog/fisher-s-exact-test-in-r-independence-test-for-a-small-sample/
-
-
-
-
-
-#=======================================================================
-# PD-L1 EXPRESSION RESPONDERS VS NON-RESPONDERS BIOLUNG COHORT
-#=======================================================================
-
-
-
-
-#=======================================================================
-# NORMALIZE TMB ACROSS COHORTS
-#=======================================================================
-
-
-
-#=======================================================================
-# DO MANUALLY...
-#=======================================================================
-
-
-table(total_df$Study_ID)
-
-
-length(test_df$Study_ID)
-test_df <- total_df %>% filter(!is.na(TMB)) %>% mutate(TMB_normalized = )
-
-grouped_df <- total_df %>% group_by(Study_ID)
 
 
 

@@ -34,7 +34,7 @@ md_df[md_df == ''] <- NA
 # Rename columns
 colnames(md_df)
 md_df <- md_df %>% rename("Stage at Diagnosis" = Stage_at_diagnosis, "PD-L1 Expression" = `PD-L1_Expression`,
-                          "Smoking_History" = Smoking_History, "Tumor Histology" = Histology,
+                          "Smoking History" = Smoking_History, "Tumor Histology" = Histology,
                           "Diagnosis Age" = Diagnosis_Age)
 
 # Create barplots of missing data
@@ -48,5 +48,6 @@ md_barp <- md_df %>%
   scale_fill_brewer(palette = "Paired") +
   theme(axis.title.y = element_blank()) +
   labs(x = "\nProportion")
+md_barp
 
 sum(is.na(md_df$`PD-L1 Expression`))/nrow(md_df)

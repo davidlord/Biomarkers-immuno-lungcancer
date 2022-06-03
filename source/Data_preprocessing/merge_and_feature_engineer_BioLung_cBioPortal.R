@@ -64,6 +64,8 @@ biolung_df <- read.delim("merged_BioLung_data.tsv")
   cbio_cols <- colnames(cbioportal_df)
   setdiff(biolung_cols, cbio_cols)
 
+
+
 #================================================================================
 # SEPARATE CONTROL COHORT
 #================================================================================
@@ -74,6 +76,8 @@ biolung_df <- read.delim("merged_BioLung_data.tsv")
 
 # Edit Study ID entry for control cohort
   control_df$Study_ID <- "Model_Control"
+
+
 
 #================================================================================
 # MERGE & EXPORT DATASETS (FEATURES UNALTERED)
@@ -89,6 +93,7 @@ biolung_df <- read.delim("merged_BioLung_data.tsv")
 
 # Export control df as tsv
   write.table(control_df, file="control_data.tsv", dec = ".", col.names = TRUE, sep = "\t")
+
 
 
 #===========================================================================
@@ -122,12 +127,12 @@ total_df$Pan_2020_compound_muts <- ifelse(total_df$Pan_2020_muts >=2, 1, 0)
 #===========================================================================
 # COMBINE SPECIFIC GENE-MUTATIONS TO SINGLE SCORES
 #===========================================================================
-### Enriched in non-responders: EGFR, STK11
-### Enriched in responders: PTEN, KRAS, POLE, POLD1, MSH2
+### Enriched in non-responders: EGFR, PTEN, STK11, KEAP1
+### Enriched in responders: KRAS, POLE, POLD1, MSH2, TP53
 
 # Define vectors for durable clinical benefit (DCB) & no durable benefit (NDB) associated genes
-NDB_genes <- c("EGFR", "STK11")
-DCB_genes <- c("PTEN", "KRAS", "POLE", "POLD1", "MSH2", "TP53")
+NDB_genes <- c("EGFR", "PTEN", "STK11", "KEAP1")
+DCB_genes <- c("KRAS", "POLE", "POLD1", "MSH2", "TP53")
 # Add KEAP1 to DCB genes? 
 
 # Combine sums to columns
@@ -137,21 +142,15 @@ temp <- total_df %>% select(NDB_genes) %>% mutate(NDB_genes = rowSums(.))
 total_df$NDB_genes <- temp$NDB_genes
 
 
-#===========================================================================
-# FURTHER PREPROCESSING
-#===========================================================================
-
-
-#===========================================================================
-# PD-L1 EXPRESSION
-#===========================================================================
-
-# To be added...
-
 
 #===========================================================================
 # NORMALIZE TMB
 #===========================================================================
+
+# Remove max TMB outlier
+max(total_df$TMB)
+total_df <- total_df %>% filter(TMB < 90)
+
 
 # Normalize TMB across cohorts
 total_df <- total_df %>% group_by(Study_ID) %>% mutate(TMB_norm = TMB / mean(TMB))
@@ -165,14 +164,6 @@ min(temp$TMB_norm_log2)
 # Minimum is -5(ish)
 total_df$TMB_norm_log2 <- ifelse(is.infinite(total_df$TMB_norm_log2), -5, total_df$TMB_norm_log2)
 
-
-#===========================================================================
-# EXCLUDE FEATURES ?
-#===========================================================================
-
-# Convert relevant columns to factors? Remove? 
-colz <- c('Durable_clinical_benefit', 'Histology', 'Smoking_history', 'Sex')
-data[colz] <- lapply(data[colz], factor)
 
 
 #===========================================================================

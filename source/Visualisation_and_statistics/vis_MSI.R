@@ -14,8 +14,6 @@ setwd(WORK_DIR)
 # Read data file
 total_df <- read.delim("combined_data.tsv", stringsAsFactors = FALSE)
 
-# Replace 'Responder' for 'Responders' & 'Non-responder' for 'Non-responders'
-total_df$Treatment_Outcome <- ifelse(total_df$Treatment_Outcome == "Responder", "Responders", "Non-responders")
 
 
 #=======================================================================
@@ -31,13 +29,14 @@ MSI_hist
 
 # MSI BOXPLOTS
 #--------------
-biolung_df$Treatment_Outcome <- ifelse(biolung_df$Treatment_Outcome == "Responder", "Responders \n (N = 20)", "Non-responders \n (N = 14)")
+# Change x-labels
+biolung_df$Treatment_Outcome <- ifelse(biolung_df$Treatment_Outcome == "Responder", "Responders\n (N = 20)", "Non-responders\n (N = 14)")
 
 MSI_boxplot <- biolung_df %>% ggplot(aes(
   x = Treatment_Outcome, y = MSI, fill = Treatment_Outcome)) +
   geom_boxplot() +
   scale_fill_brewer(palette = "Paired", direction = -1) + 
-  labs(x = "\n Treatment Outcome", y = "% Microsatellite Instability \n", subtitle = "N = 34", size = 10) +
+  labs(x = "\n Treatment Outcome", y = "% Microsatellite Instability \n", size = 10) +
   theme(legend.position = "none", text = element_text(size = 14))
 MSI_boxplot
 

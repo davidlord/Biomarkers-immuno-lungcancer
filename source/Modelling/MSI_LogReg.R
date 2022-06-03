@@ -29,32 +29,24 @@ msi_df <- data %>% filter(Study_ID == 'BioLung_2022') %>% select(Treatment_Outco
 
 
 #===========================================================================
-# PLOT RAWDATA
+# LOGISTIC REGRESSION
 #===========================================================================
 
-# MSI hisogram:
-msi_hist <- msi_df %>% ggplot(aes(x = MSI)) +
-  geom_histogram(binwidth = 1)
-msi_hist
-
-# MSI histogram log2-transformed
-msi_hist + scale_x_continuous(trans = "log2")
-
+# PLOT RAWDATA
+#--------------
 msi_point <- msi_df %>% ggplot(aes(x = MSI, y = Treatment_Outcome)) + 
   geom_point()
 msi_point
 
 
-#===========================================================================
 # PREPROCESS DATA
-#===========================================================================
+#--------------------
+# Replace Treatment outcome column with numeric values
+# Responder = 1, Non-responder = 0
+msi_df <- msi_df %>% mutate(Treatment_Outcome = ifelse(Treatment_Outcome == "Responder", 1, 0))
 
 model <- glm(Treatment_Outcome ~., data = msi_df, family = binomial)
 summary(model)
-
-
-# Replace Treatment outcome column with numeric values
-msi_df <- msi_df %>% mutate(Treatment_Outcome = ifelse(Treatment_Outcome == "Responder", 1, 0))
 
 # Sort data based on MSI
 msi_df <- msi_df[order(msi_df$MSI),]
@@ -63,6 +55,10 @@ msi_df <- msi_df[order(msi_df$MSI),]
 glm_fit = glm(Treatment_Outcome ~ MSI, family = binomial, data = msi_df)
 plot(x=msi_df$MSI, y=msi_df$Treatment_Outcome)
 lines(msi_df$MSI, glm_fit$fitted.values)
+
+msi_df %>% ggplot(aes(x = MSI, y = Treatment_Outcome)) + 
+  geom_point()
+
 
 
 # Draw ROC curve using known classifications and estimated probabilities
