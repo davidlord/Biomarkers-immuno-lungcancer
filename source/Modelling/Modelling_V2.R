@@ -16,6 +16,9 @@ library(caret)
 library(dplyr)
 library(doSNOW)
 library(pROC)
+library(tidymodels)
+library(DiagrammeR)
+library(rattle)
 
 
 # Set working directory (also place data to read in working directory).
@@ -24,8 +27,6 @@ setwd(WORK_DIR)
 
 # Read data
 total_df <- read.delim("Features_engineered_control_included.tsv")
-
-### DEV: REMOVE TMB MAX OUTLIER
 
 
 #========================================================================
@@ -51,16 +52,6 @@ total_df <- read.delim("Features_engineered_control_included.tsv")
   total_df$Treatment_Outcome[total_df$Treatment_Outcome == "Non-Responder"] <- "NonResponder"
 
 
-##### EXPERIMENTAL #####
-##### EXPERIMENTAL #####
-
-  # Combine Current and former to Current/Former
-  total_df$Smoking_History[total_df$Smoking_History == "Current"] <- "Current/Former"
-  total_df$Smoking_History[total_df$Smoking_History == "Former"] <- "Current/Former"
-  table(total_df$Smoking_History)
-
-##### EXPERIMENTAL #####
-##### EXPERIMENTAL #####
   
 #========================================================================
 # IMPUTE MISSING VALUES & CONVERT DATA TYPES
@@ -85,12 +76,7 @@ total_df$Diagnosis_Age <- ifelse(is.na(total_df$Diagnosis_Age), mean_age, total_
 table(temp_df$Smoking_History)
 total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Former", total_df$Smoking_History)
 
-#####  EXPERIMENTAL #####
-total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Current/Former", total_df$Smoking_History)
-##### EXPERIMENTAL #####
-
 # Impute patient sex with mode
-### DEV: Use random sampling imputation
 table(temp_df$Sex)
 total_df$Sex <- ifelse(is.na(total_df$Sex), "Female", total_df$Sex)
 sum(is.na(total_df))  
@@ -109,6 +95,7 @@ total_df[muts_cols] <- lapply(total_df[muts_cols], factor)
 str(total_df)
 fac_cols <- c("Study_ID", "Sex", "Histology", "Smoking_History", "Treatment_Outcome")
 total_df[fac_cols] <- lapply(total_df[fac_cols], factor)
+
 
 
 #========================================================================
@@ -134,23 +121,25 @@ findCorrelation(data_correlated)
 # No observed correlated numeric variables. 
 
 
+
 #========================================================================
 # EXCLUDE EXCESS FEATURES - BASED ON RESULTS FROM DOWNSTREAM RFE
 #========================================================================
 
 # Exclude excess features
 colnames(total_df)
-unselect_cols <- c("Histology", "Sex", "Pan_2020_compound_muts", "TMB_norm", "TMB")
+unselect_cols <- c("Histology", "Sex", "Pan_2020_compound_muts", "TMB_norm", "TMB", "Diagnosis_Age")
 total_df <- total_df %>% select(-unselect_cols)
 
+### EXPERIMENTAL ###
 # Exclude excess mutations columns
 colnames(total_df)
-unselect_cols <- c("POLE", "KEAP1", "TP53", "MSH2", "EGFR", "PTEN", "DCB_genes")
+unselect_cols <- c("POLE", "KEAP1", "TP53", "MSH2", "EGFR", "PTEN")
 total_df <- total_df %>% select(-unselect_cols)
 
 ### EXPERIMENTAL ###
 colnames(total_df)
-unselect_cols <- c("Smoking_History", "Diagnosis_Age", "NDB_genes", "POLD1", "NDB_genes")
+unselect_cols <- c("Diagnosis_Age", "KRAS", "POLD1", "STK11")
 total_df <- total_df %>% select(-unselect_cols)
 ### EXPERIMENTAL ###
 
@@ -159,18 +148,18 @@ total_df <- total_df %>% select(-unselect_cols)
 #========================================================================
 # SPLIT CONTROL- & VALIDATION COHORTS
 #========================================================================
-
 unique(total_df$Study_ID)
 
 # Control df
 control_df <- total_df %>% filter(Study_ID == "Model_Control") %>% select(-Study_ID)
 
-# Validation df
+# Validation df (Jordan 2017 cohort)
 validation_df <- total_df %>% filter(Study_ID == "Jordan_2017") %>% select(-Study_ID)
 
 # Combined df
 total_df <- total_df %>% filter(Study_ID != "Model_Control") %>% 
   filter(Study_ID != "Jordan_2017") %>% select(-Study_ID)
+
 
 
 #========================================================================
@@ -188,6 +177,7 @@ dummies_data <- predict(dummies_model, newdata = total_df)
 # Convert to dataframe
 total_df <- data.frame(dummies_data)
 str(total_df)
+
 
 
 #========================================================================
@@ -216,6 +206,10 @@ ctrl <- rfeControl(functions = rfFuncs, method = "repeatedcv", repeats = 10)
 rfeprofile <- rfe(x = total_df[, 1:(length(total_df) - 1)], y = total_df$Treatment_Outcome, 
                   sizes = c(1:length(total_df)), rfeControl = ctrl)
 rfeprofile
+
+
+
+# View top predictors
 predictors(rfeprofile)
 
 
@@ -304,7 +298,13 @@ summary(compare_models)
 scales <- list(x = list(relation = "free"), y = list(relation = "free"))
 bwplot(compare_models, scales = scales)
 
-help(bwplot)
+xgb.plot.tree(model = xgbtree_model$finalModel, trees = 1)
+
+
+help("xgb.plot.tree")
+
+# PLOT TREES
+# https://www.youtube.com/watch?v=pYdpVr34sJA
 
 
 #========================================================================
