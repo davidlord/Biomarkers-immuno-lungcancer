@@ -15,7 +15,7 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
   # Read cBioPortal clinical data table files
-    Rivzi_2015 <- read.delim("cBioPortal_clinical_data/Rivzi_2015_clinical_data.tsv")
+    Rivzi_2015 <- read.delim("cBioPortal_clinical_data/NSCLC_Rivzi_2015_clinical_data.tsv")
     LUAD_Rivzi_2015 <- read.delim("cBioPortal_clinical_data/LUAD_Rivzi_2015_clinical_data.tsv")
     Jordan_2017 <- read.delim("cBioPortal_clinical_data/Jordan_2017_clinical_data.tsv")
     Hellmann_2018 <- read.delim("cBioPortal_clinical_data/Hellmann_2018_clinical_data.tsv")
@@ -33,7 +33,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   Jordan_2017_trimmed <- Jordan_2017 %>% filter(!is.na(Durable.Clinical.Benefit)) %>% select("Study.ID", "Smoking.History", "Immunotherapy", "Somatic.Status", "Diagnosis.Age", "Patient.ID", "Sample.ID", "Cancer.Type.Detailed", "Durable.Clinical.Benefit", "Sex", "TMB..nonsynonymous.", "Stage.At.Diagnosis", "Gene.Panel")
   LUAD_Rivzi_2015_trimmed <- LUAD_Rivzi_2015 %>% select("Study.ID", "Diagnosis.Age", "Somatic.Status", "Smoking.History", "Patient.ID", "Sample.ID", "Cancer.Type.Detailed", "Durable.Clinical.Benefit", "Sex", "TMB..nonsynonymous.", "PDL1.Expression", "Progress.Free.Survival..Months.")
   Rivzi_2015_trimmed <- Rivzi_2015 %>% select("Study.ID", "Somatic.Status", "Smoking.History", "Patient.Current.Age", "Patient.ID", "Sample.ID", "Cancer.Type.Detailed", "Durable.Clinical.Benefit", "Sex", "TMB..nonsynonymous.", "PDL1.Expression", "Progress.Free.Survival..Months.")
-  Rivzi_2018_trimmed <- Rivzi_2018 %>% select("Study.ID", "Somatic.Status", "Patient.ID", "Sample.ID", "Diagnosis.Age", "Cancer.Type.Detailed", "Durable.Clinical.Benefit", "Gene.Panel", "PD.L1.Score....", "Progress.Free.Survival..Months.", "Sex", "Smoker", "TMB..nonsynonymous.")
+  Rivzi_2018_trimmed <- Rivzi_2018 %>% select("Study.ID", "Somatic.Status", "Patient.ID", "Sample.ID", "Diagnosis.Age", "Cancer.Type.Detailed", "Durable.Clinical.Benefit", "Gene.Panel", "PD.L1.Score....", "Progress.Free.Survival..Months.", "Sex", "Smoker", "TMB..nonsynonymous.", "Treatment.Type")
 
   # Note that the Jordan 2017 cohort contain patients that have not been treated with immunotherapy.
   # These will later be separated to constitute a control cohort for the downstream modelling process. 
@@ -76,6 +76,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   colnames(Rivzi_2018_trimmed)[which(names(Rivzi_2018_trimmed) == "Gene.Panel")] <- "Sequencing.Type"
 
 
+
 #================================================================================
 # MERGE COHORTS INTO SINGLE DATAFRAME
 #================================================================================
@@ -89,8 +90,28 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
 # HARMONIZE COLUMN ENTRIES
 #================================================================================
 
+# SEQUENCING TYPE
+#-------------------
 # Add sequencing type to Hellmann_2018, LUAD_Rivzi_2015, and Rivzi_2018 (All WES)
-  clinical_df <- clinical_df %>% mutate(Sequencing.Type = ifelse(Study.ID %in% c("luad_mskcc_2015", "nsclc_mskcc_2018", "nsclc_mskcc_2015"), "WES", Sequencing.Type))
+clinical_df <- clinical_df %>% mutate(Sequencing.Type = ifelse(Study.ID %in% c("luad_mskcc_2015", "nsclc_mskcc_2018", "nsclc_mskcc_2015"), "WES", Sequencing.Type))
+
+
+# TREATMENT TYPE
+#-------------------
+unique(clinical_df$Study.ID)
+# Rivzi 2018: Data present; "nsclc_pd1_msk_2018"
+# Rivzi 2015: Monotherapy; "luad_mskcc_2015", "nsclc_mskcc_2015"
+# Hellmann 2018: Combination; "nsclc_mskcc_2018"
+# Jordan 2017: Unknown;"lung_msk_2017"
+
+# Rivzi cohorts <- "monotherapy"
+clinical_df$Treatment.Type <- ifelse(clinical_df$Study.ID %in% c("luad_mskcc_2015", "nsclc_mskcc_2015"), "Monotherapy", clinical_df$Treatment.Type)
+# Hellmann 2018 <- "Combination"
+clinical_df$Treatment.Type <- ifelse(clinical_df$Study.ID == "nsclc_mskcc_2018", "Combination", clinical_df$Treatment.Type)
+# Jordan 2017 <- NA
+clinical_df$Treatment.Type <- ifelse(clinical_df$Study.ID == "lung_msk_2017", NA, clinical_df$Treatment.Type)
+table(clinical_df$Treatment.Type)
+
 
 # REPLACE ENTRIES
 #-----------------
@@ -112,8 +133,7 @@ Col_in_all_datasets <- c("Study.ID", "Patient.ID", "Sample.ID", "Cancer.Type.Det
   clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "Durable Clinical Benefit" | clinical_df$Durable.Clinical.Benefit == "Durable clinical benefit beyond 6 months" | clinical_df$Durable.Clinical.Benefit == "DCB"] <- "YES"
   clinical_df$Durable.Clinical.Benefit[clinical_df$Durable.Clinical.Benefit == "No durable benefit" | clinical_df$Durable.Clinical.Benefit == "No Durable Benefit" | clinical_df$Durable.Clinical.Benefit == "NDB" | clinical_df$Durable.Clinical.Benefit == "N"] <- "NO"
 
-table(clinical_df$PDL1.Expression)
-sum(is.na())
+
 sum(is.na(clinical_df$PDL1.Expression))
 
   
@@ -125,6 +145,7 @@ sum(is.na(clinical_df$PDL1.Expression))
   clinical_df$Study.ID[clinical_df$Study.ID == 'lung_msk_2017'] <- 'Jordan_2017'
   table(clinical_df$Study.ID)
   
+
 
 #================================================================================
 # DATA CLEANING
@@ -166,10 +187,12 @@ sum(is.na(clinical_df$PDL1.Expression))
   colnames(clinical_df)[which(names(clinical_df) == "Stage.At.Diagnosis")] <- "Stage_at_diagnosis"
   colnames(clinical_df)[which(names(clinical_df) == "Sequencing.Type")] <- "Sequencing_type"
   colnames(clinical_df)[which(names(clinical_df) == "PDL1.Expression")] <- "PD-L1_Expression"
+  colnames(clinical_df)[which(names(clinical_df) == "Treatment.Type")] <- "Treatment_Type"
 
 # Reorder columns
-  col_order <- c("Study_ID", "Patient_ID", "Sample_ID", "Sequencing_type", "Durable_clinical_benefit", "PFS_months", "Histology", "Smoking_History", "Diagnosis_Age", "Sex", "Stage_at_diagnosis", "PD-L1_Expression", "TMB", "Immunotherapy")
+  col_order <- c("Study_ID", "Patient_ID", "Sample_ID", "Sequencing_type", "Durable_clinical_benefit", "Treatment_Type", "PFS_months", "Histology", "Smoking_History", "Diagnosis_Age", "Sex", "Stage_at_diagnosis", "PD-L1_Expression", "TMB", "Immunotherapy")
   clinical_df <- clinical_df[, col_order]
+
 
 
 #================================================================================

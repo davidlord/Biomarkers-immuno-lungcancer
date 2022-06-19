@@ -13,7 +13,9 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read data file
-total_df <- read.delim("combined_data.tsv", stringsAsFactors = FALSE)
+total_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = FALSE)
+unique(total_df$Study_ID)
+total_df <- total_df %>% filter(Study_ID != "Model_Control")
 
 
 
@@ -37,12 +39,10 @@ temp_df$PD.L1_Expression <- as.numeric(temp_df$PD.L1_Expression)
 # HISTOGRAM
 #------------
 
-temp_df$Treatment_Outcome <- ifelse(temp_df$Treatment_Outcome == "Responder", "Responders", "Non-responders")
-
 hist <- temp_df %>% ggplot(aes(x = PD.L1_Expression, fill = Treatment_Outcome)) +
   geom_histogram(binwidth = 10, color = "dodgerblue4", alpha = 0.65) +
-  #scale_y_continuous(trans = "sqrt") +
   scale_fill_brewer(palette = "Paired", direction = -1) +
+  #scale_y_continuous(trans = "log2") +
   labs(x = "PD-L1 Expression\n", y = "Count", subtitle = "N = 164", 
        fill = "Treatment Outcome", title = "Distribution of PD-L1 Expression values")
 hist
@@ -74,7 +74,6 @@ boxp_cohorts <- temp_df %>% filter(Study_ID != "Jordan_2017") %>%
   filter(Study_ID != "Rivzi_2015") %>% 
   ggplot(aes(y = PD.L1_Expression, x = Study_ID)) +
   geom_boxplot(fill = "steelblue", color = "dodgerblue4") +
-  #scale_y_continuous(trans = "log10") +
   labs(x = "", y = "PD-L1 Expression", title = "PD-L1 Expression", 
        subtitle = "Comparison between cohorts of origin")
 boxp_cohorts

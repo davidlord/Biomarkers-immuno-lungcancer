@@ -10,12 +10,14 @@ library(tidyverse)
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
+
 # READ DATA FILES
 #--------------------
 # Read cBioPortal df
 cbioportal_df <- read.delim("merged_cBioPortal_data.tsv")
 # Read BioLung data
 biolung_df <- read.delim("merged_BioLung_data.tsv")
+
 
 
 #=================================================================================
@@ -33,35 +35,37 @@ biolung_df <- read.delim("merged_BioLung_data.tsv")
   cbioportal_df <- cbioportal_df %>% add_column(MSI = NA)
   
 # Rename MSI column in BioLung dataset
-  biolung_df <- biolung_df %>% rename(MSI = MSI_MSISensorPro)
+  colnames(biolung_df)[which(names(biolung_df) == "MSI_MSISensorPro")] <- "MSI"
   
 # Add empty 'Immunotherapy column to BioLung df'
   biolung_df$Immunotherapy <- NA
   
 # Change name of PD-L1 expression column
-  cbioportal_df <- cbioportal_df %>% rename("PD-L1_Expression" = "PD.L1_Expression")
-  biolung_df <- biolung_df %>% rename("PD-L1_Expression" = "PD.L1_Expression")
+  colnames(cbioportal_df)[which(names(cbioportal_df) == "PD.L1_Expression")] <- "PD-L1_Expression"
+  colnames(biolung_df)[which(names(biolung_df) == "PD.L1_Expression")] <- "PD-L1_Expression"
   
 # Replace no info entries with NA in PD-L1 expression
   table(cbioportal_df$`PD-L1_Expression`)
   cbioportal_df$`PD-L1_Expression`[cbioportal_df$`PD-L1_Expression` == "Unassessable"] <- NA
-
+  cbioportal_df$`PD-L1_Expression`[cbioportal_df$`PD-L1_Expression` == ""] <- NA
 
 # Change "Durable clinical benefit" to "Treatment outcome"
-  cbioportal_df <- cbioportal_df %>% rename(Treatment_Outcome = Durable_clinical_benefit)
-  biolung_df <- biolung_df %>% rename(Treatment_Outcome = Durable_clinical_benefit)
+  colnames(biolung_df)[which(names(biolung_df) == "Durable_clinical_benefit")] <- "Treatment_Outcome"
+  colnames(cbioportal_df)[which(names(cbioportal_df) == "Durable_clinical_benefit")] <- "Treatment_Outcome"
+  
 
 # Replace entries in response variable
   # YES <- Responder
   # NO <- Non-Responder
-  cbioportal_df$Treatment_Outcome[cbioportal_df$Treatment_Outcome == "YES"] <- "Responder"
-  cbioportal_df$Treatment_Outcome[cbioportal_df$Treatment_Outcome == "NO"] <- "Non-Responder"
-  biolung_df$Treatment_Outcome[biolung_df$Treatment_Outcome == "YES"] <- "Responder"
-  biolung_df$Treatment_Outcome[biolung_df$Treatment_Outcome == "NO"] <- "Non-Responder"
+  cbioportal_df$Treatment_Outcome[cbioportal_df$Treatment_Outcome == "YES"] <- "Responders"
+  cbioportal_df$Treatment_Outcome[cbioportal_df$Treatment_Outcome == "NO"] <- "Non-Responders"
+  biolung_df$Treatment_Outcome[biolung_df$Treatment_Outcome == "YES"] <- "Responders"
+  biolung_df$Treatment_Outcome[biolung_df$Treatment_Outcome == "NO"] <- "Non-Responders"
 
 # Check that column names match
   biolung_cols <- colnames(biolung_df)
   cbio_cols <- colnames(cbioportal_df)
+  setdiff(cbio_cols, biolung_cols)
   setdiff(biolung_cols, cbio_cols)
 
 
@@ -105,13 +109,12 @@ biolung_df <- read.delim("merged_BioLung_data.tsv")
 total_df <- rbind(combined_df, control_df)
 
 
-#===========================================================================
 # SUM PAN 2020 MUTATIONS IN NEW COLUMN
-#===========================================================================
+#======================================
 
 # Create a vector of all mutations column names
 colnames(total_df)
-mutations_cols <- colnames(total_df)[14:72]
+mutations_cols <- colnames(total_df)[15:73]
 
 # Define Pan et al 2020 genes
 pan_2020_genes <- mutations_cols[! mutations_cols %in% c("EGFR", "PTEN", "TP53", "STK11", "POLD1", "KRAS", "KEAP1")]
@@ -124,9 +127,8 @@ total_df$Pan_2020_muts <- temp$Pan_2020_muts
 total_df$Pan_2020_compound_muts <- ifelse(total_df$Pan_2020_muts >=2, 1, 0)
 
 
-#===========================================================================
 # COMBINE SPECIFIC GENE-MUTATIONS TO SINGLE SCORES
-#===========================================================================
+#===================================================
 ### Enriched in non-responders: EGFR, PTEN, STK11, KEAP1
 ### Enriched in responders: KRAS, POLE, POLD1, MSH2, TP53
 
@@ -144,13 +146,15 @@ total_df$NDB_genes <- temp$NDB_genes
 
 
 #===========================================================================
-# NORMALIZE TMB
+# FURTHER PREPROCESSING
 #===========================================================================
+
+# TMB
+#========
 
 # Remove max TMB outlier
 max(total_df$TMB)
 total_df <- total_df %>% filter(TMB < 90)
-
 
 # Normalize TMB across cohorts
 total_df <- total_df %>% group_by(Study_ID) %>% mutate(TMB_norm = TMB / mean(TMB))
@@ -163,6 +167,13 @@ temp <- total_df %>% filter(!is.infinite(TMB_norm_log2))
 min(temp$TMB_norm_log2)
 # Minimum is -5(ish)
 total_df$TMB_norm_log2 <- ifelse(is.infinite(total_df$TMB_norm_log2), -5, total_df$TMB_norm_log2)
+
+
+# HISTOLOGY
+#============
+# Remove Neuroendocrine entries
+table(total_df$Histology)
+total_df <- total_df %>% filter(Histology != "Large Cell Neuroendocrine Carcinoma")
 
 
 
