@@ -14,7 +14,6 @@ setwd(WORK_DIR)
 
 # Read data file
 total_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = FALSE)
-
 # Remove control cohort
 unique(total_df$Study_ID)
 temp_df <- total_df %>% filter(Study_ID != "Model_Control")
@@ -31,11 +30,23 @@ dcb_df <- temp_df %>% select(Study_ID, Treatment_Outcome, DCB_genes)
 
 # BARPLOTS RESPONDERS VS NON-RESPONDERS
 #----------------------------------------
-dcb_df %>% ggplot(aes(x = DCB_genes, fill = Treatment_Outcome)) +
+dcb_bar <- dcb_df %>% ggplot(aes(x = DCB_genes, fill = Treatment_Outcome)) +
   geom_bar(color = "dodgerblue4", position = position_dodge()) +
   scale_fill_brewer(palette = "Paired", direction = -1) +
   scale_y_continuous(trans = "log2") +
-  labs(y = "Count (log2 scale)", x = "Number of Gene Mutations", fill = "Treatment Outcome")
+  labs(y = "Count (log2 scale)", x = "Number of Gene Mutations", 
+       fill = "Treatment Outcome", title = "DCB Gene Mutations")
+dcb_bar
+
+# HISTOGRAM 
+#------------
+dcb_hist <- dcb_df %>% ggplot(aes(x = DCB_genes)) +
+  geom_histogram(binwidth = 1, color = "dodgerblue4", fill = "steelblue") +
+  scale_y_continuous(trans = "log2") +
+  labs(y = "Count (log2 scale)", x = "Number of DCB Gene Mutations")
+dcb_hist
+
+
 
 
 
@@ -48,11 +59,22 @@ ndb_df <- temp_df %>% select(Study_ID, Treatment_Outcome, NDB_genes)
 
 # BARPLOTS RESPONDERS VS NON-RESPONDERS
 #----------------------------------------
-ndb_df %>% ggplot(aes(x = NDB_genes, fill = Treatment_Outcome)) +
+ndb_bar <- ndb_df %>% ggplot(aes(x = NDB_genes, fill = Treatment_Outcome)) +
   geom_bar(color = "dodgerblue4", position = position_dodge()) +
   scale_fill_brewer(palette = "Paired", direction = -1) +
   scale_y_continuous(trans = "log2") +
-  labs(y = "Count (log2 scale)", x = "Number of Gene Mutations", fill = "Treatment Outcome")
+  labs(y = "Count (log2 scale)", x = "Number of Gene Mutations", 
+       fill = "Treatment Outcome", title = "NDB Gene Mutations")
+ndb_bar
+
+# HISTOGRAM
+#-----------
+ndb_hist <- ndb_df %>% ggplot(aes(x = NDB_genes)) +
+  geom_histogram(binwidth = 1, color = "dodgerblue4", fill = "steelblue") +
+  scale_y_continuous(trans = "log2") +
+  labs(y = "Count (log2 scale)", x = "Number of DCB Gene Mutations")
+ndb_hist
+
 
 
 
@@ -64,12 +86,26 @@ temp_df %>% ggplot(aes(x = Pan_2020_muts)) +
   geom_histogram(binwidth = 1, fill = "steelblue", color = "dodgerblue4") +
   labs(x = "Number of Signature Mutations", y = "Count", title = "Pan et al 2020 Signature Mutations")
 
-temp_df %>% ggplot(aes(x = Pan_2020_muts, fill = Treatment_Outcome)) +
-  geom_histogram(binwidth = 1, alpha = 0.7, color = "dodgerblue4") +
-  scale_fill_brewer(palette = "Paired", direction = -1)
+sig_genes_hist <- temp_df %>% ggplot(aes(x = Pan_2020_muts, fill = Treatment_Outcome)) +
+  geom_histogram(binwidth = 1, alpha = 1, color = "dodgerblue4") +
+  scale_fill_brewer(palette = "Paired", direction = -1) +
+  labs(x = "Number of Signature Mutations\n", y = "Count", 
+       fill = "Treatment Outcome", title = "Signature Gene Mutations")
+sig_genes_hist
 
-temp_df %>% filter(Pan_2020_muts < 10) %>%
-  ggplot(aes(x = Treatment_Outcome, y = Pan_2020_muts)) +
-  geom_boxplot()
+
+#=======================================================================  
+# COMBINE PLOTS
+#=======================================================================
+# Remove legends
+sig_genes_hist
+dcb_bar <- dcb_bar + theme(legend.position="none")
+ndb_bar <- ndb_bar + theme(legend.position="none")
+
+# Combine barplots and Signature genes histogram
+ggarrange(sig_genes_hist, ggarrange(dcb_bar, ndb_bar, ncol = 2, labels = c("B", "C")), nrow = 2, labels = "A")
+
+# Combine NDB gene mutations and DCB gene mutations hist
+ggarrange(dcb_hist, ndb_hist)
 
 

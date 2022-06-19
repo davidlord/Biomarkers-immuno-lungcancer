@@ -15,10 +15,9 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read data file
-total_df <- read.delim("combined_data.tsv", stringsAsFactors = FALSE)
-
-# Replace 'Responder' for 'Responders' & 'Non-responder' for 'Non-responders'
-total_df$Treatment_Outcome <- ifelse(total_df$Treatment_Outcome == "Responder", "Responders", "Non-responders")
+total_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = FALSE)
+unique(total_df$Study_ID)
+total_df <- total_df %>% filter(Study_ID != "Model_Control")
 
 
 #=======================================================================
@@ -96,14 +95,13 @@ temp_df <- total_df %>% filter(!is.na(Histology))
 
 # Replace entries with abbreviations
 unique(temp_df$Histology)
-temp_df$Histology[temp_df$Histology == "Large Cell Neuroendocrine Carcinoma"] <- "LCNEC\n(N = 6)"
 temp_df$Histology[temp_df$Histology == "Lung Adenocarcinoma"] <- "LUAD\n(N = 322)"
 temp_df$Histology[temp_df$Histology == "Lung Squamous Cell Carcinoma"] <- "LSCC\n(N = 40)"
 temp_df$Histology[temp_df$Histology == "Non-Small Cell Lung Cancer"] <- "NSCLC\n(N = 14)"
 
 # Calculate numbers of each
 table(temp_df$Histology)
-counts <- c(6, 40, 322, 14)
+counts <- c(40, 322, 14)
 nrow(temp_df)
 
 # BARPLOT HISTOLOGY RESPONDERS VS NON-RESPONDERS

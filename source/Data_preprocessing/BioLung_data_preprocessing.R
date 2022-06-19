@@ -16,6 +16,8 @@ setwd(WORK_DIR)
 # Read clinical data
 biolung_2022 <- read_excel("BioLung_data/BioLung_clinical_data.xlsx")
 
+
+
 #================================================================================
 # DATA CLEANING
 #================================================================================
@@ -25,6 +27,7 @@ biolung_2022 <- biolung_2022 %>% filter(Somatic_Status == TRUE)
 
 # Filter NAs in response variable entries
 biolung_2022 <- biolung_2022 %>% filter(Durable_clinical_benefit == 'Responder' | Durable_clinical_benefit == 'Non responder')
+
 
 
 #================================================================================
@@ -37,7 +40,9 @@ biolung_2022 <- biolung_2022 %>% filter(Durable_clinical_benefit == 'Responder' 
   biolung_2022$Durable_clinical_benefit[biolung_2022$Durable_clinical_benefit == "Responder"] <- "YES"
   biolung_2022$Durable_clinical_benefit[biolung_2022$Durable_clinical_benefit == "Non responder"] <- "NO"
 
-# Histology
+
+# HISTOLOGY
+#------------
   # 'Lung adenocarcinoma' <- 'LUAD'
   # 'Lung Squamous Cell Carcinoma' <- 'SCC'
   # 'Non-Small Cell Lung Cancer'
@@ -45,29 +50,34 @@ biolung_2022 <- biolung_2022 %>% filter(Durable_clinical_benefit == 'Responder' 
   biolung_2022$Histology[biolung_2022$Histology == "SCC"] <- "Lung Squamous Cell Carcinoma"
   biolung_2022$Histology[biolung_2022$Histology == "NSCLC"] <- "Non-Small Cell Lung Cancer"
   
-# Smoking history
+  
+# SMOKING HISTORY
+#------------------
   # 'Former' <- 'Previous'
   # 'Never' <- 'Non-smoker'
   biolung_2022$Smoking_History[biolung_2022$Smoking_History == "Previous"] <- "Former"
   biolung_2022$Smoking_History[biolung_2022$Smoking_History == "Non-smoker"] <- "Never"
   
-  # Study ID: BioLung <- BioLung_2022
+  
+# STUDY ID: BioLung <- BioLung_2022
   biolung_2022$Study_ID[biolung_2022$Study_ID == "BioLung"] <- "BioLung_2022"
 
+  
   
 #================================================================================
 # SELECT & RENAME COLUMNS
 #================================================================================
 
 # Select columns
-### Frist try out w TMB_lower
-biolung_2022 <- biolung_2022 %>% select(Study_ID, Patient_ID, Sequencing_type, Durable_clinical_benefit, PFS_months, Histology, Smoking_History, Diagnosis_Age, Sex, `PD-L1_Expression`, TMB_lower, MSI_MSISensorPro)
+biolung_2022 <- biolung_2022 %>% select(Study_ID, Patient_ID, Sequencing_type, Durable_clinical_benefit, PFS_months, Histology, Smoking_History, Diagnosis_Age, Sex, `PD-L1_Expression`, TMB_lower, MSI_MSISensorPro, Treatment_Type)
+
 
 # Harmonize column names
   # Smoking_history <- Smoking_History
   colnames(biolung_2022)[which(names(biolung_2022) == "Smoking_history")] <- "Smoking_History"
   # TMB_lower <- TMB
   colnames(biolung_2022)[which(names(biolung_2022) == "TMB_lower")] <- "TMB"
+
 
 
 #================================================================================
@@ -83,7 +93,7 @@ variants_df <- variants_df %>% filter(Utvärdering != 'artefakt') %>%
   select(`Sample+A:FI`, `Gene (gene)`)
 
 # Rename columns
-variants_df <- variants_df %>% rename(Patient_ID = `Sample+A:FI`, Gene = `Gene (gene)`)
+colnames(variants_df) <- c("Patient_ID", "Gene")
 
 
 #================================================================================
@@ -95,6 +105,7 @@ table(variants_df$Patient_ID)
 variants_df$Patient_ID <- str_sub(variants_df$Patient_ID, -3, -1)
 variants_df$Patient_ID <- paste('BL', variants_df$Patient_ID, sep = '_')
 table(variants_df$Patient_ID)
+
 
 
 #================================================================================
@@ -119,6 +130,7 @@ df[is.na(df)] = 0
 patient_ids <- sort(patient_ids)
 # Insert as Patient IDs column in dataframe
 df$Patient_ID <- patient_ids
+
 
 
 #================================================================================

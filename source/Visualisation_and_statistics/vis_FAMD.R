@@ -15,38 +15,22 @@ library(factoextra)
 WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
-# Read data file
+# Read Combined dataset
 total_df <- read.delim("combined_data.tsv", stringsAsFactors = TRUE)
-
-
-
-#=======================================================================  
-# VISUALIZE MISSING DATA (CLINICAL FEATURES)
-#=======================================================================
-
-# Select relevant columns for visualization of missing data:
-colnames(total_df)
-# Rename PD-L1 Expression column
-total_df <- total_df %>% rename("PD-L1_Expression" = "PD.L1_Expression")
-# Subset into separate df
-md_df <- total_df %>% select(Histology, 'PD-L1_Expression', Smoking_History, TMB, Diagnosis_Age, Stage_at_diagnosis, Sex, MSI, Study_ID)
-# Replace empty string entries with NAs
-md_df[md_df == ''] <- NA
-# Create heatmap of missing data
-gg_miss_fct(x = md_df, fct = Study_ID) + 
-  labs(title = "Missing data in Combined Dataset", y = "Feature", x = "Cohort of Origin") +
-  theme(axis.text.y = element_text(angle = 45))
+# Read model-ready dataset
+model_df <- read.delim("model-ready_combinded_data.tsv", stringsAsFactors = TRUE)
+model_df <- model_df %>% filter(Study_ID != "Model_Control")
+model_df <- model_df %>% filter(Study_ID != "Jordan_2017")
+unique(model_df$Study_ID)
 
 
 #=======================================================================  
 # PLOT RAWDATA, FAMD
 #=======================================================================
 
-# Read model-ready dataset
-model_df <- read.delim("model-ready_combinded_data.tsv", stringsAsFactors = TRUE)
 
-# Remove features
-model_df <- model_df %>% select(-c(Treatment_Outcome, TMB, TMB_norm))
+
+
 
 # Get FAMD
 res_famd <- FAMD (base = model_df, ncp = 5, sup.var = NULL, ind.sup = NULL)
@@ -59,4 +43,15 @@ fviz_screeplot(res_famd)
 fviz_famd_ind(res_famd, habillage = "Study_ID", addEllipses = TRUE, 
               col.ind = "cos2", repel = TRUE, 
               )
+
+
+
+fviz_famd_ind(res_famd, habillage = "Treatment_Outcome", addEllipses = TRUE, 
+              col.ind = "cos2", repel = TRUE, 
+)
+
+
+
+
+
 

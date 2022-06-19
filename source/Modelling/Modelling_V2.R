@@ -1,12 +1,9 @@
 #============================================================================
-#
-# The purpose of this script is to generate supervised machine learning models (using the Caret package) 
-# of the preprocessed and harmonized data deriving from the Biomarkers-Immuno-Lung project.
-#
+# The purpose of this script is to create supervised classification models (using the Caret package) of the harmonized NSCLC-data. 
 #============================================================================
-#
-#
-#
+
+
+
 #============================================================================
 # LOAD LIBRARIES & READ FILES
 #============================================================================
@@ -14,11 +11,11 @@ library(ggplot2)
 library(lattice)
 library(caret)
 library(dplyr)
-library(doSNOW)
 library(pROC)
 library(tidymodels)
 library(DiagrammeR)
 library(rattle)
+library(MLeval)
 
 
 # Set working directory (also place data to read in working directory).
@@ -29,6 +26,7 @@ setwd(WORK_DIR)
 total_df <- read.delim("Features_engineered_control_included.tsv")
 
 
+
 #========================================================================
 # REMOVE IRRELEVANT FEATURES
 #========================================================================
@@ -36,54 +34,62 @@ total_df <- read.delim("Features_engineered_control_included.tsv")
 # Select relevant columns
   colnames(total_df)
   # Remove Pan 2020 gene-mutations
-  pan_2020_genes_cols <- colnames(total_df)[14:63]
-  total_df <- total_df %>% select(-pan_2020_genes_cols)
+  signature_genes_cols <- colnames(total_df)[15:64]
+  total_df <- total_df %>% select(-signature_genes_cols)
   
 # Remove additional excess columns
   colnames(total_df)
   rm_cols <- c("Patient_ID", "Sequencing_type", "PFS_months", "Stage_at_diagnosis", "PD.L1_Expression", 
-               "Immunotherapy", "MSI")
+               "Immunotherapy", "MSI", "TMB", "TMB_norm")
   # Keep Study ID for now as this is used to normalize numeric values downstream
-  ### DEV: Determine which TMB to keep...
   total_df <- total_df %>% select(-rm_cols)
   colnames(total_df)
-
+  
 # To avoid downstream bug in the modelling step, remove special characters from response variable
-  total_df$Treatment_Outcome[total_df$Treatment_Outcome == "Non-Responder"] <- "NonResponder"
+  total_df$Treatment_Outcome[total_df$Treatment_Outcome == "Non-Responders"] <- "NonResponders"
 
 
   
 #========================================================================
-# IMPUTE MISSING VALUES & CONVERT DATA TYPES
+# IMPUTE MISSING VALUES 
 #========================================================================
-
-# Since all missing values are located in the BioLung cohort, 
-# subset the BioLung cohort when assessing appropriate imputations
-temp_df <- total_df %>% filter(Study_ID == "BioLung_2022")
 
 # Identify columns with NAs
 colSums(is.na(total_df))
-  
-# Impute histology with mode
+
+# Add placeholder for treatment type in Jordan 2017 cohort and Model Control set. 
+table(total_df$Treatment_Type)
+total_df$Treatment_Type <- ifelse(total_df$Study_ID == "Jordan_2017", "Unknown", total_df$Treatment_Type)
+total_df$Treatment_Type <- ifelse(total_df$Study_ID == "Model_Control", "Not_immunotherapy", total_df$Treatment_Type)
+table(total_df$Study_ID)
+
+colSums(is.na(total_df))
+# Since all remaining missing values are located in the BioLung cohort, 
+# subset the BioLung cohort when assessing appropriate imputations
+temp_df <- total_df %>% filter(Study_ID == "BioLung_2022")
+
+# IMPUTE HISTOLOGY
 table(temp_df$Histology)
 total_df$Histology <- ifelse(is.na(total_df$Histology), "Lung Adenocarcinoma", total_df$Histology)
 
-# Impute patient diagnosis age with mean
+# IMPUTE PATIENT AGE
 mean_age <- as.integer(mean(temp_df$Diagnosis_Age, na.rm = TRUE))
 total_df$Diagnosis_Age <- ifelse(is.na(total_df$Diagnosis_Age), mean_age, total_df$Diagnosis_Age)
 
-# Impute patient smoking history with mode
+# IMPUTE PATIENT SMOKING HISTORY
 table(temp_df$Smoking_History)
 total_df$Smoking_History <- ifelse(is.na(total_df$Smoking_History), "Former", total_df$Smoking_History)
 
-# Impute patient sex with mode
+# IMPUTE PATIENT SEX
 table(temp_df$Sex)
 total_df$Sex <- ifelse(is.na(total_df$Sex), "Female", total_df$Sex)
 sum(is.na(total_df))  
 
 
+
+#========================================================================
 # CONVERT DATA TYPES
-#--------------------
+#========================================================================
 str(total_df)
 
 # Convert binary mutations columns to factors
@@ -93,7 +99,7 @@ total_df[muts_cols] <- lapply(total_df[muts_cols], factor)
 
 # Convert relevant columns to factors
 str(total_df)
-fac_cols <- c("Study_ID", "Sex", "Histology", "Smoking_History", "Treatment_Outcome")
+fac_cols <- c("Study_ID", "Sex", "Histology", "Smoking_History", "Treatment_Outcome", "Treatment_Type")
 total_df[fac_cols] <- lapply(total_df[fac_cols], factor)
 
 
@@ -101,8 +107,8 @@ total_df[fac_cols] <- lapply(total_df[fac_cols], factor)
 #========================================================================
 # EXPORT MODEL-READY DATASET
 #========================================================================
-
 write.table(total_df, file = "model-ready_combinded_data.tsv", sep = "\t")
+
 
 
 #========================================================================
@@ -120,29 +126,11 @@ data_correlated = cor(total_df[numeric_cols])
 findCorrelation(data_correlated)
 # No observed correlated numeric variables. 
 
-
-
-#========================================================================
-# EXCLUDE EXCESS FEATURES - BASED ON RESULTS FROM DOWNSTREAM RFE
-#========================================================================
-
-# Exclude excess features
+# Remove excess features (based on RFE output)
 colnames(total_df)
-unselect_cols <- c("Histology", "Sex", "Pan_2020_compound_muts", "TMB_norm", "TMB", "Diagnosis_Age")
-total_df <- total_df %>% select(-unselect_cols)
-
-### EXPERIMENTAL ###
-# Exclude excess mutations columns
-colnames(total_df)
-unselect_cols <- c("POLE", "KEAP1", "TP53", "MSH2", "EGFR", "PTEN")
-total_df <- total_df %>% select(-unselect_cols)
-
-### EXPERIMENTAL ###
-colnames(total_df)
-unselect_cols <- c("Diagnosis_Age", "KRAS", "POLD1", "STK11")
-total_df <- total_df %>% select(-unselect_cols)
-### EXPERIMENTAL ###
-
+rm_cols <- c("Diagnosis_Age", "Sex", "Histology", "Pan_2020_compound_muts", 
+             "KEAP1", "POLD1", "POLE", "TP53", "MSH2")
+total_df <- total_df %>% select(-rm_cols)
 
 
 #========================================================================
@@ -184,16 +172,14 @@ str(total_df)
 # DATA TRANSFORMATION
 #========================================================================
 
-### DEV: Add TMB normalization and log2 transformation here... 
-
 # Normalize data, range between 0 and 1
 process_range_model <- preProcess(total_df, method='range')
 total_df <- predict(process_range_model, newdata = total_df)
 
 # Append response variable column
 total_df$Treatment_Outcome <- Y
-
 str(total_df)
+
 
 
 #========================================================================
@@ -207,10 +193,16 @@ rfeprofile <- rfe(x = total_df[, 1:(length(total_df) - 1)], y = total_df$Treatme
                   sizes = c(1:length(total_df)), rfeControl = ctrl)
 rfeprofile
 
-
-
 # View top predictors
 predictors(rfeprofile)
+
+
+# EXCLUDE EXCESS FEATURES 
+#==========================
+# Exclude excess features
+input_cols <- append(predictors(rfeprofile), "Treatment_Outcome")
+total_df <- total_df %>% select(input_cols)
+
 
 
 #========================================================================
@@ -225,132 +217,263 @@ train_set <- total_df[indexes,]
 test_set <- total_df[-indexes,]
 
 
+
 #========================================================================
 # MODEL TRAINING
 #========================================================================
 
 # Define training control
 set.seed(100)
-ctrl <- trainControl(method = 'cv', 
+ctrl <- trainControl(method = "repeatedcv", 
                      number = 10, 
-                     savePredictions = 'final', 
-                     classProbs = TRUE, 
-                     summaryFunction = twoClassSummary)
-
-
-
-# TEST CONTROL
-set.seed(100)
-ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 5, search = "random")
-
+                     repeats = 5,
+                     search = "random",
+                     savePredictions = 'final')
+                     #classProbs = TRUE, 
+                     #summaryFunction = twoClassSummary)
 
 
 # (BOOSTED) LOGISTIC REGRESSION
-#---------------------------------
-
+#=================================
 # Train model
 set.seed(100)
 bag_logreg_model = train(Treatment_Outcome ~ ., 
                  data = train_set, 
                  method = "LogitBoost", 
-                 tunelength = 20, 
+                 tunelength = 30, 
                  trControl = ctrl)
 bag_logreg_model
 
 
 # RANDOM FOREST
-#----------------------
-# Note: Decision trees
-
+#====================
 # Train model
 set.seed(100)
 rf_model = train(Treatment_Outcome ~ ., 
                  data = train_set, 
                  method = "rf", 
-                 tunelength = 10, 
+                 tunelength = 20, 
                  trControl = ctrl)
 rf_model
 
 
-# EXTREME GRADIENT BOOSTING BAG DECISION TREE
-#-----------------------------------------------
-
+# K NEAREST NEIGHBOURS
+#=======================
 # Train model
 set.seed(100)
-xgbtree_model = train(Treatment_Outcome ~ ., 
+knn_model = train(Treatment_Outcome ~ ., 
                        data = train_set, 
-                       method = "xgbTree", 
-                       tunelength = 10, 
+                       method = "kknn", 
+                       tunelength = 20, 
                        trControl = ctrl)
-xgbtree_model
+knn_model
+
+
+# RECURSIVE PARTITIONING
+#==========================
+# Train model
+set.seed(100)
+rpart_model <- train(Treatment_Outcome ~ ., data = train_set, 
+                    method = "rpart",
+                    trControl = ctrl)
+rpart_model
+
 
 
 #========================================================================
 # COMMPARE MODELS
 #========================================================================
 
-compare_models <- resamples(list("Logistic Regression" = bag_logreg_model, 
-                                 "Random Forest" = rf_model, 
-                                 "Extreme Gradient Boosting" = xgbtree_model))
+compare_models <- resamples(list("Logistic Regression" = bag_logreg_model,
+                                 "K Nearest Neighbours" = knn_model,
+                                 "Recursive Partitioning" = rpart_model,
+                                 "Random Forest" = rf_model))
 summary(compare_models)
 
 # Plot comparisons
 scales <- list(x = list(relation = "free"), y = list(relation = "free"))
 bwplot(compare_models, scales = scales)
 
-xgb.plot.tree(model = xgbtree_model$finalModel, trees = 1)
-
-
-help("xgb.plot.tree")
-
-# PLOT TREES
-# https://www.youtube.com/watch?v=pYdpVr34sJA
 
 
 #========================================================================
-# MODEL VALIDATION
+# PLOT ROC CURVES 
 #========================================================================
 
-# Use models to make predictions on test data
+# Convert response variable entries to numeric
+set.seed(100)
+res <- evalm(list(rf_model, rpart_model, bag_logreg_model, knn_model),
+             gnames=c('\nRandom Forest', '\nRecursive Partitioning', '\nLogistic Regression', '\nK Nearest Neighbours'))
+
+
+
+#========================================================================
+# PLOT DECISION TREE & FEATURE IMPORTANCE
+#========================================================================
+
+library(rpart.plot)
+rpart.plot(rpart_model$finalModel, fallen.leaves = FALSE)
+
+varimp_rf <- varImp(rf_model)
+plot(varimp_rf, main="Variable Importance")
+
+#========================================================================
+# MODEL VALIDATION P1
+# PREDICT TREATMENT OUTCOME ON TEST SET
+#========================================================================
 
 # Logistic regression: 
 pred_logreg <- predict(bag_logreg_model, test_set)
 cm_logreg <- confusionMatrix(reference = test_set$Treatment_Outcome, 
                          data = pred_logreg, 
                          mode = 'everything', 
-                         positive = 'Responder')
+                         positive = 'NonResponders')
 cm_logreg
+
+# K Nearest Neighbours:
+pred_knn <- predict(knn_model, test_set)
+cm_knn <- confusionMatrix(reference = test_set$Treatment_Outcome, 
+                             data = pred_knn, 
+                             mode = 'everything', 
+                             positive = 'NonResponders')
+cm_knn
+
+# Recursive Partitioning:
+pred_rpart <- predict(rpart_model, test_set)
+cm_rpart <- confusionMatrix(reference = test_set$Treatment_Outcome, 
+                         data = pred_rpart, 
+                         mode = 'everything', 
+                         positive = 'NonResponders')
+cm_rpart
 
 # Random Forest: 
 pred_rf <- predict(rf_model, test_set)
 cm_rf <- confusionMatrix(reference = test_set$Treatment_Outcome, 
                          data = pred_rf, 
                          mode = 'everything', 
-                         positive = 'Responder')
+                         positive = 'NonResponders')
 cm_rf
 
-# Extreme Gradient Boosting
-pred_xgbtree <- predict(xgbtree_model, test_set)
-cm_xgbtree <- confusionMatrix(reference = test_set$Treatment_Outcome, 
-                         data = pred_xgbtree, 
+
+
+#========================================================================
+# MODEL VALIDATION P2
+# EVALUATE MODEL PERFORMANCE ON VALIDATION- & CONTROL COHORTS
+#========================================================================
+
+# SEPARATE RESPONSE VARIABLE
+#==============================
+Xcontrol <- control_df %>% select(-Treatment_Outcome)
+Ycontrol <- control_df$Treatment_Outcome
+
+Xvalidation <- validation_df %>% select(-Treatment_Outcome)
+Yvalidation <- validation_df$Treatment_Outcome
+
+# CREATE DUMMY VARIABLES
+#========================
+dummies_control <- predict(dummies_model, newdata = control_df)
+dummies_validation <- predict(dummies_model, newdata = validation_df)
+
+control_df <- data.frame(dummies_control)
+validation_df <- data.frame(dummies_validation)
+
+# NORMALIZE NUMERIC VALUES
+#===========================
+control_df <- predict(process_range_model, newdata = control_df)
+validation_df <- predict(process_range_model, newdata = validation_df)
+
+# APPEND RESPONSE VARIABLE
+#===========================
+control_df$Treatment_Outcome <- Ycontrol
+validation_df$Treatment_Outcome <- Yvalidation
+str(control_df)
+str(validation_df)
+
+
+# MAKE PREDICTIONS ON VALIDATION SET
+#======================================
+
+# Logistic regression: 
+pred_logreg <- predict(bag_logreg_model, validation_df)
+cm_logreg <- confusionMatrix(reference = validation_df$Treatment_Outcome, 
+                             data = pred_logreg, 
+                             mode = 'everything', 
+                             positive = 'NonResponders')
+cm_logreg
+
+# K Nearest Neighbours:
+pred_knn <- predict(knn_model, validation_df)
+cm_knn <- confusionMatrix(reference = validation_df$Treatment_Outcome, 
+                          data = pred_knn, 
+                          mode = 'everything', 
+                          positive = 'NonResponders')
+cm_knn
+
+# Recursive Partitioning:
+pred_rpart <- predict(rpart_model, validation_df)
+cm_rpart <- confusionMatrix(reference = validation_df$Treatment_Outcome, 
+                            data = pred_rpart, 
+                            mode = 'everything', 
+                            positive = 'NonResponders')
+cm_rpart
+
+# Random Forest: 
+pred_rf <- predict(rf_model, validation_df)
+cm_rf <- confusionMatrix(reference = validation_df$Treatment_Outcome, 
+                         data = pred_rf, 
                          mode = 'everything', 
-                         positive = 'Responder')
-cm_xgbtree
+                         positive = 'NonResponders')
+cm_rf
 
 
 
 
-#========================================================================
-# PLOT ROC CURVES
-#========================================================================
+# MAKE PREDICTIONS ON CONTROL SET
+#=====================================
 
-# Convert response variable entries to numeric
+# Logistic regression: 
+pred_logreg <- predict(bag_logreg_model, control_df)
+cm_logreg <- confusionMatrix(reference = control_df$Treatment_Outcome, 
+                             data = pred_logreg, 
+                             mode = 'everything', 
+                             positive = 'NonResponders')
+cm_logreg
 
-pred_xgbtree <- ifelse(pred_xgbtree == "Responder", 1, 0)
-pred_rf <- ifelse(pred_rf == "Responder", 1, 0)
+# K Nearest Neighbours:
+pred_knn <- predict(knn_model, control_df)
+cm_knn <- confusionMatrix(reference = control_df$Treatment_Outcome, 
+                          data = pred_knn, 
+                          mode = 'everything', 
+                          positive = 'NonResponders')
+cm_knn
 
-roc(test_set$Treatment_Outcome, pred_xgbtree, plot = TRUE)
-plot.roc(test_set$Treatment_Outcome, pred_rf)
+# Recursive Partitioning:
+pred_rpart <- predict(rpart_model, control_df)
+cm_rpart <- confusionMatrix(reference = control_df$Treatment_Outcome, 
+                            data = pred_rpart, 
+                            mode = 'everything', 
+                            positive = 'NonResponders')
+cm_rpart
+
+# Random Forest: 
+pred_rf <- predict(rf_model, control_df)
+cm_rf <- confusionMatrix(reference = control_df$Treatment_Outcome, 
+                         data = pred_rf, 
+                         mode = 'everything', 
+                         positive = 'NonResponders')
+cm_rf
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -11,8 +11,9 @@ WORK_DIR <- "/Users/davidlord/Documents/External_data/script_running"
 setwd(WORK_DIR)
 
 # Read data file
-total_df <- read.delim("combined_data.tsv", stringsAsFactors = FALSE)
-
+total_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = FALSE)
+unique(total_df$Study_ID)
+total_df <- total_df %>% filter(Study_ID != "Model_Control")
 
 
 #=======================================================================
@@ -59,14 +60,21 @@ cor.test(biolung_df$MSI, biolung_df$PD.L1_Expression, method = "spearman", use =
 
 
 #=======================================================================
-# PATIENT DEMOGRAPHY & TREATMENT OUTCOME
+# PATIENT CHARACTERISTICS & TREATMENT OUTCOME
 #=======================================================================
 
 colnames(total_df)
 # PATIENT AGE
 #=============
+# Get mean and sd
+total_df %>% group_by(Treatment_Outcome) %>% filter(!is.na(Diagnosis_Age)) %>%
+  summarize("Mean" = mean(Diagnosis_Age), "SD" = sd(Diagnosis_Age))
+
+# T-test
 res <- t.test(Diagnosis_Age ~ Treatment_Outcome, data = total_df)
 res
+
+
 
 # PATIENT SEX
 #==============
@@ -85,6 +93,7 @@ table(total_df$Histology, total_df$Treatment_Outcome)
 # Run Chi-Square test
 chisq <- chisq.test(total_df$Histology, total_df$Treatment_Outcome, simulate.p.value = TRUE)
 chisq
+
   
 # SMOKING HISTORY
 #=================
@@ -112,12 +121,13 @@ table(temp_df$PD.L1_Expression)
 # Change to numeric
 temp_df$PD.L1_Expression <- as.numeric(temp_df$PD.L1_Expression)
 
+
 # Difference in PD-L1 Expression between responders & non-responders? 
 wilcox.test(PD.L1_Expression ~ Treatment_Outcome, data = temp_df, exact = FALSE)
 
-# Difference in PD-L1 Expression across cohorts of origin? 
+# Test for difference in PD-L1 Expression across cohorts of origin.
 # Kruskal-Wallis test by rank is a non-parametric alternative to one-way ANOVA test, 
-# which extends the two-samples Wilcoxon test in the situation where there are more 4than 
+# which extends the two-samples Wilcoxon test in the situation where there are more than 
 # two groups.
 kruskal.test(PD.L1_Expression ~ Study_ID, data = temp_df)
 
@@ -125,61 +135,69 @@ kruskal.test(PD.L1_Expression ~ Study_ID, data = temp_df)
 # Use Spearman test since can not assume a normal distribution for PD-L1
 res2 <-cor.test(my_data$wt, my_data$mpg,  method = "spearman")
 
+# Get medians
+class(total_df$PD.L1_Expression)
+total_df$PD.L1_Expression <- as.numeric(total_df$PD.L1_Expression)
+total_df %>% filter(!is.na(PD.L1_Expression)) %>% group_by(Study_ID) %>%
+  summarize("Median" = median(PD.L1_Expression))
+
+
 
 
 
 #=======================================================================
 # GENES OF INTEREST
 #=======================================================================
-
-# Calculate again after excluding Jordan 2017
-temp_df <- total_df %>% select(Treatment_Outcome, Study_ID, genes_of_interest) %>%
-  filter(Study_ID != "Jordan_2017")
-
+temp_df <- total_df
 # Count responders & non-responders
 table(temp_df$Treatment_Outcome)
 
 # Define genes of interest
 genes_of_interest <- c("PTEN", "POLD1", "STK11", "TP53", "POLE", "KEAP1", "MSH2", "EGFR", "KRAS")
 
-temp_df <- total_df %>% select(Treatment_Outcome, genes_of_interest)
-
-table(temp_df$Treatment_Outcome, temp_df$KRAS)
-
 
 EGFR <- table(temp_df$Treatment_Outcome, temp_df$EGFR)
+EGFR
 chisq.test(EGFR)$expected
 chisq.test(EGFR)
 
 STK11 <- table(temp_df$Treatment_Outcome, temp_df$STK11)
+STK11
 chisq.test(STK11)$expected
 chisq.test(STK11)
 
 KRAS <- table(temp_df$Treatment_Outcome, temp_df$KRAS)
+KRAS
 chisq.test(KRAS)$expected
 chisq.test(KRAS)
 
 POLD1 <- table(temp_df$Treatment_Outcome, temp_df$POLD1)
+POLD1
 chisq.test(POLD1)$expected
 chisq.test(POLD1)
 
 TP53 <- table(temp_df$Treatment_Outcome, temp_df$TP53)
+TP53
 chisq.test(TP53)$expected
 chisq.test(TP53)
 
 POLE <- table(temp_df$Treatment_Outcome, temp_df$POLE)
+POLE
 chisq.test(POLE)$expected
 chisq.test(POLE)
 
 KEAP1 <- table(temp_df$Treatment_Outcome, temp_df$KEAP1)
+KEAP1
 chisq.test(KEAP1)$expected
 chisq.test(KEAP1)
 
 MSH2 <- table(temp_df$Treatment_Outcome, temp_df$MSH2)
+MSH2
 chisq.test(MSH2)$expected
 chisq.test(MSH2)
 
 PTEN <- table(temp_df$Treatment_Outcome, temp_df$PTEN)
+PTEN
 chisq.test(PTEN)$expected
 chisq.test(PTEN)
 
@@ -190,36 +208,11 @@ chisq.test(PTEN)
 # ENGINEERED FEATURES
 #=======================================================================
 
-# PREPROCESS
-#-------------------------------
-# Features engineered dataset
-temp_df <- read.delim("Features_engineered_control_included.tsv", stringsAsFactors = FALSE)
-unique(temp_df$Study_ID)
-# Remove control cohort before analysis
-temp_df <- temp_df %>% filter(Study_ID != "Model_Control")
-colnames(model_df)
-
-
-# PAN 2020 SIGNATURE MUTATIONS
-#-------------------------------
-
-# Pan 2020 mutations (counts), Responders vs Non-responders
-wilcox.test(Pan_2020_muts ~ Treatment_Outcome, data = temp_df)
-
-# Pan 2020 compound mutations (binary), Responders vs Non-responders
-comp <- table(temp_df$Pan_2020_compound_muts, temp_df$Treatment_Outcome)
-chisq.test(comp)
-
-
-
 # NDB GENES & DCB GENES
 #-------------------------
-
 table(temp_df$DCB_genes, temp_df$Treatment_Outcome)
 
-
-table(model_df$NDB_genes, model_df$Treatment_Outcome)
-
+table(temp_df$NDB_genes, temp_df$Treatment_Outcome)
 
 res <- wilcox.test(NDB_genes ~ Treatment_Outcome, data = temp_df,
                    exact = FALSE)
@@ -230,6 +223,15 @@ res <- wilcox.test(DCB_genes ~ Treatment_Outcome, data = temp_df,
 res
 
 
+
+# PAN 2020 SIGNATURE MUTATIONS
+#-------------------------------
+# Pan 2020 mutations (counts), Responders vs Non-responders
+wilcox.test(Pan_2020_muts ~ Treatment_Outcome, data = temp_df)
+
+# Pan 2020 compound mutations (binary), Responders vs Non-responders
+comp <- table(temp_df$Pan_2020_compound_muts, temp_df$Treatment_Outcome)
+chisq.test(comp)
 
 
 
@@ -245,6 +247,7 @@ total_df <- total_df %>% filter(TMB < 90)
 total_df$TMB_log2 <- log2(total_df$TMB)
 # Filter -Inf values from TMB
 total_df <- total_df %>% filter(!is.infinite(TMB_log2))
+
 
 # LOG2-TRANSFORMED TMB
 #=======================
